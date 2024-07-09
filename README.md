@@ -1,5 +1,8 @@
 # FM-Frontend
+This project is the front-end dev of Football Manager.
+Please download node.js, yarn and vue cli(using vue2.0) to set up the project.
 
+Use [Element](https://element.eleme.cn/#/zh-CN/component) as components library.
 
 ## Project setup
 
