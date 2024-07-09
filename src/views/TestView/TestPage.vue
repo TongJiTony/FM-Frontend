@@ -20,7 +20,7 @@ export default {
     };
   },
   created() {
-    axios.get('/api/testexample')
+    axios.get('/api/v1/testexampleapi')
       .then(response => {
         this.data = response.data;
         this.loading = false;

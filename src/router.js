@@ -1,17 +1,27 @@
 import Vue from 'vue';
-import VueRouter from 'vue-router';
-import Test from './components/test.vue';
+import Router from 'vue-router';
+import DefaultLayout from '@/layouts/defaultLayout.vue';
 
-Vue.use(VueRouter);
+Vue.use(Router);
 
-const router = new VueRouter({
+export default new Router({
+    mode: 'history',
     routes: [
         {
-            path: '/test',
-            component: Test
-        }
-        // 其他路由记录...
-    ]
+            path: '/',
+            component: DefaultLayout,
+            children: [
+                {
+                    path: '',
+                    name: 'Home',
+                    component: () => import('@/views/HomePage.vue'),
+                },
+                {
+                    path: 'test',
+                    name: 'Test',
+                    component: () => import('@/views/TestView/TestPage.vue'),
+                },
+            ],
+        },
+    ],
 });
-
-export default router;
