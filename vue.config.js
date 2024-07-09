@@ -5,7 +5,7 @@ module.exports = defineConfig({
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5000', // 后端API的URL
+        target: 'http://localhost:5253', // 后端API的URL
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
