@@ -21,6 +21,11 @@ export default new Router({
                     name: 'Test',
                     component: () => import('@/views/TestView/TestPage.vue'),
                 },
+                {
+                    path: 'team',
+                    name: 'Team',
+                    component: () => import('@/views/TeamView/TeamPage.vue'),
+                },
             ],
         },
     ],
