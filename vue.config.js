@@ -1,5 +1,7 @@
 const { defineConfig } = require('@vue/cli-service')
+const path = require('path');
 module.exports = defineConfig({
+  lintOnSave: false, // 关闭保存时 lint 检查
   // 所有依赖项都被转译
   transpileDependencies: true,
   devServer: {
@@ -18,6 +20,13 @@ module.exports = defineConfig({
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, X-Auth-Token'
     },
-  }
+  },
+  configureWebpack: {
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, 'src'),
+      },
+    },
+  },
   // Future
 })
