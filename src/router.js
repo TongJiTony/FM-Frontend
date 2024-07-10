@@ -21,6 +21,11 @@ export default new Router({
                     name: 'Test',
                     component: () => import('@/views/TestView/TestPage.vue'),
                 },
+                {
+                    path: 'player-display', // 新增的路由
+                    name: 'PlayerDisplay',
+                    component: () => import('@/views/PlayerDisplay.vue'),
+                },
             ],
         },
     ],
