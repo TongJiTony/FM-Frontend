@@ -21,19 +21,19 @@
           <el-table
     :data="team.filter(data => !search || data.TEAM_NAME.includes(search))"
     style="width: 100%">
-          <el-table-column prop="TEAM_ID" label="ID" width="250">
+          <el-table-column prop="TEAM_ID" label="ID" width="200">
           </el-table-column>
-          <el-table-column prop="TEAM_NAME" label="球队名称" width="250">
+          <el-table-column prop="TEAM_NAME" label="球队名称" width="200">
           </el-table-column>
           <el-table-column prop="ESTABLISHED_DATE" label="成立时间" width="250">
           </el-table-column>
-          <el-table-column prop="HEAD_COACH" label="主教练" width="250">
+          <el-table-column prop="HEAD_COACH" label="主教练" width="200">
           </el-table-column>
-          <el-table-column prop="CITY" label="城市" >
+          <el-table-column prop="CITY" label="城市"  >
           </el-table-column>
 
            <el-table-column
-      align="right">
+       fixed="right" width="250">
        <!-- eslint-disable-next-line -->
         <template slot="header" slot-scope="scope">
         <el-input
@@ -41,16 +41,11 @@
           placeholder="输入球队名称搜索"/>
         </template>
       <template slot-scope="scope">
-         <el-button
-          size="mini"
-          @click="handleSearch(scope.$index, scope.row)">Details</el-button>
+        <el-button @click="handleDetails(scope.row)" type="text" size="small">Details</el-button>
         <el-button
-          size="mini"
-          @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+          @click="handleEdit( scope.row)" type="text" size="small">Edit</el-button>
         <el-button
-          size="mini"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+          @click="handleDelete(scope.row)" type="text" size="small">Delete</el-button>
       </template>
     </el-table-column>
 
@@ -77,7 +72,7 @@
       };
     },
     created() {
-      axios.get('/api/v1/team/all')
+      axios.get('/api/v1/team/displayall')
         .then(response => {
           this.team = response.data;
           this.loading = false;
@@ -86,7 +81,34 @@
           console.error(error);
           this.loading = false;
         });
-    }
+    },
+    methods:{
+      handleDetails(key){
+        if (this.$route.path !== key){
+        this.$router.push('teampage');
+      }
+
+      },
+      handleEdit(index, row) {
+        console.log(index, row);
+      },
+      handleDelete(index, row) {
+        console.log(index, row);
+      }
+    },
+    sendRequest(data) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/v1/team/displayall', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            console.log('操作成功');
+        } else {
+            console.log('操作失败');
+        }
+    };
+    xhr.send(JSON.stringify(data));
+}
   };
   </script>
 

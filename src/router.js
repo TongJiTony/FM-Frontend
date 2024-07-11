@@ -25,6 +25,11 @@ export default new Router({
                     path: 'team',
                     name: 'Team',
                     component: () => import('@/views/TeamView/TeamList.vue'),
+                    
+                },
+                {path: 'teampage',
+                    name: 'TeamPage',
+                    component: () => import('@/views/TeamView/TeamPage.vue'),
                 },
             ],
         },
