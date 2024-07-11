@@ -22,9 +22,14 @@ export default new Router({
                     component: () => import('@/views/TestView/TestPage.vue'),
                 },
                 {
-                    path: 'player-display', // 新增的路由
+                    path: 'player-list',
+                    name: 'PlayerList',
+                    component: () => import('@/views/PlayerView/PlayerList.vue'),
+                },
+                {
+                    path: 'player-display',
                     name: 'PlayerDisplay',
-                    component: () => import('@/views/PlayerDisplay.vue'),
+                    component: () => import('@/views/PlayerView/PlayerDisplay.vue'),
                 },
             ],
         },
