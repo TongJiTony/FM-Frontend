@@ -27,10 +27,11 @@ export default new Router({
                     component: () => import('@/views/PlayerView/PlayerList.vue'),
                 },
                 {
-                    path: 'player-display',
+                    path: '/player-display/:playerId', // 添加 playerId 参数
                     name: 'PlayerDisplay',
                     component: () => import('@/views/PlayerView/PlayerDisplay.vue'),
                 },
+
             ],
         },
     ],

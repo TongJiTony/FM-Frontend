@@ -1,42 +1,49 @@
 <template>
-    <div>
-      <h1>Player Display Page</h1>
-      <p v-if="loading">Loading player data...</p>
+  <div>
+    <h1>Player Display Page</h1>
+    <p v-if="loading">Loading player data...</p>
+    <div v-else>
+      <div v-if="player">
+        <p><strong>ID:</strong> {{ player[0].PLAYER_ID}}</p>
+        <p><strong>Name:</strong> {{ player[0].PLAYER_NAME }}</p>
+        <p><strong>Birthday:</strong> {{ player[0].BIRTHDAY }}</p>
+        <p><strong>Team ID:</strong> {{ player[0].TEAM_ID }}</p>
+        <p><strong>Role:</strong> {{ player[0].ROLE }}</p>
+        <p><strong>Used Foot:</strong> {{ player[0].USED_FOOT }}</p>
+        <p><strong>Health State:</strong> {{ player[0].HEALTH_STATE }}</p>
+        <p><strong>Rank:</strong> {{ player[0].RANK }}</p>
+        <p><strong>Game State:</strong> {{ player[0].GAME_STATE }}</p>
+        <p><strong>Transfer State:</strong> {{ player[0].TRANS_STATE }}</p>
+        <p><strong>Is Show:</strong> {{ player[0].IS_SHOW }}</p>
+      </div>
       <div v-else>
-        <div v-if="player">
-          <p><strong>ID:</strong> {{ player.PLAYER_ID }}</p>
-          <p><strong>Name:</strong> {{ player.PLAYER_NAME }}</p>
-          <p><strong>Birthday:</strong> {{ player.BIRTHDAY }}</p>
-          <p><strong>Team ID:</strong> {{ player.TEAM_ID }}</p>
-          <p><strong>Role:</strong> {{ player.ROLE }}</p>
-          <p><strong>Used Foot:</strong> {{ player.USED_FOOT }}</p>
-          <p><strong>Health State:</strong> {{ player.HEALTH_STATE }}</p>
-          <p><strong>Rank:</strong> {{ player.RANK }}</p>
-          <p><strong>Game State:</strong> {{ player.GAME_STATE }}</p>
-          <p><strong>Transfer State:</strong> {{ player.TRANS_STATE }}</p>
-          <p><strong>Is Show:</strong> {{ player.IS_SHOW }}</p>
-        </div>
-        <div v-else>
-          <p>No player data available.</p>
-        </div>
+        <p>No player data available.</p>
       </div>
     </div>
-  </template>
-  
-  <script>
-  import axios from 'axios';
-  
-  export default {
-    data() {
-      return {
-        loading: true,
-        player: null
-      };
-    },
-    created() {
-      axios.get('/api/v1/playerdisplay/1')
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      loading: true,
+      player: null
+    };
+  },
+  created() {
+    this.fetchPlayerData();
+  },
+  methods: {
+    fetchPlayerData() {
+      const playerId = this.$route.params.playerId;
+      console.log('Fetching data for player ID:', playerId); // 添加调试信息
+      axios.get(`/api/v1/player/${playerId}`)
         .then(response => {
-          this.player = response.data[0];
+          console.log('Received data:', response.data); // 添加调试信息
+          this.player = response.data;
           this.loading = false;
         })
         .catch(error => {
@@ -44,12 +51,12 @@
           this.loading = false;
         });
     }
-  };
-  </script>
-  
-  <style scoped>
-  .player-display {
-    padding: 1rem;
   }
-  </style>
-  
+};
+</script>
+
+<style scoped>
+.player-display {
+  padding: 1rem;
+}
+</style>
