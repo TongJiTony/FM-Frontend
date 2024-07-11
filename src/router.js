@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Login from './views/common/login.vue';
 import DefaultLayout from './layouts/defaultLayout.vue';
 
 Vue.use(Router);
@@ -27,7 +26,7 @@ const router = new Router({
         },
         {
             path: '/login',
-            component: Login
+            component: () => import('@/views/common/LoginPage.vue'),
         },
         // 其他路由记录...
     ]
