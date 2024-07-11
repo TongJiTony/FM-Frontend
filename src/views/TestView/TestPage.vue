@@ -30,14 +30,14 @@ export default {
   },
   created() {
     axios.get('/api/v1/testexampleapi')
-      .then(response => {
-        this.data = response.data;
-        this.loading = false;
-      })
-      .catch(error => {
-        console.error(error);
-        this.loading = false;
-      });
+        .then(response => {
+          this.data = response.data;
+          this.loading = false;
+        })
+        .catch(error => {
+          console.error(error);
+          this.loading = false;
+        });
   }
 };
 </script>

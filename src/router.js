@@ -2,7 +2,8 @@
 import Vue from "vue";
 import Router from "vue-router";
 import DefaultLayout from "@/layouts/defaultLayout.vue";
-import Login from "@/views/LoginView/LoginPage.vue";
+import Login from "@/views/common/LoginPage.vue";
+//import LoginPage from "@/views/LoginView/LoginPage.vue";
 //import { component } from "vue/types/umd";
 //引入依赖：Vue、Router、DefaultLayout组件。
 
@@ -10,32 +11,44 @@ import Login from "@/views/LoginView/LoginPage.vue";
 Vue.use(Router);
 
 const router = new Router({
-  mode: "history",
-  routes: [
-    {
-      // 登录页面的路由配置
-      path: "/login",
-      name: "LoginPage",
-      component: Login,
-    },
-    {
-      path: "/",
-      component: DefaultLayout,
-      children: [
+    mode: 'history',
+    routes: [
         {
-          path: "",
-          name: "Home",
-          component: () => import("@/views/HomePage.vue"),
+            path: '/',
+            component: DefaultLayout,
+            children: [
+                {
+                    path: 'login',
+                    name: 'Login',
+                    component: Login,
+                },
+                {
+                    path: '',
+                    name: 'Home',
+                    component: () => import('@/views/HomePage.vue'),
+                },
+                {
+                    path: 'test',
+                    name: 'Test',
+                    component: () => import('@/views/TestView/TestPage.vue'),
+                },
+                {
+                    path: 'player-list',
+                    name: 'PlayerList',
+                    component: () => import('@/views/PlayerView/PlayerList.vue'),
+                },
+                {
+                    path: '/player-display/:playerId', // 添加 playerId 参数
+                    name: 'PlayerDisplay',
+                    component: () => import('@/views/PlayerView/PlayerDisplay.vue'),
+                },
+
+            ],
         },
-        {
-          path: "test",
-          name: "Test",
-          component: () => import("@/views/TestView/TestPage.vue"),
-        },
-      ],
-    },
-  ],
+    ],
 });
+
+
 
 // 导航守卫
 /*
@@ -46,8 +59,8 @@ next：一个函数，调用它来决定接下来的行为。
 router.beforeEach((to, from, next) => {
   const isLoggedIn = localStorage.getItem("isLoggedIn");
 
-  if (to.name !== "LoginPage" && isLoggedIn === "false") {
-    next({ name: "LoginPage" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
+  if (to.name !== "Login" && isLoggedIn === "false") {
+    next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
   } else {
     next();
   }

@@ -11,6 +11,7 @@
       >
         <el-menu-item index="/">Home</el-menu-item>
         <el-menu-item index="/test">Test</el-menu-item>
+        <el-menu-item index="/player-list">Player List</el-menu-item>
       </el-menu>
     </el-header>
     <el-main>
