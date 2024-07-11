@@ -1,11 +1,11 @@
 import Vue from 'vue';
-import VueRouter from 'vue-router';
+import Router from 'vue-router';
 import Login from './views/common/login.vue';
 import DefaultLayout from './layouts/defaultLayout.vue';
 
-Vue.use(VueRouter);
+Vue.use(Router);
 
-const router = new VueRouter({
+const router = new Router({
     mode: 'history',
     routes: [
 
