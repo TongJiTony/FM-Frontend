@@ -1,12 +1,13 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import DefaultLayout from '@/layouts/defaultLayout.vue';
+import DefaultLayout from './layouts/defaultLayout.vue';
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
     mode: 'history',
     routes: [
+
         {
             path: '/',
             component: DefaultLayout,
@@ -34,5 +35,12 @@ export default new Router({
 
             ],
         },
-    ],
+        {
+            path: '/login',
+            component: () => import('@/views/common/LoginPage.vue'),
+        },
+        // 其他路由记录...
+    ]
 });
+
+export default router;
