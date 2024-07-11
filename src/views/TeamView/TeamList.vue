@@ -2,7 +2,7 @@
     <div>
       <p v-if="loading">
          <el-container>
-      <el-header style="text-align: left; font-size: 20px">
+      <el-header>
               <h1>Team List</h1>
       </el-header>
         <el-table
@@ -13,12 +13,14 @@
       </p>
       <div v-else>
         <el-container>
-      <el-header style="text-align: left; font-size: 18px">
+      <el-header >
               <h1>Team List</h1>
       </el-header>
       
       <el-main>
-        <el-table :data="team">
+          <el-table
+    :data="team.filter(data => !search || data.TEAM_NAME.includes(search))"
+    style="width: 100%">
           <el-table-column prop="TEAM_ID" label="ID" width="250">
           </el-table-column>
           <el-table-column prop="TEAM_NAME" label="球队名称" width="250">
@@ -32,13 +34,16 @@
 
            <el-table-column
       align="right">
-        <template slot="header">
+       <!-- eslint-disable-next-line -->
+        <template slot="header" slot-scope="scope">
         <el-input
           v-model="search"
-          size="mini"
           placeholder="输入球队名称搜索"/>
         </template>
       <template slot-scope="scope">
+         <el-button
+          size="mini"
+          @click="handleSearch(scope.$index, scope.row)">Details</el-button>
         <el-button
           size="mini"
           @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
@@ -65,8 +70,10 @@
   export default {
     data() {
       return {
+        search: '',
         loading: true,
-        team:[]
+          team: []
+        
       };
     },
     created() {
@@ -82,3 +89,7 @@
     }
   };
   </script>
+
+  <style>
+
+</style>
