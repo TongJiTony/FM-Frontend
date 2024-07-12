@@ -46,15 +46,15 @@ export default {
     };
   },
   created() {
-    axios.get('/api/v1/team/all')
-      .then(response => {
-        this.team = response.data;
-        this.loading = false;
-      })
-      .catch(error => {
-        console.error(error);
-        this.loading = false;
-      });
+    axios.get('/api/v1/testexampleapi')
+        .then(response => {
+          this.data = response.data;
+          this.loading = false;
+        })
+        .catch(error => {
+          console.error(error);
+          this.loading = false;
+        });
   }
 };
 </script>

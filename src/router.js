@@ -4,7 +4,7 @@ import DefaultLayout from '@/layouts/defaultLayout.vue';
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
     mode: 'history',
     routes: [
         {
@@ -27,11 +27,26 @@ export default new Router({
                     component: () => import('@/views/TeamView/TeamList.vue'),
                     
                 },
-                {path: 'teamdetail',
+                {
+                    path: '/teamdetail/:teamID',
                     name: 'TeamPage',
                     component: () => import('@/views/TeamView/TeamDetail.vue'),
                 },
+                {
+                    path: 'player-list',
+                    name: 'PlayerList',
+                    component: () => import('@/views/PlayerView/PlayerList.vue'),
+                },
+                {
+                    path: '/player-display/:playerId', // 添加 playerId 参数
+                    name: 'PlayerDisplay',
+                    component: () => import('@/views/PlayerView/PlayerDisplay.vue'),
+                },
+
             ],
         },
     ],
 });
+
+export default router;
+
