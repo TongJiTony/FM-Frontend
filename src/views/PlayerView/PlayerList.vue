@@ -80,13 +80,28 @@ export default {
   },
   methods: {
     fetchPlayers() {
-      axios.get('/api/v1/player/all')
-        .then(response => {
-          this.tableData = response.data;
-        })
-        .catch(error => {
-          console.error('Failed to fetch player list:', error);
-        });
+      const teamId = this.$route.params.teamId;
+      if (teamId) {
+        console.log('Fetching data for team ID:', teamId);
+        axios.get(`/api/v1/player/displayall?teamid=${teamId}`)
+          .then(response => {
+            console.log('Received data:', response.data);
+            this.tableData = response.data;
+          })
+          .catch(error => {
+            console.error('Failed to fetch player list for team:', error);
+          });
+      } else {
+        console.log('Fetching all players');
+        axios.get('/api/v1/player/displayall')
+          .then(response => {
+            console.log('Received data:', response.data);
+            this.tableData = response.data;
+          })
+          .catch(error => {
+            console.error('Failed to fetch player list:', error);
+          });
+      }
     },
     handleClick(row) {
       this.$router.push(`/player-display/${row.PLAYER_ID}`);

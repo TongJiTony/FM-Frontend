@@ -22,12 +22,12 @@ export default new Router({
                     component: () => import('@/views/TestView/TestPage.vue'),
                 },
                 {
-                    path: 'player-list',
+                    path: '/player-list/:teamId?',
                     name: 'PlayerList',
-                    component: () => import('@/views/PlayerView/PlayerList.vue'),
+                    component: () => import('@/views/PlayerView/PlayerList.vue')
                 },
                 {
-                    path: '/player-display/:playerId', // 添加 playerId 参数
+                    path: '/player-display/:playerId',
                     name: 'PlayerDisplay',
                     component: () => import('@/views/PlayerView/PlayerDisplay.vue'),
                 },
