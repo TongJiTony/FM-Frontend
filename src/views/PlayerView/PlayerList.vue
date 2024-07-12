@@ -79,7 +79,7 @@ export default {
     this.fetchPlayers();
   },
   methods: {
-    fetchPlayers() {
+    fetchPlayers() { //this is a test
       const teamId = this.$route.params.teamId;
       if (teamId) {
         console.log('Fetching data for team ID:', teamId);
