@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <h1>Home Page</h1>
-    <p>Welcome to the home page of your Vue.js application!</p>
+    <p>Welcome to the home page of Football Manager!</p>
   </div>
 </template>
 
