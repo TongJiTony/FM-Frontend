@@ -3,6 +3,9 @@ import Vue from "vue";
 import Router from "vue-router";
 import DefaultLayout from "@/layouts/defaultLayout.vue";
 import Login from "@/views/common/LoginPage.vue";
+
+//import VueCookies from "vue-cookies";
+
 //import LoginPage from "@/views/LoginView/LoginPage.vue";
 //import { component } from "vue/types/umd";
 //引入依赖：Vue、Router、DefaultLayout组件。
@@ -57,9 +60,9 @@ from：当前导航正要离开的路由对象。
 next：一个函数，调用它来决定接下来的行为。
 */
 router.beforeEach((to, from, next) => {
-  const isLoggedIn = localStorage.getItem("isLoggedIn");
-
-  if (to.name !== "Login" && isLoggedIn === "false") {
+  const isLoggedIn = Vue.$cookies.get("isLoggedIn");
+  console.log(isLoggedIn);
+  if (to.name !== "Login" && isLoggedIn!="true") {
     next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
   } else {
     next();

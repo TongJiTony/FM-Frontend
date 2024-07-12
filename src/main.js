@@ -10,14 +10,17 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import ElementUI from 'element-ui';
+import VueCookies from "vue-cookies";
 import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
+Vue.use(VueCookies);
 
+Vue.$cookies.set("isLoggedIn", "false"); // 设置Cookie为false
 // 在 Vue 实例化之前，初始化 isLoggedIn 为 false
-localStorage.setItem("isLoggedIn", "false");
 
+//Vue.config.productionTip = false;
 new Vue({
   router,
   render: h => h(App),

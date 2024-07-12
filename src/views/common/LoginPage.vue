@@ -39,6 +39,9 @@
 <script>
   import { getUUID } from '@/utils'
   import VueCookies from 'vue-cookies'
+  
+  import Vue from 'vue';
+
   export default {
     data () {
       return {
@@ -95,6 +98,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             // 模拟登录成功的情况
+            Vue.$cookies.set('isLoggedIn', 'true', '1h') // 设置Cookie，过期时间为1小时
             VueCookies.set('token', 'mocked_token')
             this.$router.replace({ name: 'Home' })
           }
