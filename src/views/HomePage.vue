@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <h1>Home Page</h1>
-    <p>Welcome to the home page of your Vue.js application!</p>
+    <p>Welcome to the home page of Football Manager!</p>
   </div>
 </template>
 <!--结构: 包含一个根 div 元素，类名为 home，里面有一个 h1 元素和一个 p 元素，显示欢迎消息。-->

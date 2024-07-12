@@ -25,7 +25,7 @@ export default {
   data() {
     return {
       loading: true,
-      data: null
+      data: "",
     };
   },
   created() {
