@@ -51,38 +51,30 @@
       };
     },
     created() {
-      axios.get('/api/v1/team/displayall')
-        .then(response => {
-          this.team = response.data;
-          this.loading = false;
-        })
-        .catch(error => {
-          console.error(error);
-          this.loading = false;
-        });
+      this.refresh();
     },
     
     methods:{
       refresh(){
-      axios.get('/api/v1/team/displayall')
-        .then(response => {
-          this.team = response.data;
-          this.loading = false;
-        })
-        .catch(error => {
-          console.error(error);
-          this.loading = false;
-        });
-    },
-      handleDetails( row){
-        console.log( row.TEAM_ID);
+        axios.get('/api/v1/team/displayall')
+          .then(response => {
+            this.team = response.data;
+            this.loading = false;
+          })
+          .catch(error => {
+            console.error(error);
+            this.loading = false;
+          });
+      },
+      handleDetails(row){
+        console.log(row.TEAM_ID);
         this.$router.push(`/teamdetail/${row.TEAM_ID}`); 
 
       },
       handleEdit( row) {
-        console.log( row.TEAM_ID);
+        console.log(row.TEAM_ID);
       },
-      handleDelete( row) {
+      handleDelete(row) {
         console.log(row.TEAM_ID);
         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -92,21 +84,20 @@
           axios.delete(`/api/v1/team/delete?Teamid=${row.TEAM_ID}`)
           .then(response=>{
             if (response.status ==200){
-              this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-          this.refresh()
+              this.sendMessage('success','删除成功!');
+              this.refresh();
             }
           })
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+          this.sendMessage('info','已取消删除')          
         });  
       },
- 
+      sendMessage(Type, Message) {
+        this.$message({
+          type: Type,
+          message: Message,
+        });
+      },
     },
   };
   </script>
