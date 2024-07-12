@@ -22,6 +22,17 @@ const router = new Router({
                     component: () => import('@/views/TestView/TestPage.vue'),
                 },
                 {
+                    path: 'team',
+                    name: 'Team',
+                    component: () => import('@/views/TeamView/TeamList.vue'),
+                    
+                },
+                {
+                    path: '/teamdetail/:teamID',
+                    name: 'TeamPage',
+                    component: () => import('@/views/TeamView/TeamDetail.vue'),
+                },
+                {
                     path: 'player-list',
                     name: 'PlayerList',
                     component: () => import('@/views/PlayerView/PlayerList.vue'),
