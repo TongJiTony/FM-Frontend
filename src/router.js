@@ -39,7 +39,7 @@ const router = new Router({
                     path: 'team',
                     name: 'Team',
                     component: () => import('@/views/TeamView/TeamList.vue'),
-                    
+
                 },
                 {
                     path: '/teamdetail/:teamID',
@@ -47,12 +47,12 @@ const router = new Router({
                     component: () => import('@/views/TeamView/TeamDetail.vue'),
                 },
                 {
-                    path: 'player-list',
+                    path: '/player-list/:teamId?',
                     name: 'PlayerList',
-                    component: () => import('@/views/PlayerView/PlayerList.vue'),
+                    component: () => import('@/views/PlayerView/PlayerList.vue')
                 },
                 {
-                    path: '/player-display/:playerId', // 添加 playerId 参数
+                    path: '/player-display/:playerId',
                     name: 'PlayerDisplay',
                     component: () => import('@/views/PlayerView/PlayerDisplay.vue'),
                 },
@@ -62,8 +62,6 @@ const router = new Router({
     ],
 });
 
-
-
 // 导航守卫
 /*
 to：即将要进入的目标路由对象。
@@ -71,13 +69,13 @@ from：当前导航正要离开的路由对象。
 next：一个函数，调用它来决定接下来的行为。
 */
 router.beforeEach((to, from, next) => {
-  const isLoggedIn = Vue.$cookies.get("isLoggedIn");
-  console.log("isLoggedIn",isLoggedIn);
-  if (to.name !== "Login" && isLoggedIn !="true") {
-    next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
-  } else {
-    next();
-  }
+    const isLoggedIn = Vue.$cookies.get("isLoggedIn");
+    console.log("isLoggedIn", isLoggedIn);
+    if (to.name !== "Login" && isLoggedIn != "true") {
+        next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
+    } else {
+        next();
+    }
 });
 
 export default router;
