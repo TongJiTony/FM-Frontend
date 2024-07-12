@@ -61,8 +61,8 @@ next：一个函数，调用它来决定接下来的行为。
 */
 router.beforeEach((to, from, next) => {
   const isLoggedIn = Vue.$cookies.get("isLoggedIn");
-  console.log(isLoggedIn);
-  if (to.name !== "Login" && isLoggedIn!="true") {
+  console.log("isLoggedIn",isLoggedIn);
+  if (to.name !== "Login" && isLoggedIn !="true") {
     next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
   } else {
     next();
