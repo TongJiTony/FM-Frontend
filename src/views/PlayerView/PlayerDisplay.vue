@@ -40,7 +40,7 @@ export default {
     fetchPlayerData() {
       const playerId = this.$route.params.playerId;
       console.log('Fetching data for player ID:', playerId);
-      axios.get(`/api/v1/player/${playerId}`)
+      axios.get(`/api/v1/player/displayone?playerid=${playerId}`)
         .then(response => {
           console.log('Received data:', response.data);
           this.player = response.data;

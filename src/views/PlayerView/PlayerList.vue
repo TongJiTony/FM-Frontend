@@ -80,7 +80,7 @@ export default {
   },
   methods: {
     fetchPlayers() {
-      axios.get('/api/v1/player/all')
+      axios.get('/api/v1/player/displayall')
         .then(response => {
           this.tableData = response.data;
         })
