@@ -1,9 +1,11 @@
+//这个文件包含了一些常用的工具函数。
 import Vue from 'vue'
 import router from '@/router'
 import store from '@/store'
 
 /**
  * 获取uuid
+ * 使用正则替换生成一个 UUID。x 替换为随机16进制数字，y 替换为特定的版本号。
  */
 export function getUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
@@ -13,16 +15,18 @@ export function getUUID() {
 
 /**
  * 是否有权限
+ * 目前这个函数只是返回 true，可以根据需要修改来检查用户权限。
  * @param {*} key
  */
 export function isAuth(key) {
   // return JSON.parse(sessionStorage.getItem('permissions') || '[]').indexOf(key) !== -1 || false
-  key
-  return true
+  key;
+  return true; // 这里假设权限都为 true
 }
 
 /**
  * 树形数据转换
+ * 将平铺的数据结构转换为树形结构。
  * @param {*} data
  * @param {*} id
  * @param {*} pid
@@ -52,6 +56,7 @@ export function treeDataTranslate(data, id = 'id', pid = 'parentId') {
 
 /**
  * 清除登录信息
+ * 删除 token，重置 Vuex 状态，并标记路由动态菜单未添加。
  */
 export function clearLoginInfo() {
   Vue.cookie.delete('token')
