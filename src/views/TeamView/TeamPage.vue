@@ -1,16 +1,6 @@
 <template>
     <div>
-      <p v-if="loading">
-         <el-container>
-      <el-header style="text-align: left; font-size: 20px">
-              <h1>Team List</h1>
-      </el-header>
-        <el-table
-    v-loading="loading"
-    :data="tableData"
-    style="width: 100%"></el-table>
-        </el-container>
-      </p>
+      <p v-if="loading">Loading...</p>
       <div v-else>
         <el-container>
       <el-header style="text-align: left; font-size: 18px">
