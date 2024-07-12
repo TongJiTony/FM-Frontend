@@ -39,7 +39,7 @@ const router = new Router({
                     path: 'team',
                     name: 'Team',
                     component: () => import('@/views/TeamView/TeamList.vue'),
-                    
+
                 },
                 {
                     path: '/teamdetail/:teamID',
@@ -71,13 +71,13 @@ from：当前导航正要离开的路由对象。
 next：一个函数，调用它来决定接下来的行为。
 */
 router.beforeEach((to, from, next) => {
-  const isLoggedIn = Vue.$cookies.get("isLoggedIn");
-  console.log("isLoggedIn",isLoggedIn);
-  if (to.name !== "Login" && isLoggedIn !="true") {
-    next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
-  } else {
-    next();
-  }
+    const isLoggedIn = Vue.$cookies.get("isLoggedIn");
+    console.log("isLoggedIn", isLoggedIn);
+    if (to.name !== "Login" && isLoggedIn != "true") {
+        next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
+    } else {
+        next();
+    }
 });
 
 export default router;
