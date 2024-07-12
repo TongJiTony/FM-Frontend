@@ -76,7 +76,7 @@
     },
       handleDetails( row){
         console.log( row.TEAM_ID);
-        this.$router.push('teamdetail'); 
+        this.$router.push(`/teamdetail/${row.TEAM_ID}`); 
 
       },
       handleEdit( row) {
@@ -99,9 +99,6 @@
           this.refresh()
             }
           })
-          .catch(
-
-          )
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -114,6 +111,6 @@
   };
   </script>
 
-  <style>
+<style>
 
 </style>
