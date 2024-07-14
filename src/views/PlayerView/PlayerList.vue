@@ -15,11 +15,6 @@
         width="150">
       </el-table-column>
       <el-table-column
-        prop="BIRTHDAY"
-        label="Birthday"
-        width="150">
-      </el-table-column>
-      <el-table-column
         prop="TEAM_ID"
         label="Team ID"
         width="150">
@@ -42,7 +37,7 @@
       <el-table-column
         prop="RANK"
         label="Rank"
-        width="150">
+        width="100">
       </el-table-column>
       <el-table-column
         prop="GAME_STATE"
@@ -56,7 +51,7 @@
       </el-table-column>
       <el-table-column
         fixed="right"
-        label="Actions"
+        label="Details"
         width="150">
         <template slot-scope="scope">
           <el-button @click="handleClick(scope.row)" type="text" size="small">View</el-button>
@@ -79,7 +74,7 @@ export default {
     this.fetchPlayers();
   },
   methods: {
-    fetchPlayers() { //this is a test
+    fetchPlayers() {
       const teamId = this.$route.params.teamId;
       if (teamId) {
         console.log('Fetching data for team ID:', teamId);
