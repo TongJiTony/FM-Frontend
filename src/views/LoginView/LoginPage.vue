@@ -48,6 +48,12 @@
                 @click="dataFormSubmit()"
                 >登录</el-button
               >
+              <el-button
+                class="login-btn-submit"
+                type="primary"
+                @click="dataFormSubmit()"
+                >注册</el-button
+              >
             </el-form-item>
           </el-form>
         </div>
@@ -111,7 +117,7 @@ export default {
             .catch((error) => {
               console.error(error);
               this.getCaptcha();
-              this.$message.error("登录错误，请查看密码");
+              this.$message.error("登录错误，请检查密码");
             });
         }
       });

@@ -2,7 +2,7 @@
 import Vue from "vue";
 import Router from "vue-router";
 import DefaultLayout from "@/layouts/defaultLayout.vue";
-import Login from "@/views/common/LoginPage.vue";
+import Login from "@/views/LoginView/LoginPage.vue";
 
 //import VueCookies from "vue-cookies";
 
