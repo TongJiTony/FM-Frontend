@@ -25,11 +25,11 @@ const router = new Router({
                     path: 'team',
                     name: 'Team',
                     component: () => import('@/views/TeamView/TeamList.vue'),
-                    
+
                 },
                 {
                     path: '/teamdetail/:teamID',
-                    name: 'TeamPage',
+                    name: 'TeamDetail',
                     component: () => import('@/views/TeamView/TeamDetail.vue'),
                 },
                 {

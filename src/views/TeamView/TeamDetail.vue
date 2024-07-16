@@ -8,21 +8,23 @@
           <el-tab-pane label="球队简介">
             <el-container>
               <el-main>
-
+                <el-descriptions>
+                  <el-descriptions-item label="球队ID">{{team[0].TEAM_ID}}</el-descriptions-item>
+                  <el-descriptions-item label="球队名称">{{team[0].TEAM_NAME}}</el-descriptions-item>
+                  <el-descriptions-item label="成立时间">{{team[0].ESTABLISHED_DATE}}</el-descriptions-item>
+                  <el-descriptions-item label="主教练">{{team[0].HEAD_COACH}}</el-descriptions-item>
+                  <el-descriptions-item label="城市">{{team[0].CITY}}</el-descriptions-item>
+                </el-descriptions>
               </el-main>    
             </el-container>
-</el-tab-pane>
-    <el-tab-pane label="球员信息"></el-tab-pane>
-    <el-tab-pane label="财务表"></el-tab-pane>
-  </el-tabs>
-
-
-
-
-         
+          </el-tab-pane>
+          <el-tab-pane label="球员信息"></el-tab-pane>
+          
+          <el-tab-pane label="财务表"></el-tab-pane>
+        </el-tabs>   
       </div>
       <div v-else>
-        <p>No player data available.</p>
+        <p>No team data available.</p>
       </div>
     </div>
   </div>
