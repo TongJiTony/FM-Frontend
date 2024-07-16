@@ -3,10 +3,6 @@
       <p v-if="loading">Loading...</p>
       <div v-else>
         <el-container>
-          <el-header >
-            <h1>Team List</h1>
-          </el-header>
-      
           <el-main>
             <el-table :data="team.filter(data => !search || data.TEAM_NAME.includes(search))" style="width: 100%">
               <el-table-column prop="TEAM_ID" label="ID" width="200">

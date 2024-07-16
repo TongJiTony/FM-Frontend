@@ -1,38 +1,67 @@
 <template>
-    <e1-container>
-        <e1-header>
-        <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="球队简介" name="first">
-        <el-descriptions title="用户信息">
-    <el-descriptions-item label="用户名">kooriookami</el-descriptions-item>
-    <el-descriptions-item label="手机号">18100000000</el-descriptions-item>
-    <el-descriptions-item label="居住地">苏州市</el-descriptions-item>
-    <el-descriptions-item label="备注">
-    </el-descriptions-item>
-    <el-descriptions-item label="联系地址">江苏省苏州市吴中区吴中大道 1188 号</el-descriptions-item>
-        </el-descriptions>
-      </el-tab-pane>
-      <el-tab-pane label="球员列表" name="second"></el-tab-pane>
-      <el-tab-pane label="财务表" name="third"></el-tab-pane>
-    </el-tabs>
-    </e1-header>
-    <e1-main>
+   <div>
+    <h1></h1>
+    <p v-if="loading">Loading team data...</p>
+    <div v-else>
+      <div v-if="team">
+        <el-tabs :tab-position="tabPosition" style="height: 500px;">
+          <el-tab-pane label="球队简介">
+            <el-container>
+              <el-main>
+
+              </el-main>    
+            </el-container>
+</el-tab-pane>
+    <el-tab-pane label="球员信息"></el-tab-pane>
+    <el-tab-pane label="财务表"></el-tab-pane>
+  </el-tabs>
+
+
+
+
+         
+      </div>
+      <div v-else>
+        <p>No player data available.</p>
+      </div>
+    </div>
+  </div>
+       
         
-    </e1-main>
-    </e1-container>
   </template>
 
   <script>
-    export default {
-      data() {
-        return {
-          activeName: 'second'
-        };
-      },
-      methods: {
-        handleClick(tab, event) {
-          console.log(tab, event);
-        }
+  import axios from 'axios';
+
+  export default {
+    data() {
+      return {
+        loading:true,
+        team: null,
+        tabPosition: "left"
+      };
+    },
+    created() {
+      this.fetchTeamDetail();
+    },
+    methods: {
+      fetchTeamDetail() {
+        const teamID = this.$route.params.teamID;
+        console.log('Fetching data for team ID:', teamID);
+        axios.get(`/api/v1/team/displayone?Teamid=${teamID}`)
+          .then(response => {
+            console.log('Received data:', response.data);
+            this.team = response.data;
+            this.loading = false;
+          })
+          .catch(error => {
+            console.error('Failed to fetch team data:', error);
+            this.loading = false;
+          });
       }
-    };
+    }
+  };
   </script>
+
+  <style>
+  </style>
