@@ -25,7 +25,7 @@
             :rules="dataRule"
             ref="dataForm"
             @keyup.enter.native="dataFormSubmit()"
-            status-icon =true
+            status-icon="true"
           >
             <!-- 帐号ID输入框 -->
             <!--使用 el-form-item 创建表单项，并通过 prop 属性指定对应的表单数据字段。-->
@@ -65,7 +65,14 @@
                 class="login-btn-submit"
                 type="primary"
                 @click="dataFormSubmit()"
-                >登录</el-button>
+                >登录</el-button
+              >
+              <el-button
+                class="login-btn-register"
+                type="text"
+                @click="gotoRegister()"
+                >没有账号，点击注册</el-button
+              >
             </el-form-item>
           </el-form>
         </div>
@@ -73,9 +80,6 @@
     </div>
   </div>
 </template>
-
-
-
 
 <!--在 Vue.js 组件中，<script> 部分用于定义组件的逻辑，包括数据模型、方法、生命周期钩子等。具体来说，<script> 部分通常包含以下内容：-->
 <!--导入依赖：从外部库或文件中导入需要的模块或组件。-->
@@ -105,7 +109,7 @@ export default {
         required: true：表示该字段为必填项。
         message: '请输入帐号ID'：当该字段未填写时，显示的提示信息。
         trigger: 'blur'：表示在该字段失去焦点时触发验证。
-        */ 
+        */
         userID: [
           { required: true, message: "帐号ID不能为空", trigger: "blur" },
         ],
@@ -143,7 +147,7 @@ export default {
                 VueCookies.set("isLoggedIn", "true", "1h"); // 设置 Cookie
                 VueCookies.set("token", data.token);//
                 this.$router.replace({ name: "Home" }); // 跳转到主界面
-              } 
+              }
             })
             .catch((error) => {
               console.error(error);
@@ -153,6 +157,12 @@ export default {
         }
       });
     },
+
+    //跳转到注册路由
+    gotoRegister(){
+      this.$router.push({name : 'Register'});//跳转到注册界面
+    },
+
     // 获取验证码和图片路径
     // 调用 API 获取新的验证码路径
     getCaptcha() {
