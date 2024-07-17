@@ -2,15 +2,7 @@
 import Vue from "vue";
 import Router from "vue-router";
 import DefaultLayout from "@/layouts/defaultLayout.vue";
-import Login from "@/views/common/LoginPage.vue";
 import AdminLayout from "@/views/AdminView/AdminLayout.vue";
-import MatchesAdmin from '@/views/AdminView/admin/Matches-admin.vue';
-import PlayersAdmin from '@/views/AdminView/admin/Players-admin.vue';
-import  RecordsAdmin from '@/views/AdminView/admin/Records-admin.vue';
-import StadiumsAdmin from "@/views/AdminView/admin/Stadiums-admin.vue";
-import TeamsAdmin from "@/views/AdminView/admin/Teams-admin.vue";
-import UsersAdmin from "@/views/AdminView/admin/Users-admin.vue";
-import Error404 from "@/views/common/error-404.vue";
 
 //使用Router插件：在Vue中注册Router插件。
 Vue.use(Router);
@@ -71,18 +63,18 @@ const router = new Router({
             path: '/admin',
             component: AdminLayout,
             children: [
-                { path: 'matches', name: 'Matches', component: MatchesAdmin },
-                { path: 'players', name: 'Players', component: PlayersAdmin },
-                { path: 'records', name: 'Records', component: RecordsAdmin },
-                { path: 'stadiums', name: 'Stadiums', component: StadiumsAdmin },
-                { path: 'teams', name: 'Teams', component: TeamsAdmin },
-                { path: 'users', name: 'Users', component: UsersAdmin },
+                { path: 'matches', name: 'Matches', component: ()=>import("@/views/AdminView/admin/Matches-admin.vue") },
+                { path: 'players', name: 'Players', component: ()=>import("@/views/AdminView/admin/Players-admin.vue")},
+                { path: 'records', name: 'Records', component: ()=>import("@/views/AdminView/admin/Records-admin.vue") },
+                { path: 'stadiums', name: 'Stadiums', component: ()=>import("@/views/AdminView/admin/Stadiums-admin.vue") },
+                { path: 'teams', name: 'Teams', component: ()=>import("@/views/AdminView/admin/Teams-admin.vue") },
+                { path: 'users', name: 'Users', component: ()=>import("@/views/AdminView/admin/Users-admin.vue") },
             ]
         },
         {
             path: '*', // 捕获所有未匹配的路径
             name: 'error-404',
-            component: Error404
+            component: ()=>import("@/views/ErrorView/error-404.vue")
         }
 
     ],
