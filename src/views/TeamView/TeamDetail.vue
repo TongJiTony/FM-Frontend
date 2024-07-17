@@ -18,9 +18,33 @@
               </el-main>    
             </el-container>
           </el-tab-pane>
-          <el-tab-pane label="球员信息"></el-tab-pane>
-          
-          <el-tab-pane label="财务表"></el-tab-pane>
+          <el-tab-pane label="球员信息">
+            <el-container>
+              <el-main>
+                <el-table :data="player" style="width: 100%">
+                  <el-table-column prop="PLAYER_ID" label="球员ID" width="200">
+                  </el-table-column>
+                  <el-table-column prop="PLAYER_NAME" label="球队名称" width="200">
+                  </el-table-column>
+                  <el-table-column prop="BIRTHDAY" label="成立时间" width="250">
+                  </el-table-column>
+                  <el-table-column prop="ROLE" label="主教练" width="200">
+                  </el-table-column>
+                  <el-table-column prop="USED_FOOT" label="城市"  >
+                  </el-table-column>
+                  <el-table-column fixed="right" width="250">
+                  <!-- eslint-disable-next-line -->
+                  <template slot="header" slot-scope="scope">
+                    <el-input v-model="search" placeholder="输入球队名称搜索"/>
+                  </template>
+                  </el-table-column>
+                </el-table>
+              </el-main>    
+            </el-container>
+          </el-tab-pane>
+          <el-tab-pane label="财务表">
+          </el-tab-pane>
+
         </el-tabs>   
       </div>
       <div v-else>
@@ -40,11 +64,13 @@
       return {
         loading:true,
         team: null,
-        tabPosition: "left"
+        player:[],
+        tabPosition: "left",
+        search:""
       };
     },
     created() {
-      this.fetchTeamDetail();
+      this.fetchTeamDetail()
     },
     methods: {
       fetchTeamDetail() {
@@ -54,12 +80,20 @@
           .then(response => {
             console.log('Received data:', response.data);
             this.team = response.data;
-            this.loading = false;
           })
           .catch(error => {
             console.error('Failed to fetch team data:', error);
-            this.loading = false;
           });
+        axios.get(`/api/v1/player/displayall?teamid=${teamID}`)
+          .then(response => {
+            console.log('Received data:', response.data);
+            this.player = response.data;
+            this.loading = false;
+        })
+        .catch(error => {
+          console.error('Failed to fetch player data:',error);
+          this.loading = false;
+        })
       }
     }
   };
