@@ -21,22 +21,27 @@
           <el-tab-pane label="球员信息">
             <el-container>
               <el-main>
-                <el-table :data="player" style="width: 100%">
-                  <el-table-column prop="PLAYER_ID" label="球员ID" width="200">
+                <el-input v-model="search" placeholder="输入球员姓名搜索" clearable>
+                <i slot="prefix" class="el-input__icon el-icon-search"></i>
+                </el-input>
+                <el-table :data="player.filter(data => !search || data.PLAYER_NAME.includes(search))" style="width: 100%">
+                  <el-table-column prop="PLAYER_ID" label="球员ID" width="150">
                   </el-table-column>
-                  <el-table-column prop="PLAYER_NAME" label="球队名称" width="200">
+                  <el-table-column prop="PLAYER_NAME" label="球员姓名" width="150">
                   </el-table-column>
-                  <el-table-column prop="BIRTHDAY" label="成立时间" width="250">
+                  <el-table-column prop="BIRTHDAY" label="出生日期" width="150">
                   </el-table-column>
-                  <el-table-column prop="ROLE" label="主教练" width="200">
+                  <el-table-column prop="ROLE" label="战术角色" width="150">
                   </el-table-column>
-                  <el-table-column prop="USED_FOOT" label="城市"  >
+                  <el-table-column prop="USED_FOOT" label="惯用脚" width="150" >
                   </el-table-column>
-                  <el-table-column fixed="right" width="250">
-                  <!-- eslint-disable-next-line -->
-                  <template slot="header" slot-scope="scope">
-                    <el-input v-model="search" placeholder="输入球队名称搜索"/>
-                  </template>
+                  <el-table-column prop="HEALTH_STATE" label="健康状态" width="150" >
+                  </el-table-column>
+                  <el-table-column prop="RANK" label="技术评价" width="150" >
+                  </el-table-column>
+                  <el-table-column prop="GAME_STATE" label="上场状态"  width="150">
+                  </el-table-column>
+                  <el-table-column prop="TRANS_STATE" label="转会状态"  >
                   </el-table-column>
                 </el-table>
               </el-main>    

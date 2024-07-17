@@ -4,6 +4,9 @@
       <div v-else>
         <el-container>
           <el-main>
+           <el-input v-model="search" placeholder="输入球队名称搜索" clearable>
+           <i slot="prefix" class="el-input__icon el-icon-search"></i>
+           </el-input>
             <el-table :data="team.filter(data => !search || data.TEAM_NAME.includes(search))" style="width: 100%">
               <el-table-column prop="TEAM_ID" label="ID" width="200">
               </el-table-column>
@@ -18,9 +21,7 @@
 
               <el-table-column fixed="right" width="250">
                 <!-- eslint-disable-next-line -->
-                <template slot="header" slot-scope="scope">
-                  <el-input v-model="search" placeholder="输入球队名称搜索"/>
-                </template>
+            
                 <template slot-scope="scope">
                   <el-button @click="handleDetails(scope.row)" type="text" size="small">Details</el-button>
                   <el-button @click="handleEdit( scope.row)" type="text" size="small">Edit</el-button>
