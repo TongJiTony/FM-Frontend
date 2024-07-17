@@ -23,11 +23,6 @@ const router = new Router({
             component: DefaultLayout,
             children: [
                 {
-                    path: 'login',
-                    name: 'Login',
-                    component: Login,
-                },
-                {
                     path: '',
                     name: 'Home',
                     component: () => import('@/views/HomePage.vue'),
@@ -59,6 +54,18 @@ const router = new Router({
                     component: () => import('@/views/PlayerView/PlayerDisplay.vue'),
                 },
             ],
+        },
+        {
+            //登录路径被移动到根路径下，而不是作为子路由。
+            path: "login",
+            name: "Login",
+            component: () => import("@/views/LoginView/LoginPage.vue"),
+        },
+        {
+            //注册账户路径
+            path: "register",
+            name: "Register",
+            component: () => import("@/views/RegisterView/RegisterPage.vue"),
         },
         {
             path: '/admin',
