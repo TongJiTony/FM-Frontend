@@ -55,9 +55,9 @@ const router = new Router({
           component: () => import("@/views/UserSetting/ChangePasw.vue"),
         },
         {
-          path: "logout",
-          name: "Logout",
-          component: () => import("@/views/UserSetting/UserLogout.vue"),
+          path: "userInfo",
+          name: "UserInfo",
+          component: () => import("@/views/UserSetting/UserInfo.vue"),
         },
       ],
     },

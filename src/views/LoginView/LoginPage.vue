@@ -145,16 +145,53 @@ export default {
                 // code == 200 表示成功
                 VueCookies.set("isLoggedIn", "true", "1h"); // 设置 Cookie
                 VueCookies.set("token", data.token);//
+                this.getUserInfo(this.dataForm.userID);//获取用户信息
                 this.$router.replace({ name: "Home" }); // 跳转到主界面
               }
             })
             .catch((error) => {
               console.error(error);
               this.getCaptcha();
-              this.$message.error("登录错误，请检查密码");
+              this.$message.error("登录错误，请检查密码或网络");
             });
         }
       });
+    },
+
+    getUserInfo(userID){//获取用户所有信息
+      axios
+        .get('/api/v1/user/displayone',{
+          params:{
+            userId: userID,//userId是后端接口期待的参数名
+
+          }
+        })
+        .then(({data}) => {
+          console.log("API Response Data :", data);
+          const user = data[0];//当前只返回一个用户的数据
+
+           console.log("User info:", {
+            "\nuser_id: ": user.USER_ID,
+            "\nuser_name: ": user.USER_NAME,
+            "\nuser_right: ": user.USER_RIGHT,
+            "\nuser_psw: ": user.USER_PASSWORD,
+            "\nuser_phone: ": user.USER_PHONE,
+            "\nuser_icon: ": user.ICON,
+          });
+
+          this.$store.commit( 'user/setUser',{//保存用户状态
+            user_id: user.USER_ID,
+            user_name: user.USER_NAME,
+            user_right: user.USER_RIGHT,
+            user_psw: user.USER_PASSWORD,
+            user_phone: user.USER_PHONE,
+            user_icon: user.ICON,
+          })
+        })
+        .catch((error) => {
+          console.error(error);
+          this.$message.error("获取用户信息失败");
+        })
     },
 
     //跳转到注册路由
