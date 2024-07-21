@@ -1,3 +1,8 @@
+
+//这个文件定义了 common 模块，管理与应用布局和导航相关的状态。
+
+//state：定义了多个与应用布局和导航相关的状态变量。
+//mutations：定义了多个用于更新状态的方法。
 export default {
   namespaced: true,
   state: {
