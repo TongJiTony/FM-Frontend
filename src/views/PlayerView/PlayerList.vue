@@ -15,11 +15,6 @@
         width="150">
       </el-table-column>
       <el-table-column
-        prop="BIRTHDAY"
-        label="生日"
-        width="150">
-      </el-table-column>
-      <el-table-column
         prop="TEAM_NAME"
         label="队伍"
         width="150">
@@ -27,6 +22,12 @@
       <el-table-column
         prop="ROLE"
         label="位置"
+        width="150">
+      </el-table-column>
+      <!--      
+      <el-table-column
+        prop="BIRTHDAY"
+        label="生日"
         width="150">
       </el-table-column>
       <el-table-column
@@ -66,6 +67,7 @@
           <el-tag v-else>禁止转会</el-tag>
         </template>
       </el-table-column>
+      -->
       <el-table-column
         fixed="right"
         label="Actions"

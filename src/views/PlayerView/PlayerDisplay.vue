@@ -16,26 +16,22 @@
             <el-col :span="12"><p><strong>位置:</strong> <el-tag>{{ player[0].ROLE }}</el-tag></p></el-col>
             <el-col :span="12">
               <p><strong>惯用脚:</strong>
-                <el-tag v-if="player[0].USED_FOOT === 1">左脚</el-tag>
-                <el-tag v-else>右脚</el-tag>
+                <el-tag>{{ player[0].USED_FOOT === 1 ? '左脚' : '右脚' }}</el-tag>
               </p>
             </el-col>
             <el-col :span="12">
               <p><strong>健康状态:</strong>
-                <el-tag v-if="player[0].HEALTH_STATE === 1">健康</el-tag>
-                <el-tag v-else>受伤</el-tag>
+                <el-tag :type="player[0].HEALTH_STATE === 1 ? 'success' : 'danger'">{{ player[0].HEALTH_STATE === 1 ? '健康' : '受伤' }}</el-tag>
               </p>
             </el-col>
             <el-col :span="12">
               <p><strong>比赛状态:</strong>
-                <el-tag v-if="player[0].GAME_STATE === 1">允许出场</el-tag>
-                <el-tag v-else>禁赛</el-tag>
+                <el-tag :type="player[0].GAME_STATE === 1 ? 'success' : 'danger'">{{ player[0].GAME_STATE === 1 ? '允许出场' : '禁赛' }}</el-tag>
               </p>
             </el-col>
             <el-col :span="12">
               <p><strong>转会状态:</strong>
-                <el-tag v-if="player[0].TRANS_STATE === 1">允许转会</el-tag>
-                <el-tag v-else>禁止转会</el-tag>
+                <el-tag :type="player[0].TRANS_STATE === 1 ? 'success' : 'danger'">{{ player[0].TRANS_STATE === 1 ? '允许转会' : '禁止转会' }}</el-tag>
               </p>
             </el-col>
             <el-col :span="12"><p><strong>评分:</strong> <el-tag>{{ player[0].RANK }}</el-tag></p></el-col>
@@ -123,6 +119,16 @@ export default {
   margin-left: 1rem;
   background-color: #e0f7fa;
   color: #00796b;
+}
+
+.el-tag.success {
+  background-color: #dff0d8;
+  color: #3c763d;
+}
+
+.el-tag.danger {
+  background-color: #f2dede;
+  color: #a94442;
 }
 
 .loading-text {
