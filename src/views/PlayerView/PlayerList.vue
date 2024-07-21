@@ -23,6 +23,7 @@
           <p><strong>队伍:</strong> {{ player.TEAM_NAME }}</p>
           <p><strong>位置:</strong> {{ player.ROLE }}</p>
           <el-button @click="handleClick(player)" type="text" size="small">View</el-button>
+          <el-button @click="confirmDelete(player)" type="text" size="small" style="color: red;">Delete</el-button>
         </el-card>
       </el-col>
     </el-row>
@@ -33,6 +34,19 @@
       :page-size="pageSize"
       @current-change="handleCurrentChange">
     </el-pagination>
+
+    <!-- Confirm Delete Dialog -->
+    <el-dialog
+      title="确认删除"
+      :visible.sync="dialogVisible"
+      width="30%"
+      @close="handleDialogClose">
+      <p>确定要删除球员 {{ selectedPlayer?.PLAYER_NAME }} 吗？</p>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleDialogClose">取消</el-button>
+        <el-button type="primary" @click="handleDelete">删除</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -49,7 +63,9 @@ export default {
       total: 0,
       searchType: 'PLAYER_ID',
       searchQuery: '',
-      allData: []
+      allData: [],
+      dialogVisible: false,
+      selectedPlayer: null
     };
   },
   created() {
@@ -58,7 +74,7 @@ export default {
   methods: {
     fetchPlayers() {
       const teamId = this.$route.params.teamId;
-      if (teamId) {
+            if (teamId) {
         console.log('Fetching data for team ID:', teamId);
         axios.get(`/api/v1/player/displayall?teamid=${teamId}`)
           .then(response => {
@@ -114,6 +130,29 @@ export default {
       this.searchQuery = '';
       this.currentPage = 1;
       this.updatePagedData();
+    },
+    confirmDelete(player) {
+      this.selectedPlayer = player;
+      this.dialogVisible = true;
+    },
+    handleDelete() {
+      if (this.selectedPlayer) {
+        axios.delete(`/api/v1/player/delete/${this.selectedPlayer.PLAYER_ID}`)
+          .then(response => {
+            console.log('Delete response:', response);
+            this.tableData = this.tableData.filter(player => player.PLAYER_ID !== this.selectedPlayer.PLAYER_ID);
+            this.total = this.tableData.length;
+            this.updatePagedData();
+            this.handleDialogClose();
+          })
+          .catch(error => {
+            console.error('Failed to delete player:', error);
+          });
+      }
+    },
+    handleDialogClose() {
+      this.dialogVisible = false;
+      this.selectedPlayer = null;
     }
   }
 };
@@ -139,7 +178,7 @@ export default {
   margin-bottom: 1rem;
 }
 
-.el-table th, .el-table td {
-  padding: 10px 20px;
+.dialog-footer {
+  text-align: right;
 }
 </style>
