@@ -1,5 +1,20 @@
 <template>
   <div class="player-list">
+    <el-row :gutter="20" class="header-row" justify="end">
+      <el-col :span="6">
+        <el-input-group>
+          <el-select v-model="searchType" placeholder="选择搜索类型" size="small">
+            <el-option label="球员编号" value="PLAYER_ID"></el-option>
+            <el-option label="姓名" value="PLAYER_NAME"></el-option>
+            <el-option label="队伍" value="TEAM_NAME"></el-option>
+            <el-option label="位置" value="ROLE"></el-option>
+          </el-select>
+          <el-input v-model="searchQuery" placeholder="输入搜索内容" size="small"></el-input>
+          <el-button @click="handleSearch" type="primary" size="small">搜索</el-button>
+          <el-button @click="resetSearch" type="text" size="small">重置</el-button>
+        </el-input-group>
+      </el-col>
+    </el-row>
     <el-row :gutter="20">
       <el-col v-for="(player, index) in pagedData" :key="index" :span="12">
         <el-card shadow="always" class="player-card">
@@ -31,7 +46,10 @@ export default {
       pagedData: [],
       currentPage: 1,
       pageSize: 10,
-      total: 0
+      total: 0,
+      searchType: 'PLAYER_ID',
+      searchQuery: '',
+      allData: []
     };
   },
   created() {
@@ -46,6 +64,7 @@ export default {
           .then(response => {
             console.log('Received data:', response.data);
             this.tableData = response.data;
+            this.allData = response.data;
             this.total = response.data.length;
             this.updatePagedData();
           })
@@ -58,6 +77,7 @@ export default {
           .then(response => {
             console.log('Received data:', response.data);
             this.tableData = response.data;
+            this.allData = response.data;
             this.total = response.data.length;
             this.updatePagedData();
           })
@@ -77,6 +97,23 @@ export default {
     },
     handleClick(player) {
       this.$router.push(`/player-display/${player.PLAYER_ID}`);
+    },
+    handleSearch() {
+      const searchType = this.searchType;
+      const searchQuery = this.searchQuery.toLowerCase();
+      this.tableData = this.allData.filter(player =>
+        player[searchType].toString().toLowerCase().includes(searchQuery)
+      );
+      this.total = this.tableData.length;
+      this.currentPage = 1;
+      this.updatePagedData();
+    },
+    resetSearch() {
+      this.tableData = this.allData;
+      this.total = this.allData.length;
+      this.searchQuery = '';
+      this.currentPage = 1;
+      this.updatePagedData();
     }
   }
 };
@@ -87,7 +124,22 @@ export default {
   padding: 1rem;
 }
 
+.header-row {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.el-input-group {
+  display: flex;
+  align-items: center;
+}
+
 .player-card {
   margin-bottom: 1rem;
+}
+
+.el-table th, .el-table td {
+  padding: 10px 20px;
 }
 </style>
