@@ -14,6 +14,8 @@ import VueCookies from "vue-cookies";
 import 'element-ui/lib/theme-chalk/index.css';
 
 
+import store from './store'; // 引入 Vuex store
+
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 Vue.use(VueCookies);
@@ -22,8 +24,12 @@ Vue.use(VueCookies);
 VueCookies.set("isLoggedIn", "false"); 
 VueCookies.set("token", "invalid_token");
 // 在 Vue 实例化之前，初始化 isLoggedIn 为 false,token为invalid_token
+ store.commit("user/resetUser");//重置登录状态
 
 new Vue({
   router,
+
+  store,
+
   render: h => h(App),
 }).$mount('#app');

@@ -1,4 +1,4 @@
-//这个文件是 Vuex 状态管理的主入口，负责初始化 Vuex 并配置各个模块。
+//这个index.js文件是 Vuex 状态管理的主入口，负责初始化 Vuex 并配置各个模块。
 import Vue from "vue";
 import Vuex from "vuex";
 import cloneDeep from "lodash/cloneDeep";
