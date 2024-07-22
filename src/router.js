@@ -45,6 +45,16 @@ const router = new Router({
           name: "PlayerDisplay",
           component: () => import("@/views/PlayerView/PlayerDisplay.vue"),
         },
+        {
+          path: "/lineup",
+          name: "lineup",
+          component: () => import("@/views/LineupView/LineupView.vue"),
+        },
+        {
+          path: "/lineup/:lineupId",
+          name: "LineupDetail",
+          component: () => import("@/views/LineupView/LineupDetail.vue"),
+        }
       ],
     },
     {
@@ -59,6 +69,7 @@ const router = new Router({
       name: "Register",
       component: () => import("@/views/RegisterView/RegisterPage.vue"),
     },
+
   ],
 });
 
