@@ -95,8 +95,8 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.playerId)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.playerId)">删除</el-button>
+          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.PLAYER_ID)">修改</el-button>
+          <el-button type="text" size="small" @click="deleteHandle(scope.row.PLAYER_ID)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -146,32 +146,26 @@ export default {
     // 获取数据列表
     getDataList() {
       this.dataListLoading = true;
-      // axios.get('/api/v1/player/displayall', {
-      //   params: {
-      //     page: this.pageIndex,
-      //     limit: this.pageSize,
-      //     key: this.dataForm.key
-      //   }
-      // }).then(({ data }) => {
-      //   if (data && data.code === 0) {
-      //     this.dataList = data.page.list;
-      //     this.totalPage = data.page.totalCount;
-      //   } else {
-      //     this.dataList = [];
-      //     this.totalPage = 0;
-      //   }
-      //   this.dataListLoading = false;
-      // });
-      axios.get('/api/v1/player/displayall')
-          .then(response => {
-            console.log('Received data:', response.data);
-            this.dataList = response.data;
-            this.totalPage=1
-          })
-          .catch(error => {
-            console.error('Failed to fetch player list:', error);
-          });
-      this.dataListLoading = false;
+      // 检查如果当前页码为2且带有搜索关键词，则调整为第一页
+      if (this.pageIndex > 1 && this.dataForm.key) {
+        this.pageIndex = 1;
+      }
+      axios.get('/api/v1/player/admin/displayall', {
+        params: {
+          page: this.pageIndex,
+          limit: this.pageSize,
+          key: this.dataForm.key
+        }
+      }).then(({ data }) => {
+        if (data) {
+          this.dataList = data.data;
+          this.totalPage = data.total;
+        } else {
+          this.dataList = [];
+          this.totalPage = 0;
+        }
+        this.dataListLoading = false;
+      });
     },
     // 每页数
     sizeChangeHandle(val) {
@@ -203,9 +197,9 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        axios.post('/api/admin/players/delete', ids)
+        axios.post('/api/v1/admin/player/delete', ids)
             .then(({ data }) => {
-              if (data && data.code === 0) {
+              if (data && data.code === 200) {
                 this.$message({
                   message: '操作成功',
                   type: 'success',
