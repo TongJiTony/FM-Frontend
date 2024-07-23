@@ -1,7 +1,7 @@
 <template>
   <div class="change-password-container">
     <h3>修改密码</h3>
-    <el-form :model="passwordForm" ref="passwordForm" label-width="120px" @submit.native.prevent="savePassword">
+    <el-form :model="passwordForm" ref="passwordForm" :rules="rules" label-width="120px" @submit.native.prevent="savePassword">
       <el-form-item label="当前密码" prop="currentPassword">
         <el-input type="password" v-model="passwordForm.currentPassword" />
       </el-form-item>
@@ -31,6 +31,15 @@ export default {
         currentPassword: '',
         newPassword: '',
         confirmPassword: ''
+      },
+      rules: {
+        newPassword: [
+          { required: true, message: '请输入新密码', trigger: 'blur' }
+        ],
+        confirmPassword: [
+          { required: true, message: '请确认新密码', trigger: 'blur' },
+          { validator: this.validateConfirmPassword, trigger: 'blur' }
+        ]
       }
     };
   },
@@ -41,44 +50,51 @@ export default {
     async savePassword() {
       try {
         const userId = this.getUserId;
-        console.log("从 Vuex 获取的用户ID:",userId);
-         // 打印请求数据，确保发送的数据是正确的
+        console.log("从 Vuex 获取的用户ID:", userId);
         console.log('请求数据:', {
           user_id: userId,
           user_password: this.passwordForm.currentPassword,
           new_password: this.passwordForm.newPassword
         });
 
-        const response = await axios.post('/api/v1/user/changePassword', {
-          user_id: userId,
-          user_password: this.passwordForm.currentPassword,
-          new_password: this.passwordForm.newPassword
-        });
+        // 校验表单
+        this.$refs.passwordForm.validate(async (valid) => {
+          if (valid) {
+            const response = await axios.post('/api/v1/user/changePassword', {
+              user_id: userId,
+              user_password: this.passwordForm.currentPassword,
+              new_password: this.passwordForm.newPassword
+            });
 
-        if (response.data.code === 200) {
-          this.$message.success('密码修改成功');
-          this.passwordForm = {
-            currentPassword: '',
-            newPassword: '',
-            confirmPassword: ''
-          };
-          this.$router.push({ name: 'Home' }); // 可选：跳转到首页
-        } 
-        else {
-          this.$message.error(response.data.msg);
-        }
-      } catch (error) {
-          if (error.response && error.response.status === 400) {
-            this.$message.error('请求错误：' + error.response.data.msg);
-          } 
-          else if (error.response && error.response.status === 500) {
-            this.$message.error('服务器错误：' + error.response.data.msg);
+            if (response.data.code === 200) {
+              this.$message.success('密码修改成功');
+              this.passwordForm = {
+                currentPassword: '',
+                newPassword: '',
+                confirmPassword: ''
+              };
+              this.$router.push({ name: 'Home' });
+            } 
+            else {
+              this.$message.error(response.data.msg);
+            }
           } 
           else {
-            this.$message.error('修改失败，请稍后再试');
+            console.log('校验失败');
           }
-          console.error("错误详情:", error);
+        });
 
+      } catch (error) {
+        if (error.response && error.response.status === 400) {
+          this.$message.error('请求错误：' + error.response.data.msg);
+        } 
+        else if (error.response && error.response.status === 500) {
+          this.$message.error('服务器错误：' + error.response.data.msg);
+        } 
+        else {
+          this.$message.error('修改失败，请稍后再试');
+        }
+        console.error("错误详情:", error);
       }
     },
     cancel() {
@@ -87,6 +103,13 @@ export default {
         newPassword: '',
         confirmPassword: ''
       };
+    },
+    validateConfirmPassword(rule, value, callback) {
+      if (value !== this.passwordForm.newPassword) {
+        callback(new Error('确认密码与新密码不匹配'));
+      } else {
+        callback();
+      }
     }
   }
 };
