@@ -150,9 +150,17 @@ export default {
               }
             })
             .catch((error) => {
+              console.log("error=",error);
               console.error(error);
+              if(error.response.data.code==500){
+
+                this.$message.error(error.response.data.msg);
+              }
+              else{
+                this.$message.error("登陆失败，请检查密码或者网络");
+              }
               this.getCaptcha();
-              this.$message.error("登录错误，请检查密码或网络");
+              
             });
         }
       });

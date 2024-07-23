@@ -19,7 +19,6 @@
             <i class="el-icon-setting"></i>
             <span class="username-title">{{this.$store.getters['user/getUserName']}}</span>
           </template>
-          <el-menu-item class="user-action-item" index="/editinfo" >Edit Profile</el-menu-item>
           <el-menu-item class="user-action-item" index="/changepsw" >Change Password</el-menu-item>
           <el-menu-item class="user-action-item" index="/userinfo" > {{this.$store.getters['user/getUserName']}}'s info</el-menu-item>
         </el-submenu>
