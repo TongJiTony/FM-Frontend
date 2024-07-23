@@ -4,12 +4,12 @@
     <p v-if="loading">Loading team data...</p>
     <div v-else>
       <div v-if="team">
-        <el-tabs :tab-position="tabPosition" style="height: 500px;">
+        <el-tabs :tab-position="tabPosition" style=" height: 500px;">
           <el-tab-pane label="球队简介">
             <el-container>
               <el-main>
                 <el-descriptions>
-                  <el-descriptions-item label="球队ID">{{team[0].TEAM_ID}}</el-descriptions-item>
+                  <el-descriptions-item label="球队ID" >{{team[0].TEAM_ID}}</el-descriptions-item>
                   <el-descriptions-item label="球队名称">{{team[0].TEAM_NAME}}</el-descriptions-item>
                   <el-descriptions-item label="成立时间">{{team[0].ESTABLISHED_DATE}}</el-descriptions-item>
                   <el-descriptions-item label="主教练">{{team[0].HEAD_COACH}}</el-descriptions-item>
@@ -47,7 +47,94 @@
               </el-main>    
             </el-container>
           </el-tab-pane>
-          <el-tab-pane label="财务表">
+          <el-tab-pane label="财务记录">
+          </el-tab-pane>
+           <el-tab-pane label="阵容信息">
+             <el-container>
+              <el-main>
+                <el-input v-model="search" placeholder="输入搜索" clearable>
+                <i slot="prefix" class="el-input__icon el-icon-search"></i>
+                </el-input>
+                <el-table :data="lineup.filter(data => !search || data.NOTE.includes(search))" style="width: 100%">
+                  <el-table-column prop="LINEUP_ID" label="阵容ID" width="150">
+                  </el-table-column>
+                  <el-table-column prop="PLAYER1_ID" label="球员1ID" width="150">
+                  </el-table-column>
+                  <el-table-column prop="PLAYER2_ID" label="球员2ID" width="150">
+                  </el-table-column>
+                  <el-table-column prop="PLAYER3_ID" label="球员3ID" width="150">
+                  </el-table-column>
+                  <el-table-column prop="PLAYER4_ID" label="球员4ID" width="150" >
+                  </el-table-column>
+                  <el-table-column prop="PLAYER5_ID" label="球员5ID" width="150" >
+                  </el-table-column>
+                  <el-table-column prop="PLAYER6_ID" label="球员6ID" width="150" >
+                  </el-table-column>
+                  <el-table-column prop="PLAYER7_ID" label="球员7ID"  width="150">
+                  </el-table-column>
+                  <el-table-column prop="PLAYER8_ID" label="球员8ID" width="150" >
+                  </el-table-column>
+                   <el-table-column prop="PLAYER9_ID" label="球员9ID" width="150" >
+                  </el-table-column>
+                   <el-table-column prop="PLAYER10_ID" label="球员10ID" width="150" >
+                  </el-table-column>
+                   <el-table-column prop="PLAYER11_ID" label="球员11ID" width="150" >
+                  </el-table-column>
+                </el-table>
+              </el-main>    
+            </el-container>
+          </el-tab-pane>
+           <el-tab-pane label="比赛信息">
+            <el-container>
+              <el-main>
+                <el-input v-model="search" placeholder="输入搜索" clearable>
+                <i slot="prefix" class="el-input__icon el-icon-search"></i>
+                </el-input>
+                <el-table :data="match.filter(data => !search || data.NOTE.includes(search))" style="width: 100%">
+                  <el-table-column prop="MATCH_ID" label="比赛ID" width="150">
+                  </el-table-column>
+                  <el-table-column prop="MATCH_DATE" label="比赛日期" width="150">
+                  </el-table-column>
+                  <el-table-column prop="MATCH_STADIUM" label="比赛地点" width="150">
+                  </el-table-column>
+                  <el-table-column prop="HOME_TEAM_NAME" label="主场球队名称" width="150">
+                  </el-table-column>
+                  <el-table-column prop="AWAY_TEAM_NAME" label="客场球队名称" width="150" >
+                  </el-table-column>
+                  <el-table-column prop="HOME_TEAM_SCORE" label="主场得分" width="150" >
+                  </el-table-column>
+                  <el-table-column prop="AWAY_TEAM_SCORE" label="客场得分" width="150" >
+                  </el-table-column>
+                  <el-table-column prop="HOME_TEAM_ID" label="主场球队ID"  width="150">
+                  </el-table-column>
+                  <el-table-column prop="AWAY_TEAM_ID" label="客场球队ID" width="150" >
+                  </el-table-column>
+                </el-table>
+              </el-main>    
+            </el-container>
+          </el-tab-pane>
+           <el-tab-pane label="医疗信息"  >
+            <el-container>
+              <el-main>
+                <el-input v-model="search" placeholder="输入搜索" clearable>
+                <i slot="prefix" class="el-input__icon el-icon-search"></i>
+                </el-input>
+                <el-table :data="medical.filter(data => !search || data.NOTE.includes(search))" style="width: 100%">
+                  <el-table-column prop="medical_id" label="医疗处理ID" width="150" >
+                  </el-table-column>
+                  <el-table-column prop="player_id" label="球员ID" width="150">
+                  </el-table-column>
+                  <el-table-column prop="hurt_part" label="损伤部位" width="150">
+                  </el-table-column>
+                  <el-table-column prop="hurt_time" label="受伤时间" width="150">
+                  </el-table-column>
+                  <el-table-column prop="medical_care" label="处理方法" width="150" >
+                  </el-table-column>
+                  <el-table-column prop="state" label="处理结果" width="150" >
+                  </el-table-column>
+                </el-table>
+              </el-main>    
+            </el-container>
           </el-tab-pane>
 
         </el-tabs>   
@@ -69,7 +156,10 @@
       return {
         loading:true,
         team: null,
-        player:[],
+        player: [],
+        lineup: [],
+        match: [],
+        medical:[],
         tabPosition: "left",
         search:""
       };
@@ -99,10 +189,41 @@
           console.error('Failed to fetch player data:',error);
           this.loading = false;
         })
+        axios.get(`/api/v1/lineup/displayall?teamid=${teamID}`)
+          .then(response => {
+            console.log('Received data:', response.data);
+            this.lineup = response.data;
+            this.loading = false;
+        })
+        .catch(error => {
+          console.error('Failed to fetch lineup data:',error);
+          this.loading = false;
+        })
+        axios.get(`/api/v1/match/displayall?match_id=${teamID}`)
+          .then(response => {
+            console.log('Received data:', response.data);
+            this.match = response.data;
+            this.loading = false;
+        })
+        .catch(error => {
+          console.error('Failed to fetch match data:',error);
+          this.loading = false;
+        })
+        axios.get(`/api/v1/medical/displayall?teamid=${teamID}`)
+          .then(response => {
+            console.log('Received data:', response.data);
+            this.medical = response.data;
+            this.loading = false;
+        })
+        .catch(error => {
+          console.error('Failed to fetch medical data:',error);
+          this.loading = false;
+        })
       }
     }
   };
   </script>
 
   <style>
+
   </style>
