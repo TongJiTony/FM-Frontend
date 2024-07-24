@@ -143,9 +143,6 @@
         <el-form-item label="队伍ID" :label-width="formLabelWidth" prop="TEAM_ID">
           <el-input v-model="addForm.TEAM_ID" type="number"></el-input>
         </el-form-item>
-        <el-form-item label="队伍名称" :label-width="formLabelWidth" prop="TEAM_NAME">
-          <el-input v-model="addForm.TEAM_NAME"></el-input>
-        </el-form-item>
         <el-form-item label="位置" :label-width="formLabelWidth" prop="ROLE">
           <el-select v-model="addForm.ROLE" placeholder="选择位置">
             <el-option label="守门员 (GK)" value="GK"></el-option>
@@ -166,8 +163,8 @@
             <el-radio :label="1">受伤</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="等级" :label-width="formLabelWidth" prop="RANK">
-          <el-input v-model="addForm.RANK" type="number"></el-input>
+        <el-form-item label="等级" :label-width="formLabelWidth">
+          <el-input-number v-model="editForm.RANK" :min="0" :max="100" label="等级"></el-input-number>
         </el-form-item>
         <el-form-item label="场上状态" :label-width="formLabelWidth" prop="GAME_STATE">
           <el-radio-group v-model="addForm.GAME_STATE">
@@ -177,8 +174,8 @@
         </el-form-item>
         <el-form-item label="转会状态" :label-width="formLabelWidth" prop="TRANS_STATE">
           <el-radio-group v-model="addForm.TRANS_STATE">
-            <el-radio :label="1">在转会</el-radio>
             <el-radio :label="0">不转会</el-radio>
+            <el-radio :label="1">在转会</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="展示状态" :label-width="formLabelWidth" prop="IS_SHOW">
@@ -193,6 +190,7 @@
         <el-button type="primary" @click="handleAddPlayer">添加</el-button>
       </span>
     </el-dialog>
+
   </div>
 </template>
 
@@ -230,7 +228,6 @@ export default {
         PLAYER_NAME: '',
         BIRTHDAY: '',
         TEAM_ID: '',
-        TEAM_NAME: '',
         ROLE: '',
         USED_FOOT: 0,
         HEALTH_STATE: 0,
@@ -243,7 +240,6 @@ export default {
         PLAYER_NAME: [{ required: true, message: '请输入球员姓名', trigger: 'blur' }],
         BIRTHDAY: [{ required: true, message: '请选择出生日期', trigger: 'change' }],
         TEAM_ID: [{ required: true, message: '请输入队伍ID', trigger: 'blur' }],
-        TEAM_NAME: [{ required: true, message: '请输入队伍名称', trigger: 'blur' }],
         ROLE: [{ required: true, message: '请选择位置', trigger: 'change' }],
         USED_FOOT: [{ required: true, message: '请选择惯用脚', trigger: 'change' }],
         HEALTH_STATE: [{ required: true, message: '请选择健康状态', trigger: 'change' }],
@@ -377,23 +373,49 @@ methods: {
       });
   },
 
-  // Add a new player
-  handleAddPlayer() {
-    console.log('Adding new player');
-    this.$refs.addFormRef.validate((valid) => {
-      if (valid) {
-        axios.post('/api/v1/player/add', this.addForm)
-          .then(() => {
-            console.log('Player added successfully');
-            this.fetchPlayers();
-            this.addDialogVisible = false;
-          })
-          .catch(error => {
-            console.error('Failed to add player:', error);
-          });
-      }
-    });
-  },
+// Add a new player
+handleAddPlayer() {
+  console.log('Adding new player');
+  this.$refs.addFormRef.validate((valid) => {
+    if (valid) {
+
+      // Construct the JSON object as per server's expectations
+      const newPlayerData = {
+        PLAYER_NAME: this.addForm.PLAYER_NAME,
+        BIRTHDAY: this.addForm.BIRTHDAY,
+        TEAM_ID: Number(this.addForm.TEAM_ID),  // Convert to number
+        ROLE: this.addForm.ROLE,
+        USED_FOOT: Number(this.addForm.USED_FOOT), // Convert to number
+        HEALTH_STATE: Number(this.addForm.HEALTH_STATE), // Convert to number
+        RANK: Number(this.addForm.RANK), // Convert to number
+        GAME_STATE: Number(this.addForm.GAME_STATE), // Convert to number
+        TRANS_STATE: Number(this.addForm.TRANS_STATE), // Convert to number
+        IS_SHOW: Number(this.addForm.IS_SHOW) // Convert to number
+      };
+
+      // Use the correct API endpoint
+      axios.post(`api/v1/player/add`, newPlayerData) 
+        .then(() => {
+          console.log('Player added successfully');
+          this.fetchPlayers(); // 刷新玩家列表
+          this.addDialogVisible = false; // 关闭对话框
+        })
+        .catch(error => {
+          if (error.response) {
+            // 服务器返回的错误响应
+            console.error('Failed to add player:', error.response.data);
+          } else if (error.request) {
+            // 请求已发出，但没有收到响应
+            console.error('No response received:', error.request);
+          } else {
+            // 设置请求时出错
+            console.error('Error setting up request:', error.message);
+          }
+        });
+    }
+  });
+},
+
 
   // Perform a search
   handleSearch() {
