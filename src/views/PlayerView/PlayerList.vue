@@ -77,21 +77,27 @@
           </el-select>
         </el-form-item>
         <el-form-item label="健康状态" :label-width="formLabelWidth">
-          <el-radio-group v-model="editForm.HEALTH_STATUS">
-            <el-radio label="健康">健康</el-radio>
-            <el-radio label="受伤">受伤</el-radio>
+          <el-radio-group v-model="editForm.HEALTH_STATE">
+            <el-radio :label="0">健康</el-radio>
+            <el-radio :label="1">受伤</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="场上状态" :label-width="formLabelWidth">
-          <el-radio-group v-model="editForm.PLAYING_STATUS">
-            <el-radio label="首发">首发</el-radio>
-            <el-radio label="替补">替补</el-radio>
+          <el-radio-group v-model="editForm.GAME_STATE">
+            <el-radio :label="0">首发</el-radio>
+            <el-radio :label="1">替补</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="转会状态" :label-width="formLabelWidth">
-          <el-radio-group v-model="editForm.TRANSFER_STATUS">
-            <el-radio label="在转会">在转会</el-radio>
-            <el-radio label="不转会">不转会</el-radio>
+          <el-radio-group v-model="editForm.TRANS_STATE">
+            <el-radio :label="1">在转会</el-radio>
+            <el-radio :label="0">不转会</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="展示状态" :label-width="formLabelWidth">
+          <el-radio-group v-model="editForm.IS_SHOW">
+            <el-radio :label="1">显示</el-radio>
+            <el-radio :label="0">隐藏</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -108,13 +114,16 @@
       width="50%"
       @close="handleAddDialogClose">
       <el-form :model="addForm" :rules="addFormRules" ref="addFormRef">
-        <el-form-item label="球员编号" :label-width="formLabelWidth" prop="PLAYER_ID">
-          <el-input v-model="addForm.PLAYER_ID"></el-input>
-        </el-form-item>
         <el-form-item label="姓名" :label-width="formLabelWidth" prop="PLAYER_NAME">
           <el-input v-model="addForm.PLAYER_NAME"></el-input>
         </el-form-item>
-        <el-form-item label="队伍" :label-width="formLabelWidth" prop="TEAM_NAME">
+        <el-form-item label="出生日期" :label-width="formLabelWidth" prop="BIRTHDAY">
+          <el-date-picker v-model="addForm.BIRTHDAY" type="date" placeholder="选择日期"></el-date-picker>
+        </el-form-item>
+        <el-form-item label="队伍ID" :label-width="formLabelWidth" prop="TEAM_ID">
+          <el-input v-model="addForm.TEAM_ID" type="number"></el-input>
+        </el-form-item>
+        <el-form-item label="队伍名称" :label-width="formLabelWidth" prop="TEAM_NAME">
           <el-input v-model="addForm.TEAM_NAME"></el-input>
         </el-form-item>
         <el-form-item label="位置" :label-width="formLabelWidth" prop="ROLE">
@@ -125,22 +134,37 @@
             <el-option label="前锋 (F)" value="F"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="健康状态" :label-width="formLabelWidth" prop="HEALTH_STATUS">
-          <el-radio-group v-model="addForm.HEALTH_STATUS">
-            <el-radio label="健康">健康</el-radio>
-            <el-radio label="受伤">受伤</el-radio>
+        <el-form-item label="惯用脚" :label-width="formLabelWidth" prop="USED_FOOT">
+          <el-radio-group v-model="addForm.USED_FOOT">
+            <el-radio :label="0">左脚</el-radio>
+            <el-radio :label="1">右脚</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="场上状态" :label-width="formLabelWidth" prop="PLAYING_STATUS">
-          <el-radio-group v-model="addForm.PLAYING_STATUS">
-            <el-radio label="首发">首发</el-radio>
-            <el-radio label="替补">替补</el-radio>
+        <el-form-item label="健康状态" :label-width="formLabelWidth" prop="HEALTH_STATE">
+          <el-radio-group v-model="addForm.HEALTH_STATE">
+            <el-radio :label="0">健康</el-radio>
+            <el-radio :label="1">受伤</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="转会状态" :label-width="formLabelWidth" prop="TRANSFER_STATUS">
-          <el-radio-group v-model="addForm.TRANSFER_STATUS">
-            <el-radio label="在转会">在转会</el-radio>
-            <el-radio label="不转会">不转会</el-radio>
+        <el-form-item label="等级" :label-width="formLabelWidth" prop="RANK">
+          <el-input v-model="addForm.RANK" type="number"></el-input>
+        </el-form-item>
+        <el-form-item label="场上状态" :label-width="formLabelWidth" prop="GAME_STATE">
+          <el-radio-group v-model="addForm.GAME_STATE">
+            <el-radio :label="0">首发</el-radio>
+            <el-radio :label="1">替补</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="转会状态" :label-width="formLabelWidth" prop="TRANS_STATE">
+          <el-radio-group v-model="addForm.TRANS_STATE">
+            <el-radio :label="1">在转会</el-radio>
+            <el-radio :label="0">不转会</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="展示状态" :label-width="formLabelWidth" prop="IS_SHOW">
+          <el-radio-group v-model="addForm.IS_SHOW">
+            <el-radio :label="1">显示</el-radio>
+            <el-radio :label="0">隐藏</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -158,64 +182,55 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      tableData: [],
-      pagedData: [],
-      currentPage: 1,
-      pageSize: 10,
-      total: 0,
-      searchType: 'PLAYER_ID',
+      searchType: '',
       searchQuery: '',
-      allData: [],
+      pagedData: [],
+      total: 0,
+      pageSize: 10,
       dialogVisible: false,
-      editDialogVisible: false,
-      addDialogVisible: false,
       selectedPlayer: null,
+      editDialogVisible: false,
       editForm: {
         PLAYER_ID: '',
         PLAYER_NAME: '',
         TEAM_NAME: '',
         ROLE: '',
-        HEALTH_STATUS: '',
-        PLAYING_STATUS: '',
-        TRANSFER_STATUS: ''
+        HEALTH_STATE: 0,
+        GAME_STATE: 0,
+        TRANS_STATE: 0,
+        IS_SHOW: 1,
       },
+      formLabelWidth: '100px',
+      addDialogVisible: false,
       addForm: {
-        PLAYER_ID: '',
         PLAYER_NAME: '',
+        BIRTHDAY: '',
+        TEAM_ID: '',
         TEAM_NAME: '',
         ROLE: '',
-        HEALTH_STATUS: '',
-        PLAYING_STATUS: '',
-        TRANSFER_STATUS: ''
+        USED_FOOT: 0,
+        HEALTH_STATE: 0,
+        RANK: 0,
+        GAME_STATE: 0,
+        TRANS_STATE: 0,
+        IS_SHOW: 1,
       },
       addFormRules: {
-        PLAYER_ID: [
-          { required: true, message: '请输入球员编号', trigger: 'blur' }
-        ],
-        PLAYER_NAME: [
-          { required: true, message: '请输入球员姓名', trigger: 'blur' }
-        ],
-        TEAM_NAME: [
-          { required: true, message: '请输入队伍名称', trigger: 'blur' }
-        ],
-        ROLE: [
-          { required: true, message: '请选择位置', trigger: 'change' }
-        ],
-        HEALTH_STATUS: [
-          { required: true, message: '请选择健康状态', trigger: 'change' }
-        ],
-        PLAYING_STATUS: [
-          { required: true, message: '请选择场上状态', trigger: 'change' }
-        ],
-        TRANSFER_STATUS: [
-          { required: true, message: '请选择转会状态', trigger: 'change' }
-        ]
+        PLAYER_NAME: [{ required: true, message: '请输入球员姓名', trigger: 'blur' }],
+        BIRTHDAY: [{ required: true, message: '请选择出生日期', trigger: 'change' }],
+        TEAM_ID: [{ required: true, message: '请输入队伍ID', trigger: 'blur' }],
+        TEAM_NAME: [{ required: true, message: '请输入队伍名称', trigger: 'blur' }],
+        ROLE: [{ required: true, message: '请选择位置', trigger: 'change' }],
+        USED_FOOT: [{ required: true, message: '请选择惯用脚', trigger: 'change' }],
+        HEALTH_STATE: [{ required: true, message: '请选择健康状态', trigger: 'change' }],
+        RANK: [{ required: true, message: '请输入等级', trigger: 'blur' }],
+        GAME_STATE: [{ required: true, message: '请选择场上状态', trigger: 'change' }],
+        TRANS_STATE: [{ required: true, message: '请选择转会状态', trigger: 'change' }],
+        IS_SHOW: [{ required: true, message: '请选择展示状态', trigger: 'change' }],
       },
-      formLabelWidth: '120px'
+      tableData: [],
+      allData: [],
     };
-  },
-  created() {
-    this.fetchPlayers();
   },
   methods: {
     fetchPlayers() {
@@ -248,151 +263,131 @@ export default {
           });
       }
     },
-    updatePagedData() {
-      const start = (this.currentPage - 1) * this.pageSize;
-      const end = start + this.pageSize;
-      this.pagedData = this.tableData.slice(start, end);
-    },
-    handleCurrentChange(page) {
-      this.currentPage = page;
-      this.updatePagedData();
-    },
     handleClick(player) {
-      this.$router.push(`/player-display/${player.PLAYER_ID}`);
+      console.log('Navigating to player detail page for:', player.PLAYER_ID);
+      const playerId = player.PLAYER_ID;
+      const route = `/player/${playerId}`;
+      this.$router.push(route);
     },
-    handleSearch() {
-      const searchType = this.searchType;
-      const searchQuery = this.searchQuery.toLowerCase();
-      this.tableData = this.allData.filter(player =>
-        player[searchType].toString().toLowerCase().includes(searchQuery)
-      );
-      this.total = this.tableData.length;
-      this.currentPage = 1;
-      this.updatePagedData();
+    openAddPlayerDialog() {
+      console.log('Opening add player dialog');
+      this.addDialogVisible = true;
     },
-    resetSearch() {
-      this.tableData = this.allData;
-      this.total = this.allData.length;
-      this.searchQuery = '';
-      this.currentPage = 1;
-      this.updatePagedData();
+    handleDialogClose() {
+      console.log('Closing delete confirmation dialog');
+      this.dialogVisible = false;
+    },
+    confirmDelete(player) {
+      console.log('Confirming delete for player:', player.PLAYER_NAME);
+      this.selectedPlayer = player;
+      this.dialogVisible = true;
+    },
+    handleDelete() {
+      console.log('Deleting player:', this.selectedPlayer.PLAYER_NAME);
+      axios.delete(`/api/v1/player/${this.selectedPlayer.PLAYER_ID}`)
+        .then(() => {
+          console.log('Player deleted successfully');
+          this.fetchPlayers();
+          this.dialogVisible = false;
+        })
+        .catch(error => {
+          console.error('Failed to delete player:', error);
+        });
+    },
+    handleEditDialogClose() {
+      console.log('Closing edit dialog');
+      this.editDialogVisible = false;
     },
     confirmEdit(player) {
-      this.selectedPlayer = player;
-      this.editForm = { ...player };  // Create a shallow copy of player data
+      console.log('Opening edit dialog for player:', player.PLAYER_NAME);
+      this.editForm = { ...player };
       this.editDialogVisible = true;
     },
     handleSave() {
-      const updatedPlayer = { ...this.editForm };
-      axios.put(`/api/v1/player/update/${updatedPlayer.PLAYER_ID}`, updatedPlayer)
-        .then(response => {
-          console.log('Update response:', response);
-          const index = this.tableData.findIndex(player => player.PLAYER_ID === updatedPlayer.PLAYER_ID);
-          if (index !== -1) {
-            this.tableData.splice(index, 1, updatedPlayer);
-            this.updatePagedData();
-          }
-          this.handleEditDialogClose();
+      console.log('Saving player data for:', this.editForm.PLAYER_NAME);
+      axios.put(`/api/v1/player/${this.editForm.PLAYER_ID}`, this.editForm)
+        .then(() => {
+          console.log('Player updated successfully');
+          this.fetchPlayers();
+          this.editDialogVisible = false;
         })
         .catch(error => {
           console.error('Failed to update player:', error);
         });
     },
-    handleEditDialogClose() {
-      this.editDialogVisible = false;
-      this.selectedPlayer = null;
-      this.editForm = {
-        PLAYER_ID: '',
-        PLAYER_NAME: '',
-        TEAM_NAME: '',
-        ROLE: '',
-        HEALTH_STATUS: '',
-        PLAYING_STATUS: '',
-        TRANSFER_STATUS: ''
-      };
-    },
-    confirmDelete(player) {
-      this.selectedPlayer = player;
-      this.dialogVisible = true;
-    },
-    handleDelete() {
-      if (this.selectedPlayer) {
-        axios.delete(`/api/v1/player/delete/${this.selectedPlayer.PLAYER_ID}`)
-          .then(response => {
-            console.log('Delete response:', response);
-            this.tableData = this.tableData.filter(player => player.PLAYER_ID !== this.selectedPlayer.PLAYER_ID);
-            this.total = this.tableData.length;
-            this.updatePagedData();
-            this.handleDialogClose();
-          })
-          .catch(error => {
-            console.error('Failed to delete player:', error);
-          });
-      }
-    },
-    handleDialogClose() {
-      this.dialogVisible = false;
-      this.selectedPlayer = null;
-    },
-    openAddPlayerDialog() {
-      this.addDialogVisible = true;
+    handleAddDialogClose() {
+      console.log('Closing add player dialog');
+      this.addDialogVisible = false;
     },
     handleAddPlayer() {
+      console.log('Adding new player');
       this.$refs.addFormRef.validate((valid) => {
         if (valid) {
           axios.post('/api/v1/player/add', this.addForm)
-            .then(response => {
-              console.log('Add player response:', response);
-              this.tableData.push(response.data);  // Add the new player to the tableData
-              this.allData.push(response.data);  // Add the new player to the allData
-              this.total = this.tableData.length;
-              this.updatePagedData();
-              this.handleAddDialogClose();
+            .then(() => {
+              console.log('Player added successfully');
+              this.fetchPlayers();
+              this.addDialogVisible = false;
             })
             .catch(error => {
               console.error('Failed to add player:', error);
             });
-        } else {
-          console.log('Error: Invalid input');
-          return false;
         }
       });
     },
-    handleAddDialogClose() {
-      this.addDialogVisible = false;
-      this.addForm = {
-        PLAYER_ID: '',
-        PLAYER_NAME: '',
-        TEAM_NAME: '',
-        ROLE: '',
-        HEALTH_STATUS: '',
-        PLAYING_STATUS: '',
-        TRANSFER_STATUS: ''
-      };
-    }
-  }
+    handleSearch() {
+      console.log('Performing search with type:', this.searchType, 'and query:', this.searchQuery);
+      if (this.searchType && this.searchQuery) {
+        this.pagedData = this.allData.filter(player => {
+          return player[this.searchType].toString().includes(this.searchQuery);
+        });
+        this.total = this.pagedData.length;
+        this.updatePagedData();
+      } else {
+        console.warn('Search type or query is missing');
+      }
+    },
+    resetSearch() {
+      console.log('Resetting search');
+      this.searchType = '';
+      this.searchQuery = '';
+      this.pagedData = this.allData;
+      this.total = this.allData.length;
+      this.updatePagedData();
+    },
+    handleCurrentChange(page) {
+      console.log('Changing page to:', page);
+      this.updatePagedData(page);
+    },
+    updatePagedData(currentPage = 1) {
+      console.log('Updating paged data for page:', currentPage);
+      const start = (currentPage - 1) * this.pageSize;
+      const end = currentPage * this.pageSize;
+      this.pagedData = this.allData.slice(start, end);
+    },
+  },
+  created() {
+    this.fetchPlayers();
+  },
 };
 </script>
 
 <style scoped>
 .player-list {
-  padding: 1rem;
+  padding: 20px;
 }
 
 .header-row {
-  margin-bottom: 1rem;
-  display: flex;
-  justify-content: flex-end;
+  margin-bottom: 20px;
 }
 
 .el-input-group {
   display: flex;
   align-items: center;
-  margin-right: 1rem;
 }
 
 .player-card {
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
 }
 
 .dialog-footer {
