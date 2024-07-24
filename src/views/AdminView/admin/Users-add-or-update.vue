@@ -4,20 +4,20 @@
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-    <el-form-item label="${column.comments}" prop="userName">
-      <el-input v-model="dataForm.userName" placeholder="${column.comments}"></el-input>
+    <el-form-item label="userName" prop="userName">
+      <el-input v-model="dataForm.userName" placeholder="userName"></el-input>
     </el-form-item>
-    <el-form-item label="${column.comments}" prop="userRight">
-      <el-input v-model="dataForm.userRight" placeholder="${column.comments}"></el-input>
+    <el-form-item label="userRight" prop="userRight">
+      <el-input v-model="dataForm.userRight" placeholder="userRight"></el-input>
     </el-form-item>
-    <el-form-item label="${column.comments}" prop="userPassword">
-      <el-input v-model="dataForm.userPassword" placeholder="${column.comments}"></el-input>
+    <el-form-item label="USER_PASSWORD" prop="USER_PASSWORD">
+      <el-input v-model="dataForm.userPassword" placeholder="USER_PASSWORD"></el-input>
     </el-form-item>
-    <el-form-item label="${column.comments}" prop="userPhone">
-      <el-input v-model="dataForm.userPhone" placeholder="${column.comments}"></el-input>
+    <el-form-item label="USER_PHONE" prop="USER_PHONE">
+      <el-input v-model="dataForm.userPhone" placeholder="USER_PHONE"></el-input>
     </el-form-item>
-    <el-form-item label="${column.comments}" prop="icon">
-      <el-input v-model="dataForm.icon" placeholder="${column.comments}"></el-input>
+    <el-form-item label="ICON" prop="ICON">
+      <el-input v-model="dataForm.icon" placeholder="ICON"></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -68,14 +68,20 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields();
         if (this.dataForm.userId) {
-          axios.get(`/api/admin/users/info/${this.dataForm.userId}`)
+          axios.get(`/api/v1/user/displayone`,
+          {
+            params: {
+              userId: this.dataForm.userId
+            }
+          })
               .then(({ data }) => {
-                if (data && data.code === 0) {
-                  this.dataForm.userName = data.users.userName;
-                  this.dataForm.userRight = data.users.userRight;
-                  this.dataForm.userPassword = data.users.userPassword;
-                  this.dataForm.userPhone = data.users.userPhone;
-                  this.dataForm.icon = data.users.icon;
+                if (data[0]) {
+                  console.log(data[0])
+                  this.dataForm.userName = data[0].USER_NAME;
+                  this.dataForm.userRight = data[0].USER_RIGHT;
+                  this.dataForm.userPassword = data[0].USER_PASSWORD;
+                  this.dataForm.userPhone = data[0].USER_PHONE;
+                  this.dataForm.icon = data[0].ICON;
                 }
               });
         }
@@ -85,7 +91,7 @@ export default {
     dataFormSubmit() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          axios.post(`/api/admin/users/${!this.dataForm.userId ? 'save' : 'update'}`, {
+          axios.post(`/api/v1/user/${!this.dataForm.userId ? 'add' : 'admin/changeAttributes'}`, {
             userId: this.dataForm.userId || undefined,
             userName: this.dataForm.userName,
             userRight: this.dataForm.userRight,
@@ -93,7 +99,8 @@ export default {
             userPhone: this.dataForm.userPhone,
             icon: this.dataForm.icon
           }).then(({ data }) => {
-            if (data && data.code === 0) {
+            console.log(data)
+            if (data && data.code === 200) {
               this.$message({
                 message: '操作成功',
                 type: 'success',

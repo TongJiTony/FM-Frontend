@@ -11,62 +11,62 @@
       </el-form-item>
     </el-form>
     <el-table
-      :data="dataList"
-      border
-      v-loading="dataListLoading"
-      @selection-change="selectionChangeHandle"
-      style="width: 100%;">
+        :data="dataList"
+        border
+        v-loading="dataListLoading"
+        @selection-change="selectionChangeHandle"
+        style="width: 100%;">
       <el-table-column
-        type="selection"
-        header-align="center"
-        align="center"
-        width="50">
+          type="selection"
+          header-align="center"
+          align="center"
+          width="50">
       </el-table-column>
       <el-table-column
-        prop="userId"
-        header-align="center"
-        align="center"
-        label="用户id">
+          prop="USER_ID"
+          header-align="center"
+          align="center"
+          label="用户id">
       </el-table-column>
       <el-table-column
-        prop="userName"
-        header-align="center"
-        align="center"
-        label="用户名">
+          prop="USER_NAME"
+          header-align="center"
+          align="center"
+          label="用户名">
       </el-table-column>
       <el-table-column
-        prop="userRight"
-        header-align="center"
-        align="center"
-        label="用户权限">
+          prop="USER_RIGHT"
+          header-align="center"
+          align="center"
+          label="用户权限">
       </el-table-column>
       <el-table-column
-        prop="userPassword"
-        header-align="center"
-        align="center"
-        label="用户密码">
+          prop="USER_PASSWORD"
+          header-align="center"
+          align="center"
+          label="用户密码">
       </el-table-column>
       <el-table-column
-        prop="userPhone"
-        header-align="center"
-        align="center"
-        label="用户手机号">
+          prop="USER_PHONE"
+          header-align="center"
+          align="center"
+          label="用户手机号">
       </el-table-column>
       <el-table-column
-        prop="icon"
-        header-align="center"
-        align="center"
-        label="头像">
+          prop="ICON"
+          header-align="center"
+          align="center"
+          label="头像">
       </el-table-column>
       <el-table-column
-        fixed="right"
-        header-align="center"
-        align="center"
-        width="150"
-        label="操作">
+          fixed="right"
+          header-align="center"
+          align="center"
+          width="150"
+          label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.userId)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.userId)">删除</el-button>
+          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.USER_ID)">修改</el-button>
+          <el-button type="text" size="small" @click="deleteHandle(scope.row.USER_ID)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -116,16 +116,21 @@ export default {
     // 获取数据列表
     getDataList() {
       this.dataListLoading = true;
-      axios.get('/api/admin/users/list', {
+      // 检查如果当前页码为2且带有搜索关键词，则调整为第一页
+      if (this.pageIndex > 1 && this.dataForm.key) {
+        this.pageIndex = 1;
+      }
+      axios.get('/api/v1/user/admin/displayall', {
         params: {
           page: this.pageIndex,
           limit: this.pageSize,
           key: this.dataForm.key
         }
       }).then(({ data }) => {
-        if (data && data.code === 0) {
-          this.dataList = data.page.list;
-          this.totalPage = data.page.totalCount;
+
+        if (data) {
+          this.dataList = data.data;
+          this.totalPage = data.total;
         } else {
           this.dataList = [];
           this.totalPage = 0;
@@ -157,15 +162,21 @@ export default {
     },
     // 删除
     deleteHandle(id) {
-      const ids = id ? [id] : this.dataListSelections.map(item => item.userId);
+      console.log(this.dataListSelections)
+      const ids = id ? [id] : this.dataListSelections.map(item => item.USER_ID);
       this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        axios.post('/api/admin/users/delete', ids)
+        axios.delete('/api/v1/user/admin/delete', {
+          data: ids,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
             .then(({ data }) => {
-              if (data && data.code === 0) {
+              if (data && data.code === 200) {
                 this.$message({
                   message: '操作成功',
                   type: 'success',
