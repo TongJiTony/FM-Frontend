@@ -36,6 +36,7 @@
       layout="prev, pager, next"
       :total="total"
       :page-size="pageSize"
+      :current-page.sync="currentPage"  
       @current-change="handleCurrentChange">
     </el-pagination>
 
@@ -205,6 +206,7 @@ export default {
       pagedData: [],
       total: 0,
       pageSize: 10,
+      currentPage: 1, // Add this line to keep track of the current page
       dialogVisible: false,
       selectedPlayer: null,
       editDialogVisible: false,
@@ -362,15 +364,16 @@ methods: {
     };
 
     // 使用正确的 API 路径
-    axios.post(`/api/v1/player/update?playerid=${this.editForm.PLAYER_ID}`, updatedPlayerData)
-      .then(() => {
-        console.log('Player updated successfully');
-        this.fetchPlayers();
-        this.editDialogVisible = false;
-      })
-      .catch(error => {
-        console.error('Failed to update player:', error);
-      });
+      axios.post(`/api/v1/player/update?playerid=${this.editForm.PLAYER_ID}`, updatedPlayerData)
+        .then(() => {
+          console.log('Player updated successfully');
+          this.fetchPlayers();
+          this.updatePagedData(this.currentPage); // Ensure the correct page is displayed after data is fetched
+          this.editDialogVisible = false;
+        })
+    .catch(error => {
+      console.error('Failed to update player:', error);
+    });
   },
 
 // Add a new player
@@ -448,12 +451,13 @@ handleAddPlayer() {
   },
 
   // Update paged data
-  updatePagedData(currentPage = 1) {
-    console.log('Updating paged data for page:', currentPage);
-    const start = (currentPage - 1) * this.pageSize;
-    const end = currentPage * this.pageSize;
-    this.pagedData = this.allData.slice(start, end);
-  }
+    updatePagedData(currentPage = this.currentPage) {
+      console.log('Updating paged data for page:', currentPage);
+      const start = (currentPage - 1) * this.pageSize;
+      const end = currentPage * this.pageSize;
+      this.pagedData = this.allData.slice(start, end);
+    }
+
 },
 
 created() {

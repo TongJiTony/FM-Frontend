@@ -37,13 +37,13 @@
             <el-col :span="12">
               <p>
                 <strong>惯用脚:</strong>
-                <el-tag>{{ player[0].USED_FOOT === 1 ? '左脚' : '右脚' }}</el-tag>
+                <el-tag>{{ player[0].USED_FOOT === 1 ? '右脚' : '左脚' }}</el-tag>
               </p>
             </el-col>
             <el-col :span="12">
               <p>
                 <strong>健康状态:</strong>
-                <el-tag :type="player[0].HEALTH_STATE === 1 ? 'success' : 'danger'">{{ player[0].HEALTH_STATE === 1 ? '健康' : '受伤' }}</el-tag>
+                <el-tag :type="player[0].HEALTH_STATE === 1 ? 'danger' : 'success'">{{ player[0].HEALTH_STATE === 1 ? '受伤' : '健康' }}</el-tag>
               </p>
             </el-col>
             <el-col :span="12">
