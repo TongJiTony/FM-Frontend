@@ -376,48 +376,48 @@ methods: {
     });
   },
 
-// Add a new player
-handleAddPlayer() {
-  console.log('Adding new player');
-  this.$refs.addFormRef.validate((valid) => {
-    if (valid) {
+  // Add a new player
+  handleAddPlayer() {
+    console.log('Adding new player');
+    this.$refs.addFormRef.validate((valid) => {
+      if (valid) {
 
-      // Construct the JSON object as per server's expectations
-      const newPlayerData = {
-        PLAYER_NAME: this.addForm.PLAYER_NAME,
-        BIRTHDAY: this.addForm.BIRTHDAY,
-        TEAM_ID: Number(this.addForm.TEAM_ID),  // Convert to number
-        ROLE: this.addForm.ROLE,
-        USED_FOOT: Number(this.addForm.USED_FOOT), // Convert to number
-        HEALTH_STATE: Number(this.addForm.HEALTH_STATE), // Convert to number
-        RANK: Number(this.addForm.RANK), // Convert to number
-        GAME_STATE: Number(this.addForm.GAME_STATE), // Convert to number
-        TRANS_STATE: Number(this.addForm.TRANS_STATE), // Convert to number
-        IS_SHOW: Number(this.addForm.IS_SHOW) // Convert to number
-      };
+        // Construct the JSON object as per server's expectations
+        const newPlayerData = {
+          PLAYER_NAME: this.addForm.PLAYER_NAME,
+          BIRTHDAY: this.addForm.BIRTHDAY,
+          TEAM_ID: Number(this.addForm.TEAM_ID),  // Convert to number
+          ROLE: this.addForm.ROLE,
+          USED_FOOT: Number(this.addForm.USED_FOOT), // Convert to number
+          HEALTH_STATE: Number(this.addForm.HEALTH_STATE), // Convert to number
+          RANK: Number(this.addForm.RANK), // Convert to number
+          GAME_STATE: Number(this.addForm.GAME_STATE), // Convert to number
+          TRANS_STATE: Number(this.addForm.TRANS_STATE), // Convert to number
+          IS_SHOW: Number(this.addForm.IS_SHOW) // Convert to number
+        };
 
-      // Use the correct API endpoint
-      axios.post(`api/v1/player/add`, newPlayerData) 
-        .then(() => {
-          console.log('Player added successfully');
-          this.fetchPlayers(); // 刷新玩家列表
-          this.addDialogVisible = false; // 关闭对话框
-        })
-        .catch(error => {
-          if (error.response) {
-            // 服务器返回的错误响应
-            console.error('Failed to add player:', error.response.data);
-          } else if (error.request) {
-            // 请求已发出，但没有收到响应
-            console.error('No response received:', error.request);
-          } else {
-            // 设置请求时出错
-            console.error('Error setting up request:', error.message);
-          }
-        });
-    }
-  });
-},
+        // Use the correct API endpoint
+        axios.post(`api/v1/player/add`, newPlayerData) 
+          .then(() => {
+            console.log('Player added successfully');
+            this.fetchPlayers(); // 刷新玩家列表
+            this.addDialogVisible = false; // 关闭对话框
+          })
+          .catch(error => {
+            if (error.response) {
+              // 服务器返回的错误响应
+              console.error('Failed to add player:', error.response.data);
+            } else if (error.request) {
+              // 请求已发出，但没有收到响应
+              console.error('No response received:', error.request);
+            } else {
+              // 设置请求时出错
+              console.error('Error setting up request:', error.message);
+            }
+          });
+      }
+    });
+  },
 
 
   // Perform a search
@@ -452,18 +452,16 @@ handleAddPlayer() {
 
   // Update paged data
     updatePagedData(currentPage = this.currentPage) {
-      console.log('Updating paged data for page:', currentPage);
+      //console.log('Updating paged data for page:', currentPage);
       const start = (currentPage - 1) * this.pageSize;
       const end = currentPage * this.pageSize;
       this.pagedData = this.allData.slice(start, end);
     }
-
-},
-
-created() {
-  this.fetchPlayers();
-}
-,
+  },
+  
+  created() {
+    this.fetchPlayers();
+  },
 };
 </script>
 
