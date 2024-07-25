@@ -2,8 +2,7 @@
 import Vue from "vue";
 import Router from "vue-router";
 import DefaultLayout from "@/layouts/defaultLayout.vue";
-
-//引入依赖：Vue、Router、DefaultLayout组件。
+import AdminLayout from "@/views/AdminView/AdminLayout.vue";
 
 //使用Router插件：在Vue中注册Router插件。
 Vue.use(Router);
@@ -54,7 +53,22 @@ const router = new Router({
           path: "/lineup/:lineupId",
           name: "LineupDetail",
           component: () => import("@/views/LineupView/LineupDetail.vue"),
-        }
+        },
+        {
+          path: "editinfo",
+          name: "Editinfo",
+          component: () => import("@/views/UserSetting/UserInfoEditPage.vue"),
+        },
+        {
+          path: "changepsw",
+          name: "Changepsw",
+          component: () => import("@/views/UserSetting/ChangePasw.vue"),
+        },
+        {
+          path: "userInfo",
+          name: "UserInfo",
+          component: () => import("@/views/UserSetting/UserInfo.vue"),
+        },
       ],
     },
     {
@@ -69,9 +83,51 @@ const router = new Router({
       name: "Register",
       component: () => import("@/views/RegisterView/RegisterPage.vue"),
     },
-
+    {
+      path: "/admin",
+      component: AdminLayout,
+      children: [
+        {
+          path: "matches",
+          name: "Matches",
+          component: () => import("@/views/AdminView/admin/Matches-admin.vue"),
+        },
+        {
+          path: "players",
+          name: "Players",
+          component: () => import("@/views/AdminView/admin/Players-admin.vue"),
+        },
+        {
+          path: "records",
+          name: "Records",
+          component: () => import("@/views/AdminView/admin/Records-admin.vue"),
+        },
+        {
+          path: "stadiums",
+          name: "Stadiums",
+          component: () => import("@/views/AdminView/admin/Stadiums-admin.vue"),
+        },
+        {
+          path: "teams",
+          name: "Teams",
+          component: () => import("@/views/AdminView/admin/Teams-admin.vue"),
+        },
+        {
+          path: "users",
+          name: "Users",
+          component: () => import("@/views/AdminView/admin/Users-admin.vue"),
+        },
+      ],
+    },
+    {
+      path: "*", // 捕获所有未匹配的路径
+      name: "error-404",
+      component: () => import("@/views/ErrorView/error-404.vue"),
+    },
   ],
 });
+
+
 
 // 导航守卫
 /*
@@ -80,19 +136,20 @@ from：当前导航正要离开的路由对象。
 next：一个函数，调用它来决定接下来的行为。
 */
 router.beforeEach((to, from, next) => {
-    const isLoggedIn = Vue.$cookies.get("isLoggedIn");
-    console.log("isLoggedIn status:", isLoggedIn);
-    if (//如果当前未登录并且没有前往登陆界面或者注册界面
-      to.name !== "Login" &&
-      to.name !== "Register" &&
-      isLoggedIn !== "true"
-    ) {
-      next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
-    } else if (to.name === "Login" && isLoggedIn === "true") {
-      next({ name: "Home" }); // 已登录时重定向到首页
-    } else {
-      next();
-    }
+  const isLoggedIn = Vue.$cookies.get("isLoggedIn");
+  console.log("isLoggedIn status:", isLoggedIn);
+  if (
+    //如果当前未登录并且没有前往登陆界面或者注册界面
+    to.name !== "Login" &&
+    to.name !== "Register" &&
+    isLoggedIn !== "true"
+  ) {
+    next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
+  } else if (to.name === "Login" && isLoggedIn === "true") {
+    next({ name: "Home" }); // 已登录时重定向到首页
+  } else {
+    next();
+  }
 });
 
 export default router;
