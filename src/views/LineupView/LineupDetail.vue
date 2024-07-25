@@ -1,17 +1,17 @@
 <template>
-    <div class="lineup-detail">
-      <el-header>Lineup ID: {{ this.$route.params.lineupId }}
-           <div class = "button-contanier">
-            <el-button type="primary" class = "add_button" @click="addLineup">修改阵容</el-button>
-
-            <el-button type="info" class = "goback_button" @click="goback">返回上级页面</el-button>
-          </div>
-        </el-header>
+  <p v-if="loading">Loading...</p>
+  <div v-else class="lineup-detail">
+    <el-header>阵容 ID: {{ this.$route.params.lineupId }}
+      <div class = "button-contanier">
+        <el-button type="primary" class = "add_button" @click="addLineup">修改阵容</el-button>
+        <el-button type="info" class = "goback_button" @click="goback">返回上级页面</el-button>
+      </div>
+    </el-header>
       
-      <el-table
+    <el-table
       :data="lineupDetail"
-      border
-      style="width: 100%">
+      stripe style="width: 100%">
+      <el-table-column type="index" :width="100" />
       <el-table-column
         prop="PLAYER_ID"
         label="Player ID"
@@ -46,7 +46,7 @@
         label="Actions"
         width="150">
         <template slot-scope="scope">
-          <el-button @click="handleClick(scope.row)">详情</el-button>
+          <el-button size = "small" @click="handleClick(scope.row)">详情</el-button>
         </template>
       </el-table-column>
     </el-table>
