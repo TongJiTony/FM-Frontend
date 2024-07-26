@@ -4,34 +4,34 @@
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
-    <el-form-item label="playerName" prop="playerName">
+    <el-form-item label="PLAYER_NAME" prop="PLAYER_NAME">
       <el-input v-model="dataForm.playerName" placeholder="playerName"></el-input>
     </el-form-item>
-    <el-form-item label="birthday" prop="birthday">
+    <el-form-item label="BIRTHDAY" prop="BIRTHDAY">
       <el-input v-model="dataForm.birthday" placeholder="birthday"></el-input>
     </el-form-item>
-    <el-form-item label="teamId" prop="teamId">
+    <el-form-item label="TEAM_ID" prop="TEAM_ID">
       <el-input v-model="dataForm.teamId" placeholder="teamId"></el-input>
     </el-form-item>
-    <el-form-item label="role" prop="role">
+    <el-form-item label="ROLE" prop="ROLE">
       <el-input v-model="dataForm.role" placeholder="role"></el-input>
     </el-form-item>
-    <el-form-item label="usedFoot" prop="usedFoot">
+    <el-form-item label="USED_FOOT" prop="USED_FOOT">
       <el-input v-model="dataForm.usedFoot" placeholder="usedFoot"></el-input>
     </el-form-item>
-    <el-form-item label="healthState" prop="healthState">
+    <el-form-item label="HEALTH_STATE" prop="HEALTH_STATE">
       <el-input v-model="dataForm.healthState" placeholder="healthState"></el-input>
     </el-form-item>
-    <el-form-item label="rank" prop="rank">
+    <el-form-item label="RANK" prop="RANK">
       <el-input v-model="dataForm.rank" placeholder="rank"></el-input>
     </el-form-item>
-    <el-form-item label="gameState" prop="gameState">
+    <el-form-item label="GAME_STATE" prop="GAME_STATE">
       <el-input v-model="dataForm.gameState" placeholder="gameState"></el-input>
     </el-form-item>
-    <el-form-item label="transState" prop="transState">
+    <el-form-item label="TRANS_STATE" prop="TRANS_STATE">
       <el-input v-model="dataForm.transState" placeholder="transState"></el-input>
     </el-form-item>
-    <el-form-item label="isShow" prop="isShow">
+    <el-form-item label="IS_SHOW" prop="IS_SHOW">
       <el-input v-model="dataForm.isShow" placeholder="isShow"></el-input>
     </el-form-item>
     </el-form>
@@ -103,19 +103,25 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields();
         if (this.dataForm.playerId) {
-          axios.get(`/api/admin/players/info/${this.dataForm.playerId}`)
+          axios.get(`/api/v1/player/displayone`,{
+            params: {
+              playerid: this.dataForm.playerId
+            }
+          })
               .then(({ data }) => {
-                if (data && data.code === 0) {
-                  this.dataForm.playerName = data.players.playerName;
-                  this.dataForm.birthday = data.players.birthday;
-                  this.dataForm.teamId = data.players.teamId;
-                  this.dataForm.role = data.players.role;
-                  this.dataForm.usedFoot = data.players.usedFoot;
-                  this.dataForm.healthState = data.players.healthState;
-                  this.dataForm.rank = data.players.rank;
-                  this.dataForm.gameState = data.players.gameState;
-                  this.dataForm.transState = data.players.transState;
-                  this.dataForm.isShow = data.players.isShow;
+                if (data[0]) {
+                  this.dataForm.playerId = data[0].PLAYER_ID;
+                  this.dataForm.playerName = data[0].PLAYER_NAME;
+                  this.dataForm.birthday = data[0].BIRTHDAY;
+                  this.dataForm.teamId = data[0].TEAM_ID;
+                  this.dataForm.role = data[0].ROLE;
+                  this.dataForm.usedFoot = data[0].USED_FOOT;
+                  this.dataForm.healthState = data[0].HEALTH_STATE;
+                  this.dataForm.rank = data[0].RANK;
+                  this.dataForm.gameState = data[0].GAME_STATE;
+                  this.dataForm.transState = data[0].TRANS_STATE;
+                  this.dataForm.isShow = data[0].IS_SHOW
+                  ;
                 }
               });
         }
@@ -125,20 +131,25 @@ export default {
     dataFormSubmit() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          axios.post(`/api/admin/players/${!this.dataForm.playerId ? 'save' : 'update'}`, {
-            playerId: this.dataForm.playerId || undefined,
-            playerName: this.dataForm.playerName,
+          const isUpdate = !!this.dataForm.playerId;
+          const url = `/api/v1/player/${isUpdate ? `update?playerId=${this.dataForm.playerId}` : 'add'}`;
+          const payload = {
+            player_name: this.dataForm.playerName,
             birthday: this.dataForm.birthday,
-            teamId: this.dataForm.teamId,
-            role: this.dataForm.role,
-            usedFoot: this.dataForm.usedFoot,
-            healthState: this.dataForm.healthState,
-            rank: this.dataForm.rank,
-            gameState: this.dataForm.gameState,
-            transState: this.dataForm.transState,
-            isShow: this.dataForm.isShow
-          }).then(({ data }) => {
-            if (data && data.code === 0) {
+            team_id: Number(this.dataForm.teamId),
+            role: String(this.dataForm.role),
+            used_foot: Number(this.dataForm.usedFoot),
+            health_state: Number(this.dataForm.healthState),
+            rank: Number(this.dataForm.rank),
+            game_state: Number(this.dataForm.gameState),
+            trans_state: Number(this.dataForm.transState),
+            is_show: Number(this.dataForm.isShow)
+          };
+          axios.post(url, payload, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }).then(() => {
               this.$message({
                 message: '操作成功',
                 type: 'success',
@@ -148,9 +159,7 @@ export default {
                   this.$emit('refreshDataList');
                 }
               });
-            } else {
-              this.$message.error(data.msg);
-            }
+
           });
         }
       });
