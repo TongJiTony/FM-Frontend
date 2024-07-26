@@ -15,32 +15,22 @@
       <el-table-column
         prop="PLAYER_ID"
         label="Player ID"
-        width="150">
+        width="300">
       </el-table-column>
       <el-table-column
         prop="PLAYER_NAME"
         label="Player Name"
-        width="150">
-      </el-table-column>
-      <el-table-column
-        prop="BIRTHDAY"
-        label="Birthday"
-        width="150">
+        width="300">
       </el-table-column>
       <el-table-column
         prop="ROLE"
         label="Role"
-        width="150">
-      </el-table-column>
-      <el-table-column
-        prop="USED_FOOT"
-        label="Used Foot"
-        width="150">
+        width="300">
       </el-table-column>
       <el-table-column
         prop="HEALTH_STATE"
         label="Health State"
-        width="150">
+        width="300">
       </el-table-column>
       <el-table-column
         label="Actions"

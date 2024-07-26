@@ -20,21 +20,21 @@
             :data = "lineupData"
             stripe
             style = "width: 100%">
-            <el-table-column type="index" width="50" />
+            <el-table-column type="index" width="100" />
             <el-table-column
               prop="TEAM_NAME"
               label="球队"
-              :width="180">
+              :width="300">
             </el-table-column>
             <el-table-column
               prop="LINEUP_ID"
               label="阵容ID"
-              :width="180">
+              :width="400">
             </el-table-column>
             <el-table-column
               prop="NOTE"
               label="备注"
-              :width="180">
+              :width="320">
             </el-table-column>
             <el-table-column
               :width="250"
@@ -44,31 +44,27 @@
               </template>
               <template slot-scope="scope">
                 <el-button size="small" @click="handleDetails(scope.row)">详情</el-button>
-                <el-button size = "small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                <el-button size = "small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑备注</el-button>
                 <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
               </template>
             </el-table-column>
             </el-table>
           </el-main>
         </el-container>
-        <!-- notes -->
-        <!-- <div class="note-box">
-          NOTE: {{ lineup[activeItem - 1].NOTE }}
-        </div> -->
 
         <!-- 修改对话框 -->
         <el-dialog title="修改阵容" :visible.sync="editDialogVisible">
           <el-form :model="editForm">
-            <el-form-item label="阵容ID">
+            <!-- <el-form-item label="阵容ID">
               <el-input v-model="editForm.LINEUP_ID" :placeholder = "editLINEUP_ID"></el-input>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="备注">
               <el-input v-model="editForm.NOTE"></el-input>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="editDialogVisible = false">Cancel</el-button>
-            <el-button type="primary" @click="saveEdit">Confirm</el-button>
+            <el-button @click="editDialogVisible = false">取消</el-button>
+            <el-button type="primary" @click="saveEdit">确认</el-button>
           </div>
         </el-dialog>
         
@@ -77,9 +73,6 @@
           <el-form :model="addForm">
             <el-row>
               <el-col :span="7" class = "input-col">
-                <!-- <el-form-item label="阵容ID">
-                  <el-input v-model="addForm.LINEUP_ID" placeholder=""></el-input>
-                </el-form-item> -->
                 <el-form-item label="球队ID">
                   <el-input v-model="addForm.TEAM_ID"></el-input>
                 </el-form-item>
@@ -131,8 +124,8 @@
             </el-row> -->
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="addDialogVisible = false">Cancel</el-button>
-            <el-button type="primary" @click="saveAdd">Confirm</el-button>
+            <el-button @click="addDialogVisible = false">取消</el-button>
+            <el-button type="primary" @click="saveAdd">确认</el-button>
           </div>
         </el-dialog>
       </el-container>
@@ -140,7 +133,7 @@
   </div>
 </template>
 
-   
+
 <script>
 import axios from 'axios'
 
@@ -152,55 +145,26 @@ export default {
       lineupData:[],
       editDialogVisible: false,
       editForm: {
-        LINEUP_ID: '',
         NOTE: '',
       },
-      editLINEUP_ID: '',
       editIndex: -1,
-      testData: { //////////
-        LINEUP_ID: '100001',
-        NOTE: "样例阵容23",
-      },
       addForm: {
         NOTE: '',
-        TEAM_ID: '',
-        PLAYER1_ID: '',
-        PLAYER2_ID: '',
-        PLAYER3_ID: '',
-        PLAYER4_ID: '',
-        PLAYER5_ID: '',
-        PLAYER6_ID: '',
-        PLAYER7_ID: '',
-        PLAYER8_ID: '',
-        PLAYER9_ID: '',
-        PLAYER10_ID: '',
-        PLAYER11_ID: ''
+        TEAM_ID: 0,
+        PLAYER1_ID: 0,
+        PLAYER2_ID: 0,
+        PLAYER3_ID: 0,
+        PLAYER4_ID: 0,
+        PLAYER5_ID: 0,
+        PLAYER6_ID: 0,
+        PLAYER7_ID: 0,
+        PLAYER8_ID: 0,
+        PLAYER9_ID: 0,
+        PLAYER10_ID: 0,
+        PLAYER11_ID: 0
       },
       addDialogVisible: false,
-      testAddForm: {
-        NOTE: "样例阵容23",
-        TEAM_ID: "111111111",
-        PLAYER1_ID: "100001",
-        PLAYER2_ID: "100002",
-        PLAYER3_ID: "100003",
-        PLAYER4_ID: "100004",
-        PLAYER5_ID: "100005",
-        PLAYER6_ID: "100006",
-        PLAYER7_ID: "100007",
-        PLAYER8_ID: "100008",
-        PLAYER9_ID: "100009",
-        PLAYER10_ID: "100010",
-        PLAYER11_ID: "100011"
-      },
     };
-  },
-  watch: {
-    editDialogVisible(val) { //当编辑对话框关闭时，清空表单
-      if (!val) {
-        this.editForm.LINEUP_ID = '';
-        this.editForm.NOTE = '';
-      }
-    }
   },
   created() {
     this.fetchLineups();
@@ -223,24 +187,36 @@ export default {
       this.addDialogVisible = true;
     },
     saveAdd() {
-      //console.log("addForm:", this.addForm);
-      console.log("testaddForm:", this.testAddForm); 
-      axios.post('/api/v1/lineup/add', this.testAddForm)
-        .then(response => {
-          if (response.status === 201) {
-            this.$message({
-              message: '添加成功',
-              type: 'success',
-            });
-            this.addDialogVisible = false;
-          } else {
-            this.$message.error('Failed to add lineup');
-          }
-        })
-        .catch(error => {
-          console.error('Error adding lineup:', error);
-          this.$message.error('Failed to add lineup');
-        });
+      console.log("addForm:", this.addForm);
+
+      axios.post('/api/v1/lineup/add', {
+        NOTE: this.addForm.NOTE,
+        TEAM_ID: Number(this.addForm.TEAM_ID),
+        PLAYER1_ID: Number(this.addForm.PLAYER1_ID),
+        PLAYER2_ID: Number(this.addForm.PLAYER2_ID),
+        PLAYER3_ID: Number(this.addForm.PLAYER3_ID),
+        PLAYER4_ID: Number(this.addForm.PLAYER4_ID),
+        PLAYER5_ID: Number(this.addForm.PLAYER5_ID),
+        PLAYER6_ID: Number(this.addForm.PLAYER6_ID),
+        PLAYER7_ID: Number(this.addForm.PLAYER7_ID),
+        PLAYER8_ID: Number(this.addForm.PLAYER8_ID),
+        PLAYER9_ID: Number(this.addForm.PLAYER9_ID),
+        PLAYER10_ID: Number(this.addForm.PLAYER10_ID),
+        PLAYER11_ID: Number(this.addForm.PLAYER11_ID)
+      })
+      .then(response => {
+         if (response.status === 201) {
+          this.$message({
+            message: '添加成功',
+            type: 'success',
+          });
+           this.addDialogVisible = false;
+        }
+      })
+      .catch(error => {
+        console.error('Error adding lineup:', error);
+        this.$message.error('添加失败');
+      });
     },
     goback() {
       window.sessionStorage.clear();
@@ -251,38 +227,69 @@ export default {
       this.$router.push(`/lineup/${row.LINEUP_ID}`);
     },
     handleDelete(index, row) {
-      console.log(index, row);
-
+      this.$confirm('确定删除该行数据吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        axios.delete(`/api/v1/lineup/delete?lineupid=${row.LINEUP_ID}`)
+          .then(response => {
+            if (response.status === 204) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+              this.lineupData.splice(index, 1);
+            }
+          })
+          .catch(error => {
+            console.error('Error deleting lineup:', error);
+            this.$message({
+              type: 'error',
+              message: '删除失败!'
+            });
+          });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     },
     handleEdit(index, row) {
-      console.log(index);
-      this.editLINEUP_ID = row.LINEUP_ID;
-      
-      //this.editForm = { ...row };   // to be editted
+      //console.log(index);
+      this.editForm = { ...row };
       this.editIndex = index;
       this.editDialogVisible = true;
     },
     saveEdit() {
       if (this.editIndex !== -1) {
-        console.log("editForm", this.editForm);
-        
-        axios.post(`/api/v1/lineup/update?lineupid=${this.editForm.LINEUP_ID}`, this.editForm)
+        //console.log("editForm", this.editForm);
+        // 使用Object.keys和filter方法删除TEAM_NAME属性，并将LINEUP_ID转换为字符串
+        const formData = Object.keys(this.editForm).filter(key => key !== 'TEAM_NAME').reduce((obj, key) => {
+          if (key === 'LINEUP_ID') {
+            obj[key] = this.editForm[key].toString();
+          } else {
+            obj[key] = this.editForm[key];
+          }
+          return obj;
+        }, {});
+        console.log("formData: ", formData);
+
+        axios.post(`/api/v1/lineup/update?lineupid=${this.editForm.LINEUP_ID}`, formData)
         .then(response => {
           if (response.status === 204) {
             this.$message({
               message: '修改成功',
               type: 'success',
             });
-          } else {
-            this.$message.error('Failed to update lineup');
           }
         })
         .catch(error => {
           this.$message.error('Failed to update lineup', error);
         });
         
-        //this.$set(this.lineupData, this.editIndex, { ...this.editForm });
-        this.fetchLineups();
+        this.$set(this.lineupData, this.editIndex, { ...this.editForm });
         this.editIndex = -1;
         this.editDialogVisible = false;
       }

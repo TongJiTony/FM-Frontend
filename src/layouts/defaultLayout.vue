@@ -14,6 +14,7 @@
         <el-menu-item index="/test">Test</el-menu-item>
         <el-menu-item index="/team">Team</el-menu-item>
         <el-menu-item index="/player-list">Player List</el-menu-item>
+        <el-menu-item index="/lineup">Lineup</el-menu-item>
         <el-submenu>
           <template slot="title">
             <i class="el-icon-setting"></i>
