@@ -49,7 +49,7 @@
             <el-col :span="12">
               <p>
                 <strong>比赛状态:</strong>
-                <el-tag :type="player[0].GAME_STATE === 1 ? 'success' : 'danger'">{{ player[0].GAME_STATE === 1 ? '允许出场' : '禁赛' }}</el-tag>
+                <el-tag :type="player[0].GAME_STATE === 1 ? 'danger' : 'success'">{{ player[0].GAME_STATE === 1 ? '禁赛' : '允许出场' }}</el-tag>
               </p>
             </el-col>
             <el-col :span="12">
