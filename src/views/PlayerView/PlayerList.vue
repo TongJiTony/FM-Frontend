@@ -165,12 +165,12 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="等级" :label-width="formLabelWidth">
-          <el-input-number v-model="editForm.RANK" :min="0" :max="100" label="等级"></el-input-number>
+          <el-input-number v-model="addForm.RANK" :min="0" :max="100" label="等级"></el-input-number>
         </el-form-item>
         <el-form-item label="场上状态" :label-width="formLabelWidth" prop="GAME_STATE">
           <el-radio-group v-model="addForm.GAME_STATE">
-            <el-radio :label="0">首发</el-radio>
-            <el-radio :label="1">替补</el-radio>
+            <el-radio :label="0">允许出场</el-radio>
+            <el-radio :label="1">禁赛</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="转会状态" :label-width="formLabelWidth" prop="TRANS_STATE">
@@ -383,17 +383,18 @@ export default {
         if (valid) {
 
           // Construct the JSON object as per server's expectations
+          // Convert to number
           const newPlayerData = {
             PLAYER_NAME: this.addForm.PLAYER_NAME,
             BIRTHDAY: this.addForm.BIRTHDAY,
-            TEAM_ID: Number(this.addForm.TEAM_ID),  // Convert to number
+            TEAM_ID: Number(this.addForm.TEAM_ID), 
             ROLE: this.addForm.ROLE,
-            USED_FOOT: Number(this.addForm.USED_FOOT), // Convert to number
-            HEALTH_STATE: Number(this.addForm.HEALTH_STATE), // Convert to number
-            RANK: Number(this.addForm.RANK), // Convert to number
-            GAME_STATE: Number(this.addForm.GAME_STATE), // Convert to number
-            TRANS_STATE: Number(this.addForm.TRANS_STATE), // Convert to number
-            IS_SHOW: Number(this.addForm.IS_SHOW) // Convert to number
+            USED_FOOT: Number(this.addForm.USED_FOOT), 
+            HEALTH_STATE: Number(this.addForm.HEALTH_STATE),
+            RANK: Number(this.addForm.RANK), 
+            GAME_STATE: Number(this.addForm.GAME_STATE), 
+            TRANS_STATE: Number(this.addForm.TRANS_STATE), 
+            IS_SHOW: Number(this.addForm.IS_SHOW) 
           };
 
           // Use the correct API endpoint

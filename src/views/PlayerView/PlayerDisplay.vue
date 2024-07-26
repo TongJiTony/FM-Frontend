@@ -1,6 +1,16 @@
 <template>
   <div class="player-display">
     <el-card shadow="always">
+      <!-- Back Button -->
+      <el-button
+        type="primary"
+        icon="el-icon-arrow-left"
+        @click="goBack"
+        class="back-button"
+      >
+        返回
+      </el-button>
+      
       <el-row :gutter="20">
         <el-col :span="6">
           <div class="player-image">
@@ -83,6 +93,7 @@
   </div>
 </template>
 
+
 <script>
 import axios from 'axios';
 
@@ -110,14 +121,26 @@ export default {
           console.error('Failed to fetch player data:', error);
           this.loading = false;
         });
+    },
+    goBack() {
+      this.$router.go(-1); // Navigate to the previous page
     }
   }
 };
 </script>
 
+
 <style scoped>
 .player-display {
   padding: 1rem;
+}
+
+.back-button {
+  margin-bottom: 1rem;
+  background-color: #409eff;
+  border-color: #409eff;
+  color: #fff;
+  margin-left: 10px;
 }
 
 .player-image {
