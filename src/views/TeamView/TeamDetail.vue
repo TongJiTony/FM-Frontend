@@ -49,6 +49,23 @@
             </el-container>
           </el-tab-pane>
           <el-tab-pane label="财务记录">
+            <el-container>
+              <el-main>
+                <el-input v-model="search" placeholder="输入球员姓名搜索" clearable>
+                <i slot="prefix" class="el-input__icon el-icon-search"></i>
+                </el-input>
+                <el-table :data="record.filter(data => !search || data.RECORD_ID.includes(search))" style="width: 100%">
+                  <el-table-column prop="RECORD_ID" label="财务记录ID" width="150">
+                  </el-table-column>
+                  <el-table-column prop="DESCRIPTION" label="交易描述" width="150">
+                  </el-table-column>
+                  <el-table-column prop="TRANSACTION_DATE" label="交易日期" width="200">
+                  </el-table-column>
+                  <el-table-column prop="AMOUNT" label="金额" width="150">
+                  </el-table-column>            
+                </el-table>
+              </el-main>    
+            </el-container>
           </el-tab-pane>
           <el-tab-pane label="阵容信息">
   <el-container>
@@ -150,31 +167,7 @@
       </el-table>
     </el-main>
   </el-container>
-
-  <el-drawer
-    title="我是标题"
-    :visible.sync="drawer"
-    :with-header="false"
-    custom-class="e1-drawer"
-  >
-    <div v-if="player1">
-      <p><strong>ID:</strong> {{ player1[0].PLAYER_ID }}</p>
-      <p><strong>Name:</strong> {{ player1[0].PLAYER_NAME }}</p>
-      <p><strong>Birthday:</strong> {{ player1[0].BIRTHDAY }}</p>
-      <p><strong>Team ID:</strong> {{ player1[0].TEAM_ID }}</p>
-      <p><strong>Role:</strong> {{ player1[0].ROLE }}</p>
-      <p><strong>Used Foot:</strong> {{ player1[0].USED_FOOT }}</p>
-      <p><strong>Health State:</strong> {{ player1[0].HEALTH_STATE }}</p>
-      <p><strong>Rank:</strong> {{ player1[0].RANK }}</p>
-      <p><strong>Game State:</strong> {{ player1[0].GAME_STATE }}</p>
-      <p><strong>Transfer State:</strong> {{ player1[0].TRANS_STATE }}</p>
-      <p><strong>Is Show:</strong> {{ player1[0].IS_SHOW }}</p>
-    </div>
-    <div v-else>
-      <p>No player data available.</p>
-    </div>
-  </el-drawer>
-</el-tab-pane>
+          </el-tab-pane>
 
 
            <el-tab-pane label="比赛信息">
@@ -250,6 +243,7 @@
         loading:true,
         team: null,
         player: [],
+        record:[],
         lineup: [],
         match: [],
         medical:[],
@@ -330,7 +324,16 @@
           console.error('Failed to fetch medical data:',error);
           this.loading = false;
         })
-      
+        axios.get(`/api/v1/record/getbyTeam/${teamID}`)
+          .then(response => {
+            console.log('Received data:', response.data);
+            this.record = response.data;
+            this.loading = false;
+        })
+        .catch(error => {
+          console.error('Failed to fetch record data:',error);
+          this.loading = false;
+        })
       }
     },
     
