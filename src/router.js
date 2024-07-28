@@ -45,14 +45,9 @@ const router = new Router({
           component: () => import("@/views/PlayerView/PlayerDisplay.vue"),
         },
         {
-          path: "editinfo",
-          name: "Editinfo",
-          component: () => import("@/views/UserSetting/UserInfoEditPage.vue"),
-        },
-        {
           path: "changepsw",
           name: "Changepsw",
-          component: () => import("@/views/UserSetting/ChangePasw.vue"),
+          component: () => import("@/views/UserSetting/ChangePassword.vue"),
         },
         {
           path: "userInfo",
@@ -116,6 +111,8 @@ const router = new Router({
     },
   ],
 });
+
+
 
 // 导航守卫
 /*
