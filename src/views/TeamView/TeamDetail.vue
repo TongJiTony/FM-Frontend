@@ -8,14 +8,43 @@
           <el-tab-pane label="球队简介">
             <el-container>
               <el-main>
-                <el-descriptions direction="vertical" :column="2" border>
-                  <el-descriptions-item label="球队ID" >{{team[0].TEAM_ID}}</el-descriptions-item>                            
-                  <el-descriptions-item label="球队名称" >{{team[0].TEAM_NAME}}</el-descriptions-item>
-                  <el-descriptions-item label="成立时间">{{team[0].ESTABLISHED_DATE}}</el-descriptions-item>
-                  <el-descriptions-item label="主教练">{{team[0].HEAD_COACH}}</el-descriptions-item>
-                  <el-descriptions-item label="城市">{{team[0].CITY}}</el-descriptions-item>
-                 
-                </el-descriptions>
+                <el-row :gutter="10">
+                  <el-col :span="6">
+                    <div class="team-image">
+                      <img src="https://img.51miz.com/Element/00/91/85/34/422e1064_E918534_f98a4621.png" alt="Team Image" />
+                    </div>
+                  </el-col>
+                  <h2 style="font-size: 24px;">{{ team[0].TEAM_NAME }}</h2>
+                  <el-col :span="18" class="team-info">
+                   
+                    <el-row :gutter="12">
+                      <el-col :span="12">
+                      <p>
+                        <strong>队伍编号:</strong>
+                        <el-tag>{{ team[0].TEAM_ID }}</el-tag>
+                      </p>
+                      </el-col>
+                      <el-col :span="12">
+                      <p>
+                        <strong>主教练:</strong>
+                        <el-tag>{{ team[0].HEAD_COACH }}</el-tag>
+                      </p>
+                      </el-col>
+                      <el-col :span="12">
+                      <p>
+                        <strong>成立时间:</strong>
+                        <el-tag>{{ team[0].ESTABLISHED_DATE }}</el-tag>
+                      </p>
+                      </el-col>
+                      <el-col :span="12">
+                      <p>
+                        <strong>城市:</strong>
+                        <el-tag>{{ team[0].CITY }}</el-tag>
+                      </p>
+                      </el-col>
+                    </el-row>
+                  </el-col>
+                </el-row>
               </el-main>    
             </el-container>
           </el-tab-pane>
@@ -350,6 +379,34 @@
   }
   .el-drawer {
   transition: all 0.5s ease !important;
+}
+.team-image {
+  width: 66%;
+  height: 190px;
+  background-color: #f2f2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.team-image img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.team-info {
+  display: flex;
+  flex-wrap: wrap;
+  height:100px;
+}
+.team-info p strong{
+  margin-right:1rem;
+  font-size: 18px;
+}
+.el-tag {
+  margin-left: 1rem;
 }
 
   </style>
