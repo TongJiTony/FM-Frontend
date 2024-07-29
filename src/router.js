@@ -45,13 +45,13 @@ const router = new Router({
           component: () => import("@/views/PlayerView/PlayerDisplay.vue"),
         },
         {
-          path: "/lineup",
+          path: "/lineup/:teamID?",
           name: "lineup",
           component: () => import("@/views/LineupView/LineupView.vue"),
         },
         {
-          path: "/lineup/:lineupId",
-          name: "LineupDetail",
+          path: "/lineupDetail/:lineupId",
+          name: "lineupDetail",
           component: () => import("@/views/LineupView/LineupDetail.vue"),
         },
         {

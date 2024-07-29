@@ -11,13 +11,12 @@
             <el-button type="info" @click="goback" class = "goback_button">返回上级页面</el-button>
           </div>
         </el-header>
-        <!-- 侧栏 -->
-         
-        <!-- 页面主体区 -->
+        
+        <!-- 页面主体 -->
         <el-container>
           <el-main>
             <el-table
-            :data = "lineupData"
+            :data = "filteredLineupData"
             stripe
             style = "width: 100%">
             <el-table-column type="index" width="100" />
@@ -29,7 +28,7 @@
             <el-table-column
               prop="LINEUP_ID"
               label="阵容ID"
-              :width="400">
+              :width="350">
             </el-table-column>
             <el-table-column
               prop="NOTE"
@@ -37,10 +36,23 @@
               :width="320">
             </el-table-column>
             <el-table-column
-              :width="250"
+              :width="300"
               align="right">
               <template #header>
-                <el-input size="small" placeholder="Type to search" />
+                <div class='el-input-group'>
+                  <el-select v-model="selectedColumn" placeholder="选择列" style="width:45%" size="small">
+                    <el-option
+                      v-for="column in columns"
+                      :key="column.prop"
+                      :label="column.label"
+                      :value="column.prop">
+                    </el-option>
+                  </el-select>
+                  <el-input
+                    placeholder="输入关键字搜索"
+                    v-model="searchQuery"
+                  />
+                </div>
               </template>
               <template slot-scope="scope">
                 <el-button size="small" @click="handleDetails(scope.row)">详情</el-button>
@@ -52,12 +64,9 @@
           </el-main>
         </el-container>
 
-        <!-- 修改对话框 -->
+        <!-- edit note dialog -->
         <el-dialog title="修改阵容" :visible.sync="editDialogVisible">
           <el-form :model="editForm">
-            <!-- <el-form-item label="阵容ID">
-              <el-input v-model="editForm.LINEUP_ID" :placeholder = "editLINEUP_ID"></el-input>
-            </el-form-item> -->
             <el-form-item label="备注">
               <el-input v-model="editForm.NOTE"></el-input>
             </el-form-item>
@@ -67,67 +76,40 @@
             <el-button type="primary" @click="saveEdit">确认</el-button>
           </div>
         </el-dialog>
-        
-        <!-- 添加对话框 -->
-        <el-dialog title="增加阵容" :visible.sync="addDialogVisible" width = 800px>
-          <el-form :model="addForm">
-            <el-row>
-              <el-col :span="7" class = "input-col">
-                <el-form-item label="球队ID">
-                  <el-input v-model="addForm.TEAM_ID"></el-input>
-                </el-form-item>
-                <el-form-item label="球员1 ID">
-                  <el-input v-model="addForm.PLAYER1_ID"></el-input>
-                </el-form-item>
-                <el-form-item label="球员4 ID">
-                  <el-input v-model="addForm.PLAYER4_ID"></el-input>
-                </el-form-item>
-                <el-form-item label="球员7 ID">
-                  <el-input v-model="addForm.PLAYER7_ID"></el-input>
-                </el-form-item>
-                <el-form-item label="球员10 ID">
-                  <el-input v-model="addForm.PLAYER10_ID"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="7" class = "input-col">
-                <el-form-item label="备注">
-                  <el-input v-model="addForm.NOTE"></el-input>
-                </el-form-item>
-                <el-form-item label="球员2 ID">
-                  <el-input v-model="addForm.PLAYER2_ID"></el-input>
-                </el-form-item>
-                <el-form-item label="球员5 ID">
-                  <el-input v-model="addForm.PLAYER5_ID"></el-input>
-                </el-form-item>
-                <el-form-item label="球员8 ID">
-                  <el-input v-model="addForm.PLAYER8_ID"></el-input>
-                </el-form-item>
-                <el-form-item label="球员11 ID">
-                  <el-input v-model="addForm.PLAYER11_ID"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="7" class = "input-col">
-                <el-form-item label="球员3 ID">
-                  <el-input v-model="addForm.PLAYER3_ID"></el-input>
-                </el-form-item>
-                <el-form-item label="球员6 ID">
-                  <el-input v-model="addForm.PLAYER6_ID"></el-input>
-                </el-form-item>
-                <el-form-item label="球员9 ID">
-                  <el-input v-model="addForm.PLAYER9_ID"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <!-- <el-row>
-              <el-col :span="8">
-              </el-col>
-            </el-row> -->
-          </el-form>
-          <div slot="footer" class="dialog-footer">
+
+        <!-- add lineup dialog -->
+        <el-dialog title="增加阵容" :visible.sync="addDialogVisible" width = 1000px>
+          <el-card class="add-teamID-card" @click.native="openAddDrawer_teamID()">
+            <div v-if="addForm.TEAM_ID">
+              <p>球队 ID:  {{ addForm.TEAM_ID }}</p>
+              <!-- <p>球队名:  {{ get_TEAM_NAME(addForm.TEAM_ID) }}</p> -->
+            </div>
+            <div v-else>
+              <p>点击确定一个球队</p>
+            </div>
+          </el-card>
+
+          <div slot="footer">
             <el-button @click="addDialogVisible = false">取消</el-button>
             <el-button type="primary" @click="saveAdd">确认</el-button>
           </div>
         </el-dialog>
+
+        <!-- add lineup drawer --select teamID -->
+        <el-drawer
+          title="选择一个球队"
+          :visible.sync="addDrawerVisible_teamID"
+          direction="rtl"
+          size="30%">
+          <el-row :gutter="20">
+            <el-col :span="24" v-for="team in teams" :key="team.TEAM_ID">
+              <el-card @click.native="selectTeam(team)" style="cursor: pointer;">
+                <p>{{ team.TEAM_NAME }}</p>
+              </el-card>
+            </el-col>
+          </el-row>
+        </el-drawer>
+        
       </el-container>
     </div>
   </div>
@@ -143,11 +125,22 @@ export default {
     return {
       loading: true,
       lineupData:[],
+      teamID: this.$route.params.teamID, //路由参数
+      // search
+      searchQuery: '',
+      selectedColumn: '',
+      columns: [
+        { prop: 'TEAM_NAME', label: '球队' },
+        { prop: 'LINEUP_ID', label: '阵容ID' },
+        { prop: 'NOTE', label: '备注' },
+      ],
+      // edit
       editDialogVisible: false,
       editForm: {
         NOTE: '',
       },
       editIndex: -1,
+      // add
       addForm: {
         NOTE: '',
         TEAM_ID: 0,
@@ -161,19 +154,38 @@ export default {
         PLAYER8_ID: 0,
         PLAYER9_ID: 0,
         PLAYER10_ID: 0,
-        PLAYER11_ID: 0
+        PLAYER11_ID: 0,
       },
       addDialogVisible: false,
+      addDrawerVisible_teamID: false,
+      teams: [],
     };
   },
   created() {
     this.fetchLineups();
+    this.selectedColumn = this.columns[0].prop;
+    this.addForm.TEAM_ID = this.teamID;
   },
-
+  computed: {
+    filteredLineupData() {
+      if (!this.selectedColumn) {
+        return this.lineupData;
+      }
+      return this.lineupData.filter(item => {
+        return String(item[this.selectedColumn]).toLowerCase().includes(this.searchQuery.toLowerCase());
+      });
+    }
+  },
   methods: {
     fetchLineups() {
       this.loading = true;
-      axios.get('/api/v1/lineup/displayall')
+      //console.log("teamID: ", this.teamID);
+
+      let apiUrl = '/api/v1/lineup/displayall';
+      if (this.teamID) {
+        apiUrl = `/api/v1/lineup/displayall?teamid=${this.teamID}`;
+      }
+      axios.get(apiUrl)
         .then((response) => {
           this.lineupData = response.data;
           this.loading = false;
@@ -183,12 +195,36 @@ export default {
           this.loading = false;
         });
     },
+    // Add new lineup
     handleAdd() {
       this.addDialogVisible = true;
+      //console.log("test: ", this.teamID);
     },
+    openAddDrawer_teamID() {
+      if (!this.teamID) {
+        this.addDrawerVisible_teamID = true;
+        this.fetchTeams();
+      }
+    },
+    fetchTeams() {
+      // 这里使用了伪代码来表示API调用，实际应根据API具体情况进行调整
+      axios.get('/api/v1/team/displayall')
+        .then(response => {
+          this.teams = response.data;
+        })
+        .catch(error => {
+          console.error('Error fetching teams:', error);
+        });
+    },
+    selectTeam(team) {
+      console.log("selected team: ", team);
+      this.addForm.TEAM_ID = team.TEAM_ID;
+      this.addDrawerVisible_teamID = false;
+    },
+    ///////////////////////////
+    ///////////////////////////
     saveAdd() {
       console.log("addForm:", this.addForm);
-
       axios.post('/api/v1/lineup/add', {
         NOTE: this.addForm.NOTE,
         TEAM_ID: Number(this.addForm.TEAM_ID),
@@ -223,8 +259,8 @@ export default {
       this.$router.go(-1);
     },
     handleDetails(row) {
-      console.log("target: ", `/lineup/${row.LINEUP_ID}`);
-      this.$router.push(`/lineup/${row.LINEUP_ID}`);
+      console.log("target: ", `/lineupDetail/${row.LINEUP_ID}`);
+      this.$router.push(`/lineupDetail/${row.LINEUP_ID}`);
     },
     handleDelete(index, row) {
       this.$confirm('确定删除该行数据吗?', '提示', {
@@ -264,7 +300,6 @@ export default {
     },
     saveEdit() {
       if (this.editIndex !== -1) {
-        //console.log("editForm", this.editForm);
         // 使用Object.keys和filter方法删除TEAM_NAME属性，并将LINEUP_ID转换为字符串
         const formData = Object.keys(this.editForm).filter(key => key !== 'TEAM_NAME').reduce((obj, key) => {
           if (key === 'LINEUP_ID') {
@@ -274,7 +309,7 @@ export default {
           }
           return obj;
         }, {});
-        console.log("formData: ", formData);
+        //console.log("formData: ", formData);
 
         axios.post(`/api/v1/lineup/update?lineupid=${this.editForm.LINEUP_ID}`, formData)
         .then(response => {
@@ -286,7 +321,7 @@ export default {
           }
         })
         .catch(error => {
-          this.$message.error('Failed to update lineup', error);
+          this.$message.error('修改失败', error);
         });
         
         this.$set(this.lineupData, this.editIndex, { ...this.editForm });
@@ -294,16 +329,36 @@ export default {
         this.editDialogVisible = false;
       }
     },
-  },
+    // assist
+    get_TEAM_NAME(team_id) {
+      console.log("team_id: ", team_id);
+      axios.get(`/apiv1/team/displayone?Teamid=${team_id}`)
+        .then(response => {
+          const teamData = response.data;
+          console.log("teamData: ", teamData);
+          return teamData.TEAM_NAME;
+        })
+        .catch(error => {
+          console.error('Error fetching team data:', error);
+          return '';
+        });
+    },
+  }
 };
 </script>
-
 
 
 <style scoped>
   .home-container{
     height: 100%;
    }
+  .add-teamID-card {
+    width: 300px; /* 调整宽度 */
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+  }
   .el-header{
     background-color: #373D41;
     display: flex;
@@ -317,16 +372,9 @@ export default {
     display: flex;
     justify-content: flex-end;
   }
-  .note-box {
-    width: 100%;
-    height: 50px; /* 设置展示框的高度 */
-    background-color: #f0f0f0; /* 设置展示框的背景颜色 */
-    text-align: center; /* 居中对齐内容 */
-    line-height: 50px; /* 设置行高，使内容垂直居中 */
-    text-indent: -900px;
-    /* padding-left: 200px; */
-  }
-  .input-col {
-    margin-right: 20px;
-  }
+  .el-input-group {
+  display: flex;
+  align-items: center;
+}
+
 </style>
