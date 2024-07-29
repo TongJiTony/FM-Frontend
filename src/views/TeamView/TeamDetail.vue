@@ -4,11 +4,13 @@
     <p v-if="loading">Loading team data...</p>
     <div v-else>
       <div v-if="team">
-        <el-tabs :tab-position="tabPosition" style=" height: 500px;">
-          <el-tab-pane label="球队简介">
-            <el-container>
-              <el-main>
-                <el-row :gutter="10">
+                <el-row gutter="20">
+                   <el-col :span="24">
+                <el-card shadow="always" class="box-card">
+                  <div slot="header" class="clearfix">
+                    <span style="font-size: 20px;">球队简介</span>
+                  </div>
+                   <el-row :gutter="10">
                   <el-col :span="6">
                     <div class="team-image">
                       <img src="https://img.51miz.com/Element/00/91/85/34/422e1064_E918534_f98a4621.png" alt="Team Image" />
@@ -45,9 +47,27 @@
                     </el-row>
                   </el-col>
                 </el-row>
-              </el-main>    
-            </el-container>
-          </el-tab-pane>
+                </el-card>
+                </el-col>
+              </el-row>
+              <el-row >
+                <el-col :span="12">
+                    <el-card shadow="always" class="box-card">
+                  <div slot="header" class="clearfix">
+    <span style="font-size: 20px;">球员信息</span>
+  </div>
+  
+                    </el-card>
+
+                  </el-col>
+                  <el-col :span="12">
+                    <el-card shadow="always" class="box-card">
+                  <div slot="header" class="clearfix">
+    <span style="font-size: 20px;">财务记录</span>
+  </div>
+                    </el-card>
+                  </el-col>
+              </el-row>
           <el-tab-pane label="球员信息">
             <el-container>
               <el-main>
@@ -252,7 +272,6 @@
             </el-container>
           </el-tab-pane>
 
-        </el-tabs>   
       </div>
       <div v-else>
         <p>No team data available.</p>
@@ -408,5 +427,10 @@
 .el-tag {
   margin-left: 1rem;
 }
-
+.box-card {
+    width: 100%;
+  }
+  .card-header{
+  margin-left: 1rem;
+  }
   </style>
