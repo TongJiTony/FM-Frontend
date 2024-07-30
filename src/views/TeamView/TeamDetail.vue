@@ -8,7 +8,7 @@
                    <el-col :span="24">
                 <el-card shadow="never" class="box-card">
                   <div slot="header" class="clearfix">
-                    <span style="font-size: 20px;">球队简介</span>
+                    <span style="font-size: 20px;font-weight: bold;">球队简介</span>
                   </div>
                    <el-row :gutter="10">
                   <el-col :span="6">
@@ -17,8 +17,7 @@
                     </div>
                   </el-col>
                   <h2 style="font-size: 24px;">{{ team[0].TEAM_NAME }}</h2>
-                  <el-col :span="18" class="team-info">
-                   
+                  <el-col :span="18" class="team-info">                  
                     <el-row :gutter="12">
                       <el-col :span="12">
                       <p>
@@ -54,7 +53,7 @@
                 <el-col :span="12">
                   <el-card shadow="never" class="box-card">
                     <div slot="header" class="clearfix">
-                    <span style="font-size: 20px;">球员信息</span>
+                    <span style="font-size: 20px;font-weight: bold;">球员信息</span>
                     <el-container>
                       <el-main>   
                       <el-table :data="filteredPlayers" style="width: 100% height=200px" >
@@ -72,11 +71,11 @@
                       </el-table-column>
                       </el-table>
                         <el-pagination
-                        @size-change="handleSizeChange"
-                        @current-change="handleCurrentChange"
-                        :current-page.sync="currentPage"
+                        @size-change="handleSizeChange1"
+                        @current-change="handleCurrentChange1"
+                        :current-page.sync="currentPage1"
                         :page-sizes="[5,10]"
-                        :page-size="pageSize"
+                        :page-size="pageSize1"
                         layout="sizes, prev, pager, next, jumper"
                         :total="player.length"
                          ></el-pagination>
@@ -88,30 +87,30 @@
                 <el-col :span="12">
                   <el-card shadow="never" class="box-card">
                     <div slot="header" class="clearfix">
-                      <span style="font-size: 20px;">财务记录</span>
-            <el-container>
-              <el-main>         
-                <el-table :data="filteredRecords" style="width: 100% ">
-                  <el-table-column prop="RECORD_ID" label="财务记录ID" width="150" >
-                  </el-table-column>
-                  <el-table-column prop="DESCRIPTION" label="交易描述" width="150">
-                  </el-table-column>
-                  <el-table-column prop="TRANSACTION_DATE" label="交易日期" width="190">
-                  </el-table-column>
-                  <el-table-column prop="AMOUNT" label="金额">
-                  </el-table-column>            
-                </el-table>
-                <el-pagination
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page.sync="currentPage"
-                :page-sizes="[5,10]"
-                :page-size="pageSize"
-                layout="sizes, prev, pager, next, jumper"
-                :total="record.length"
-                ></el-pagination>
-              </el-main>    
-            </el-container>
+                      <span style="font-size: 20px;font-weight: bold;">财务记录</span>
+                        <el-container>
+                          <el-main>         
+                           <el-table :data="filteredRecords" style="width: 100% ">
+                            <el-table-column prop="RECORD_ID" label="财务记录ID" width="150" >
+                            </el-table-column>
+                            <el-table-column prop="DESCRIPTION" label="交易描述" width="150">
+                            </el-table-column>
+                            <el-table-column prop="TRANSACTION_DATE" label="交易日期" width="190">
+                            </el-table-column>
+                            <el-table-column prop="AMOUNT" label="金额">
+                            </el-table-column>            
+                          </el-table>
+                          <el-pagination
+                            @size-change="handleSizeChange2"
+                            @current-change="handleCurrentChange2"
+                            :current-page.sync="currentPage2"
+                            :page-sizes="[5,10]"
+                            :page-size="pageSize2"
+                            layout="sizes, prev, pager, next, jumper"
+                            :total="record.length"
+                          ></el-pagination>
+                          </el-main>    
+                        </el-container>
                     </div>
                   </el-card>
                 </el-col>
@@ -343,8 +342,10 @@
         medical:[],
         tabPosition: "left",
         search:'',
-        currentPage: 1, // 当前页码
-        pageSize: 5, // 每页显示条数
+        currentPage1: 1, // 当前页码
+        pageSize1: 5, // 每页显示条数
+        currentPage2: 1, // 当前页码
+        pageSize2: 5, // 每页显示条数
       };
     },
     created() {
@@ -355,19 +356,19 @@
     filteredPlayers() {
       const { player, search } = this;
       if (!search) {
-        return player.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize);
+        return player.slice((this.currentPage1 - 1) * this.pageSize1, this.currentPage1 * this.pageSize1);
       } else {
         const filtered = player.filter(data => data.PLAYER_NAME.includes(search));
-        return filtered.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize);
+        return filtered.slice((this.currentPage1 - 1) * this.pageSize1, this.currentPage1 * this.pageSize1);
       }
     },
     filteredRecords() {
       const { record, search } = this;
       if (!search) {
-        return record.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize);
+        return record.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
       } else {
         const filtered = record.filter(data => data.RECORD_ID.includes(search));
-        return filtered.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize);
+        return filtered.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
       }
     },
   },
@@ -378,14 +379,20 @@
       const route = `/player-display/${playerId}`;
       this.$router.push(route);
     },
-      handleSizeChange(val) {
-      this.pageSize = val;
-      this.currentPage = 1; // 每次改变每页条数时，重置当前页为第一页
+      handleSizeChange1(val) {
+      this.pageSize1 = val;
+      this.currentPage1 = 1; // 每次改变每页条数时，重置当前页为第一页
     },
-    handleCurrentChange(val) {
-      this.currentPage = val;
+    handleCurrentChange1(val) {
+      this.currentPage1 = val;
     },
-   
+    handleSizeChange2(val) {
+      this.pageSize2= val;
+      this.currentPage2 = 1; // 每次改变每页条数时，重置当前页为第一页
+    },
+    handleCurrentChange2(val) {
+      this.currentPage2 = val;
+    },
       fetchTeamDetail() {
         const teamID = this.$route.params.teamID;
         console.log('Fetching data for team ID:', teamID);
