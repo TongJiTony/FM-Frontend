@@ -6,7 +6,7 @@
       <div v-if="team">
                 <el-row gutter="20">
                    <el-col :span="24">
-                <el-card shadow="always" class="box-card">
+                <el-card shadow="never" class="box-card">
                   <div slot="header" class="clearfix">
                     <span style="font-size: 20px;">球队简介</span>
                   </div>
@@ -52,21 +52,69 @@
               </el-row>
               <el-row >
                 <el-col :span="12">
-                    <el-card shadow="always" class="box-card">
-                  <div slot="header" class="clearfix">
-    <span style="font-size: 20px;">球员信息</span>
-  </div>
-  
-                    </el-card>
-
-                  </el-col>
-                  <el-col :span="12">
-                    <el-card shadow="always" class="box-card">
-                  <div slot="header" class="clearfix">
-    <span style="font-size: 20px;">财务记录</span>
-  </div>
-                    </el-card>
-                  </el-col>
+                  <el-card shadow="never" class="box-card">
+                    <div slot="header" class="clearfix">
+                    <span style="font-size: 20px;">球员信息</span>
+                    <el-container>
+                      <el-main>   
+                      <el-table :data="filteredPlayers" style="width: 100% height=200px" >
+                      <el-table-column prop="PLAYER_ID" label="球员编号" width="150">
+                      </el-table-column>
+                      <el-table-column prop="PLAYER_NAME" label="球员姓名" width="150">
+                      </el-table-column>
+                      <el-table-column prop="ROLE" label="战术角色" width="150">
+                      </el-table-column>
+                      <el-table-column>
+                        <!-- eslint-disable-next-line -->           
+                        <template slot-scope="scope">
+                          <el-button @click="handlePlayerDetails(scope.row)" type="text" size="small">查看详情</el-button>
+                        </template>
+                      </el-table-column>
+                      </el-table>
+                        <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page.sync="currentPage"
+                        :page-sizes="[5,10]"
+                        :page-size="pageSize"
+                        layout="sizes, prev, pager, next, jumper"
+                        :total="player.length"
+                         ></el-pagination>
+                      </el-main>    
+                    </el-container>
+                    </div> 
+                  </el-card>
+                </el-col>
+                <el-col :span="12">
+                  <el-card shadow="never" class="box-card">
+                    <div slot="header" class="clearfix">
+                      <span style="font-size: 20px;">财务记录</span>
+            <el-container>
+              <el-main>         
+                <el-table :data="filteredRecords" style="width: 100% ">
+                  <el-table-column prop="RECORD_ID" label="财务记录ID" width="150" >
+                  </el-table-column>
+                  <el-table-column prop="DESCRIPTION" label="交易描述" width="150">
+                  </el-table-column>
+                  <el-table-column prop="TRANSACTION_DATE" label="交易日期" width="190">
+                  </el-table-column>
+                  <el-table-column prop="AMOUNT" label="金额">
+                  </el-table-column>            
+                </el-table>
+                <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page.sync="currentPage"
+                :page-sizes="[5,10]"
+                :page-size="pageSize"
+                layout="sizes, prev, pager, next, jumper"
+                :total="record.length"
+                ></el-pagination>
+              </el-main>    
+            </el-container>
+                    </div>
+                  </el-card>
+                </el-col>
               </el-row>
           <el-tab-pane label="球员信息">
             <el-container>
@@ -103,7 +151,7 @@
                 <el-input v-model="search" placeholder="输入球员姓名搜索" clearable>
                 <i slot="prefix" class="el-input__icon el-icon-search"></i>
                 </el-input>
-                <el-table :data="record.filter(data => !search || data.RECORD_ID.includes(search))" style="width: 100%">
+                <el-table :data="record" style="width: 100%">
                   <el-table-column prop="RECORD_ID" label="财务记录ID" width="150">
                   </el-table-column>
                   <el-table-column prop="DESCRIPTION" label="交易描述" width="150">
@@ -271,7 +319,6 @@
               </el-main>    
             </el-container>
           </el-tab-pane>
-
       </div>
       <div v-else>
         <p>No team data available.</p>
@@ -287,7 +334,6 @@
     data() {
       return {
         drawer: false,
-        player1:[],
         loading:true,
         team: null,
         player: [],
@@ -296,25 +342,50 @@
         match: [],
         medical:[],
         tabPosition: "left",
-        search:""
+        search:'',
+        currentPage: 1, // 当前页码
+        pageSize: 5, // 每页显示条数
       };
     },
     created() {
       this.fetchTeamDetail()
+  
     },
+    computed: {
+    filteredPlayers() {
+      const { player, search } = this;
+      if (!search) {
+        return player.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize);
+      } else {
+        const filtered = player.filter(data => data.PLAYER_NAME.includes(search));
+        return filtered.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize);
+      }
+    },
+    filteredRecords() {
+      const { record, search } = this;
+      if (!search) {
+        return record.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize);
+      } else {
+        const filtered = record.filter(data => data.RECORD_ID.includes(search));
+        return filtered.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize);
+      }
+    },
+  },
     methods: {
-      fetchplayerdata(playerID1){
-      axios.get(`/api/v1/player/displayone?playerid=${playerID1}`)
-            .then(response => {
-            console.log('Received playerdata:', response.data);
-            this.player1 = response.data;
-            this.loading = false;
-            })
-            .catch(error => {
-            console.error('Failed to fetch player1 data:',error);
-            this.loading = false;
-        })
+      handlePlayerDetails(row) {
+      console.log('Navigating to player detail page for:', row.PLAYER_ID);
+      const playerId = row.PLAYER_ID;
+      const route = `/player-display/${playerId}`;
+      this.$router.push(route);
     },
+      handleSizeChange(val) {
+      this.pageSize = val;
+      this.currentPage = 1; // 每次改变每页条数时，重置当前页为第一页
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+    },
+   
       fetchTeamDetail() {
         const teamID = this.$route.params.teamID;
         console.log('Fetching data for team ID:', teamID);
@@ -341,10 +412,6 @@
             console.log('Received data:', response.data);
             this.lineup = response.data;
             this.loading = false;
-
-            const playerID1 = this.lineup[0].PLAYER1_ID;
-            this.fetchplayerdata(playerID1)
-            console.log('player1:',this.playerID1)
 
            
         })
@@ -389,16 +456,6 @@
   </script>
 
   <style>
-    .my-label {
-    background: #5ab32e;
-  }
-
-  .my-content {
-    background: #FDE2E2;
-  }
-  .el-drawer {
-  transition: all 0.5s ease !important;
-}
 .team-image {
   width: 66%;
   height: 190px;
@@ -429,8 +486,10 @@
 }
 .box-card {
     width: 100%;
+   
   }
   .card-header{
   margin-left: 1rem;
+  background-color: rgb(22, 111, 62); /* 设置你想要的底色 */
   }
   </style>
