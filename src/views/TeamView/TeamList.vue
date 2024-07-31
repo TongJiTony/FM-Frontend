@@ -18,7 +18,7 @@
               </el-table-column>
               <el-table-column prop="CITY" label="城市"  >
               </el-table-column>
-
+             
               <el-table-column fixed="right" width="250">
                 <!-- eslint-disable-next-line -->
             
@@ -100,5 +100,6 @@
   </script>
 
 <style>
+
 
 </style>

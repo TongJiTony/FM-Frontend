@@ -5,10 +5,14 @@
     <div v-else>
       <div v-if="team">
                 <el-row gutter="20">
+       
                    <el-col :span="24">
+                    
                 <el-card shadow="never" class="box-card">
+         
                   <div slot="header" class="clearfix">
                     <span style="font-size: 20px;font-weight: bold;">球队简介</span>
+                    <el-button type="primary" icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
                   </div>
                    <el-row :gutter="10">
                   <el-col :span="6">
@@ -456,15 +460,18 @@
           console.error('Failed to fetch record data:',error);
           this.loading = false;
         })
-      }
+      },
+      goBack() {
+      this.$router.go(-1); // Navigate to the previous page
+    }
     },
-    
+   
   };
   </script>
 
   <style>
 .team-image {
-  width: 66%;
+  width: 60%;
   height: 190px;
   background-color: #f2f2f2;
   display: flex;
@@ -499,4 +506,9 @@
   margin-left: 1rem;
   background-color: rgb(22, 111, 62); /* 设置你想要的底色 */
   }
+  .back-button1 {
+  float: right;
+
+ 
+}
   </style>
