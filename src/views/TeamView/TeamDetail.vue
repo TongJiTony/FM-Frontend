@@ -4,63 +4,60 @@
     <p v-if="loading">Loading team data...</p>
     <div v-else>
       <div v-if="team">
-                <el-row gutter="20">
-       
-                   <el-col :span="24">
-                    
-                <el-card shadow="never" class="box-card">
-         
-                  <div slot="header" class="clearfix">
-                    <span style="font-size: 20px;font-weight: bold;">球队简介</span>
-                    <el-button type="primary" icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
+        <el-row>
+          <el-col :span="24">
+            <el-card shadow="never" class="box-card">
+              <div slot="header" class="clearfix">
+                <span style="font-size: 20px;font-weight: bold;">球队简介</span>
+                <el-button type="primary" icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
+              </div>
+              <el-row :gutter="20">
+                <el-col :span="6">
+                  <div class="team-image">
+                    <img src="https://img.51miz.com/Element/00/91/85/34/422e1064_E918534_f98a4621.png" alt="Team Image" />
                   </div>
-                   <el-row :gutter="10">
-                  <el-col :span="6">
-                    <div class="team-image">
-                      <img src="https://img.51miz.com/Element/00/91/85/34/422e1064_E918534_f98a4621.png" alt="Team Image" />
-                    </div>
-                  </el-col>
-                  <h2 style="font-size: 24px;">{{ team[0].TEAM_NAME }}</h2>
-                  <el-col :span="18" class="team-info">                  
-                    <el-row :gutter="12">
-                      <el-col :span="12">
+                </el-col>
+                <h2 style="font-size: 24px;">{{ team[0].TEAM_NAME }}</h2>
+                <el-col :span="18" class="team-info">                  
+                  <el-row :gutter="12">
+                    <el-col :span="12">
                       <p>
                         <strong>队伍编号:</strong>
                         <el-tag>{{ team[0].TEAM_ID }}</el-tag>
                       </p>
-                      </el-col>
-                      <el-col :span="12">
+                    </el-col>
+                    <el-col :span="12">
                       <p>
                         <strong>主教练:</strong>
                         <el-tag>{{ team[0].HEAD_COACH }}</el-tag>
                       </p>
-                      </el-col>
-                      <el-col :span="12">
+                    </el-col>
+                    <el-col :span="12">
                       <p>
                         <strong>成立时间:</strong>
                         <el-tag>{{ team[0].ESTABLISHED_DATE }}</el-tag>
                       </p>
-                      </el-col>
-                      <el-col :span="12">
+                    </el-col>
+                    <el-col :span="12">
                       <p>
                         <strong>城市:</strong>
                         <el-tag>{{ team[0].CITY }}</el-tag>
                       </p>
-                      </el-col>
-                    </el-row>
-                  </el-col>
-                </el-row>
-                </el-card>
+                    </el-col>
+                  </el-row>
                 </el-col>
               </el-row>
-              <el-row >
-                <el-col :span="12">
-                  <el-card shadow="never" class="box-card">
-                    <div slot="header" class="clearfix">
-                    <span style="font-size: 20px;font-weight: bold;">球员信息</span>
-                    <el-container>
-                      <el-main>   
-                      <el-table :data="filteredPlayers" style="width: 100% height=200px" >
+            </el-card>
+          </el-col>
+        </el-row>
+        <el-row >
+          <el-col :span="24">
+            <el-card shadow="never" class="box-card">
+              <div slot="header" class="clearfix">
+                <span style="font-size: 20px;font-weight: bold;">球员信息</span>
+                <el-container>
+                  <el-main>
+                    <el-table :data="filteredPlayers" style="width: 100% ;height:250px" >
                       <el-table-column prop="PLAYER_ID" label="球员编号" width="150">
                       </el-table-column>
                       <el-table-column prop="PLAYER_NAME" label="球员姓名" width="150">
@@ -68,105 +65,143 @@
                       <el-table-column prop="ROLE" label="战术角色" width="150">
                       </el-table-column>
                       <el-table-column>
-                        <!-- eslint-disable-next-line -->           
+                      <!-- eslint-disable-next-line -->           
                         <template slot-scope="scope">
                           <el-button @click="handlePlayerDetails(scope.row)" type="text" size="small">查看详情</el-button>
                         </template>
+                       </el-table-column>
+                    </el-table>
+                    <el-pagination
+                    @size-change="handleSizeChange1"
+                    @current-change="handleCurrentChange1"
+                    :current-page.sync="currentPage1"
+                    :page-sizes="[3]"
+                    :page-size="pageSize1"
+                    layout="sizes, prev, pager, next, jumper"
+                    :total="player.length"
+                    ></el-pagination>
+                  </el-main>    
+                </el-container>
+              </div> 
+            </el-card>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-card shadow="never" class="box-card">
+              <div slot="header" class="clearfix">
+                <span style="font-size: 20px;font-weight: bold;">财务记录</span>
+                <el-container>
+                  <el-main>         
+                    <el-table :data="filteredRecords" style="width: 100% ;height:250px">
+                      <el-table-column prop="RECORD_ID" label="财务记录ID" width="150" >
                       </el-table-column>
-                      </el-table>
-                        <el-pagination
-                        @size-change="handleSizeChange1"
-                        @current-change="handleCurrentChange1"
-                        :current-page.sync="currentPage1"
-                        :page-sizes="[5,10]"
-                        :page-size="pageSize1"
-                        layout="sizes, prev, pager, next, jumper"
-                        :total="player.length"
-                         ></el-pagination>
-                      </el-main>    
-                    </el-container>
-                    </div> 
-                  </el-card>
-                </el-col>
-                <el-col :span="12">
-                  <el-card shadow="never" class="box-card">
-                    <div slot="header" class="clearfix">
-                      <span style="font-size: 20px;font-weight: bold;">财务记录</span>
-                        <el-container>
-                          <el-main>         
-                           <el-table :data="filteredRecords" style="width: 100% ">
-                            <el-table-column prop="RECORD_ID" label="财务记录ID" width="150" >
-                            </el-table-column>
-                            <el-table-column prop="DESCRIPTION" label="交易描述" width="150">
-                            </el-table-column>
-                            <el-table-column prop="TRANSACTION_DATE" label="交易日期" width="190">
-                            </el-table-column>
-                            <el-table-column prop="AMOUNT" label="金额">
-                            </el-table-column>            
-                          </el-table>
-                          <el-pagination
-                            @size-change="handleSizeChange2"
-                            @current-change="handleCurrentChange2"
-                            :current-page.sync="currentPage2"
-                            :page-sizes="[5,10]"
-                            :page-size="pageSize2"
-                            layout="sizes, prev, pager, next, jumper"
-                            :total="record.length"
-                          ></el-pagination>
-                          </el-main>    
-                        </el-container>
-                    </div>
-                  </el-card>
-                </el-col>
-              </el-row>
-          <el-tab-pane label="球员信息">
-            <el-container>
-              <el-main>
-                <el-input v-model="search" placeholder="输入球员姓名搜索" clearable>
-                <i slot="prefix" class="el-input__icon el-icon-search"></i>
-                </el-input>
-                <el-table :data="player.filter(data => !search || data.PLAYER_NAME.includes(search))" style="width: 100%">
-                  <el-table-column prop="PLAYER_ID" label="球员ID" width="150">
-                  </el-table-column>
-                  <el-table-column prop="PLAYER_NAME" label="球员姓名" width="150">
-                  </el-table-column>
-                  <el-table-column prop="BIRTHDAY" label="出生日期" width="150">
-                  </el-table-column>
-                  <el-table-column prop="ROLE" label="战术角色" width="150">
-                  </el-table-column>
-                  <el-table-column prop="USED_FOOT" label="惯用脚" width="150" >
-                  </el-table-column>
-                  <el-table-column prop="HEALTH_STATE" label="健康状态" width="150" >
-                  </el-table-column>
-                  <el-table-column prop="RANK" label="技术评价" width="150" >
-                  </el-table-column>
-                  <el-table-column prop="GAME_STATE" label="上场状态"  width="150">
-                  </el-table-column>
-                  <el-table-column prop="TRANS_STATE" label="转会状态"  >
-                  </el-table-column>
-                </el-table>
-              </el-main>    
-            </el-container>
-          </el-tab-pane>
-          <el-tab-pane label="财务记录">
-            <el-container>
-              <el-main>
-                <el-input v-model="search" placeholder="输入球员姓名搜索" clearable>
-                <i slot="prefix" class="el-input__icon el-icon-search"></i>
-                </el-input>
-                <el-table :data="record" style="width: 100%">
-                  <el-table-column prop="RECORD_ID" label="财务记录ID" width="150">
-                  </el-table-column>
-                  <el-table-column prop="DESCRIPTION" label="交易描述" width="150">
-                  </el-table-column>
-                  <el-table-column prop="TRANSACTION_DATE" label="交易日期" width="200">
-                  </el-table-column>
-                  <el-table-column prop="AMOUNT" label="金额" width="150">
-                  </el-table-column>            
-                </el-table>
-              </el-main>    
-            </el-container>
-          </el-tab-pane>
+                      <el-table-column prop="DESCRIPTION" label="交易描述" width="150">
+                      </el-table-column>
+                      <el-table-column prop="TRANSACTION_DATE" label="交易日期" width="190">
+                      </el-table-column>
+                      <el-table-column prop="AMOUNT" label="金额">
+                      </el-table-column>            
+                    </el-table>
+                    <el-pagination
+                    @size-change="handleSizeChange2"
+                    @current-change="handleCurrentChange2"
+                    :current-page.sync="currentPage2"
+                    :page-sizes="[3]"
+                    :page-size="pageSize2"
+                    layout="sizes, prev, pager, next, jumper"
+                    :total="record.length"
+                    ></el-pagination>
+                  </el-main>    
+                </el-container>
+              </div>
+            </el-card>
+          </el-col>
+           <el-col :span="12">
+            <el-card shadow="never" class="box-card">
+              <div slot="header" class="clearfix">
+                <span style="font-size: 20px;font-weight: bold;">阵容信息</span>
+                <el-container>
+                  <el-main>   
+                    <el-table :data="filteredLineups" style="width: 100%;height:250px" >
+                      <el-table-column prop="LINEUP_ID" label="阵容ID">
+                      </el-table-column>
+                    </el-table>
+                     <el-pagination
+                    @size-change="handleSizeChange2"
+                    @current-change="handleCurrentChange2"
+                    :current-page.sync="currentPage2"
+                    :page-sizes="[3]"
+                    :page-size="pageSize2"
+                    layout="sizes, prev, pager, next, jumper"
+                    :total="record.length"
+                    ></el-pagination>
+                  </el-main>    
+                </el-container>
+              </div> 
+            </el-card>
+          </el-col>
+        </el-row>
+        <el-row >
+          <el-col :span="12">
+            <el-card shadow="never" class="box-card">
+              <div slot="header" class="clearfix">
+                <span style="font-size: 20px;font-weight: bold;">比赛信息</span>
+                <el-container>
+                  <el-main>         
+                    <el-table :data="filteredMatches" style="width: 100%;height:250px ">
+                      <el-table-column prop="MATCH_ID" label="比赛ID" width="150" >
+                      </el-table-column>
+                      <el-table-column prop="HOME_TEAM_ID" label="主场球队ID" width="150" >
+                      </el-table-column>
+                      <el-table-column prop="AWAY_TEAM_ID" label="客场球队ID" >
+                      </el-table-column>
+                    </el-table>
+                    <el-pagination
+                    @size-change="handleSizeChange2"
+                    @current-change="handleCurrentChange2"
+                    :current-page.sync="currentPage2"
+                    :page-sizes="[3]"
+                    :page-size="pageSize2"
+                    layout="sizes, prev, pager, next, jumper"
+                    :total="record.length"
+                    ></el-pagination>
+                  </el-main>    
+                </el-container>
+              </div>
+            </el-card>
+          </el-col>
+          <el-col :span="12">
+            <el-card shadow="never" class="box-card">
+              <div slot="header" class="clearfix">
+                <span style="font-size: 20px;font-weight: bold;">医疗信息</span>
+                <el-container>
+                  <el-main>         
+                    <el-table :data="filteredMedicals" style="width: 100%;height:250px ">
+                      <el-table-column prop="medical_id" label="医疗处理ID" width="150" >
+                      </el-table-column>
+                      <el-table-column prop="player_id" label="球员ID">
+                      </el-table-column>      
+                    </el-table>
+                    <el-pagination
+                    @size-change="handleSizeChange2"
+                    @current-change="handleCurrentChange2"
+                    :current-page.sync="currentPage2"
+                    :page-sizes="[3]"
+                    :page-size="pageSize2"
+                    layout="sizes, prev, pager, next, jumper"
+                    :total="record.length"
+                    ></el-pagination>
+                  </el-main>    
+                </el-container>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>  
+
+
+
+        
           <el-tab-pane label="阵容信息">
   <el-container>
     <el-main>
@@ -347,9 +382,9 @@
         tabPosition: "left",
         search:'',
         currentPage1: 1, // 当前页码
-        pageSize1: 5, // 每页显示条数
+        pageSize1: 3, // 每页显示条数
         currentPage2: 1, // 当前页码
-        pageSize2: 5, // 每页显示条数
+        pageSize2: 3, // 每页显示条数
       };
     },
     created() {
@@ -374,7 +409,34 @@
         const filtered = record.filter(data => data.RECORD_ID.includes(search));
         return filtered.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
       }
-    },
+      },
+     filteredLineups() {
+      const { lineup, search } = this;
+      if (!search) {
+        return lineup.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
+      } else {
+        const filtered = lineup.filter(data => data.LINEUP_ID.includes(search));
+        return filtered.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
+      }
+      },
+      filteredMatches() {
+      const { match, search } = this;
+      if (!search) {
+        return match.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
+      } else {
+        const filtered = match.filter(data => data.MATCH_ID.includes(search));
+        return filtered.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
+      }
+      },
+     filteredMedicals() {
+      const { medical, search } = this;
+      if (!search) {
+        return medical.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
+      } else {
+        const filtered = medical.filter(data => data.medical_id.includes(search));
+        return filtered.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
+      }
+      },
   },
     methods: {
       handlePlayerDetails(row) {
@@ -500,6 +562,7 @@
 }
 .box-card {
     width: 100%;
+    height: 370px;
    
   }
   .card-header{
