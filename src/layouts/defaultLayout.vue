@@ -18,6 +18,7 @@
           <template slot="title">
             <i class="el-icon-setting"></i>
             <span class="username-title">{{this.$store.getters['user/getUserName']}}</span>
+            <img :src= "this.$store.getters['user/getUserIcon']" class="user-icon"/>
           </template>
           <el-menu-item class="user-action-item" index="/changepsw" >Change Password</el-menu-item>
           <el-menu-item class="user-action-item" index="/userinfo" > {{this.$store.getters['user/getUserName']}}'s info</el-menu-item>
@@ -72,6 +73,14 @@ export default {
 
 .username-title {
   color: #ffd04b;
+}
+
+.user-icon {
+  width: 40px; /* 头像大小 */
+  height: 40px;
+  border-radius: 50%; /* 圆形头像 */
+  object-fit: cover; /* 确保图片覆盖容器，不会变形 */
+  margin-left: 10px; /* 添加一些间距 */
 }
 
 .user-action-item:hover {
