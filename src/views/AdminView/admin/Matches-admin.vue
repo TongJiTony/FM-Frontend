@@ -122,7 +122,7 @@ export default {
     // 获取数据列表
     getDataList() {
       this.dataListLoading = true;
-      axios.get('/api/admin/matches/list', {
+      axios.get('/api/v1/match/admin/displayall', {
         params: {
           page: this.pageIndex,
           limit: this.pageSize,
