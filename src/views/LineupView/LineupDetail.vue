@@ -122,8 +122,7 @@
 
     <!--  -->
     <!--  -->
-    <!--  -->
-    <el-button class="test_button" @click="testRoute">this is test</el-button>
+    <!-- <el-button class="test_button" @click="testRoute">this is test</el-button> -->
     
   </div>
 </template>
@@ -150,7 +149,6 @@ export default {
       // edit
       editPlayerDrawerVisible: false,
       players: [],
-      //editplayer: {},
       editindex: -1,
     }
   },
@@ -275,10 +273,9 @@ export default {
     },
 
     ///////////////////////////////////////////
-    ///////////////////////////////////////////
-    testRoute() {
-      this.$router.push(`/lineup/111111111`);
-    },
+    // testRoute() {
+    //   this.$router.push(`/lineup/111111111`);
+    // },
   },
 };
 </script>
@@ -333,14 +330,13 @@ export default {
     background-color: #67C23A;
   }
 
-/*  */
-/*  */
-/*  */
-  .test_button {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      width: 100px; /* 设置按钮宽度 */
-      height: 40px; /* 设置按钮高度 */
-    }
+/*  *//*  *//*  */
+/*  *//*  *//*  */
+/*  */  .test_button {
+/*  */      position: absolute;
+/*  */      bottom: 20px;
+/*  */      left: 20px;
+/*  */      width: 100px;
+/*  */      height: 40px;
+/*  */    }
 </style>
