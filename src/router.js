@@ -55,11 +55,6 @@ const router = new Router({
           component: () => import("@/views/LineupView/LineupDetail.vue"),
         },
         {
-          path: "editinfo",
-          name: "Editinfo",
-          component: () => import("@/views/UserSetting/UserInfoEditPage.vue"),
-        },
-        {
           path: "changepsw",
           name: "Changepsw",
           component: () => import("@/views/UserSetting/ChangePassword.vue"),
