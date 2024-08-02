@@ -83,11 +83,41 @@
             <div v-if="addForm.TEAM_ID">
               <p>球队 ID:  {{ addForm.TEAM_ID }}</p>
               <!-- <p>球队名:  {{ get_TEAM_NAME(addForm.TEAM_ID) }}</p> -->
+
             </div>
-            <div v-else>
-              <p>点击确定一个球队</p>
-            </div>
+            <div v-else> <p>点击确定一个球队</p> </div>
           </el-card>
+
+          <div v-if="players.length > 0">
+            <p class = "add-lineup-title">球员列表:</p>
+            <div class="player-cards">
+              <el-card
+                v-for="player in players"
+                :key="player.PLAYER_ID"
+                :class="{'selected': isSelected(player)}"
+                @click.native="toggleSelectPlayer(player)"
+                style="cursor: pointer;"
+                class = "player-card"
+                >
+                <p>
+                  <span>{{ player.PLAYER_NAME }}</span>
+                  <span class="separator"></span>
+                  <span>{{ player.ROLE }}</span>
+                </p>
+              </el-card>
+            </div>
+
+            <!-- 编辑NOTE的输入框 -->
+            <el-input
+              type="textarea"
+              placeholder="请输入阵容备注"
+              v-model="addForm.NOTE"
+              maxlength="200"
+              show-word-limit
+              style="margin-top: 20px;"
+            >
+            </el-input>
+          </div>
 
           <div slot="footer">
             <el-button @click="addDialogVisible = false">取消</el-button>
@@ -144,27 +174,25 @@ export default {
       addForm: {
         NOTE: '',
         TEAM_ID: 0,
-        PLAYER1_ID: 0,
-        PLAYER2_ID: 0,
-        PLAYER3_ID: 0,
-        PLAYER4_ID: 0,
-        PLAYER5_ID: 0,
-        PLAYER6_ID: 0,
-        PLAYER7_ID: 0,
-        PLAYER8_ID: 0,
-        PLAYER9_ID: 0,
-        PLAYER10_ID: 0,
-        PLAYER11_ID: 0,
       },
       addDialogVisible: false,
       addDrawerVisible_teamID: false,
       teams: [],
+      players: [],
+      selectedPlayers: [],
     };
   },
   created() {
     this.fetchLineups();
     this.selectedColumn = this.columns[0].prop;
     this.addForm.TEAM_ID = this.teamID;
+  },
+  watch: {
+    'addForm.TEAM_ID': function(newVal) {
+      if (newVal) {
+        this.fetchPlayersByTeamId(newVal);
+      }
+    },
   },
   computed: {
     filteredLineupData() {
@@ -198,7 +226,6 @@ export default {
     // Add new lineup
     handleAdd() {
       this.addDialogVisible = true;
-      //console.log("test: ", this.teamID);
     },
     openAddDrawer_teamID() {
       if (!this.teamID) {
@@ -221,32 +248,64 @@ export default {
       this.addForm.TEAM_ID = team.TEAM_ID;
       this.addDrawerVisible_teamID = false;
     },
-    ///////////////////////////
-    ///////////////////////////
+    fetchPlayersByTeamId(teamId) {
+      axios.get(`/api/v1/player/displayall?teamid=${teamId}`)
+        .then(response => {
+
+          this.players = response.data;
+        }),
+        error => {
+          console.error('Error fetching players:', error);
+        };
+    },
+    // 控制选择列表
+    toggleSelectPlayer(player) {
+      const index = this.selectedPlayers.findIndex(p => p.PLAYER_ID === player.PLAYER_ID);
+      if (index > -1) {
+        this.selectedPlayers.splice(index, 1);
+      } else if (this.selectedPlayers.length === 11) {
+        this.$message.error('只能选择11个球员');
+      } else if (this.selectedPlayers.length < 11) {
+        this.selectedPlayers.push(player);
+      }
+      //console.log("selectedPlayers: ", this.selectedPlayers);
+    },
+    isSelected(player) {
+      return this.selectedPlayers.some(p => p.PLAYER_ID === player.PLAYER_ID);
+    },
+    // 保存添加的阵容
     saveAdd() {
-      console.log("addForm:", this.addForm);
-      axios.post('/api/v1/lineup/add', {
+      if (this.selectedPlayers.length !== 11) {
+        this.$message.error('请选择11名球员');
+        return;
+      }
+      const lineup = {
         NOTE: this.addForm.NOTE,
         TEAM_ID: Number(this.addForm.TEAM_ID),
-        PLAYER1_ID: Number(this.addForm.PLAYER1_ID),
-        PLAYER2_ID: Number(this.addForm.PLAYER2_ID),
-        PLAYER3_ID: Number(this.addForm.PLAYER3_ID),
-        PLAYER4_ID: Number(this.addForm.PLAYER4_ID),
-        PLAYER5_ID: Number(this.addForm.PLAYER5_ID),
-        PLAYER6_ID: Number(this.addForm.PLAYER6_ID),
-        PLAYER7_ID: Number(this.addForm.PLAYER7_ID),
-        PLAYER8_ID: Number(this.addForm.PLAYER8_ID),
-        PLAYER9_ID: Number(this.addForm.PLAYER9_ID),
-        PLAYER10_ID: Number(this.addForm.PLAYER10_ID),
-        PLAYER11_ID: Number(this.addForm.PLAYER11_ID)
-      })
+        PLAYER1_ID: Number(this.selectedPlayers[0].PLAYER_ID),
+        PLAYER2_ID: Number(this.selectedPlayers[1].PLAYER_ID),
+        PLAYER3_ID: Number(this.selectedPlayers[2].PLAYER_ID),
+        PLAYER4_ID: Number(this.selectedPlayers[3].PLAYER_ID),
+        PLAYER5_ID: Number(this.selectedPlayers[4].PLAYER_ID),
+        PLAYER6_ID: Number(this.selectedPlayers[5].PLAYER_ID),
+        PLAYER7_ID: Number(this.selectedPlayers[6].PLAYER_ID),
+        PLAYER8_ID: Number(this.selectedPlayers[7].PLAYER_ID),
+        PLAYER9_ID: Number(this.selectedPlayers[8].PLAYER_ID),
+        PLAYER10_ID: Number(this.selectedPlayers[9].PLAYER_ID),
+        PLAYER11_ID: Number(this.selectedPlayers[10].PLAYER_ID),
+      };
+      console.log("lineup:", lineup);
+
+      axios.post('/api/v1/lineup/add', lineup)
       .then(response => {
          if (response.status === 201) {
           this.$message({
             message: '添加成功',
             type: 'success',
           });
-           this.addDialogVisible = false;
+          this.addDialogVisible = false;
+          this.fetchLineups();   //there may be more effective way to do this
+          //this.$set(this.lineupData, this.lineupData.length, lineup);
         }
       })
       .catch(error => {
@@ -254,6 +313,9 @@ export default {
         this.$message.error('添加失败');
       });
     },
+
+
+   // 返回上级页面
     goback() {
       window.sessionStorage.clear();
       this.$router.go(-1);
@@ -375,6 +437,33 @@ export default {
   .el-input-group {
   display: flex;
   align-items: center;
-}
+  }
+
+  .player-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* 控制卡片之间的间距 */
+  }
+  .player-card {
+    flex: 1 1 calc(25% - 10px); /* 每行放置4个卡片，并减去间距 */
+    max-width: calc(25% - 10px); /* 确保最大宽度不超过25% */
+    box-sizing: border-box; /* 确保padding和border不会影响宽度 */
+  }
+  .el-card.selected {
+    border: 2px solid #409EFF;
+  }
+  .add-lineup-title {
+    margin-top: 30px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  .separator {
+    width: 9px;
+    height: 100%;
+    background-color: #ccc;
+    margin: 0 10px;
+  }
 
 </style>

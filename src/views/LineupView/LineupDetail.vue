@@ -1,13 +1,8 @@
 <template>
   <p v-if="loading">Loading...</p>
   <div v-else>
-    <el-header>阵容 ID: {{ this.$route.params.lineupId }}
+    <el-header>阵容 ID: {{ this.lineupId }}
       <div class="button-contanier">
-        <el-button
-          type="primary"
-          class="add_button"
-          @click="handleEdit"
-        >修改阵容</el-button>
         <el-button
           type="info"
           class="goback_button"
@@ -94,54 +89,41 @@
           </div>
         </template>
         <template slot-scope="scope">
-          <el-button
-            size="small"
-            @click="handleClick(scope.row)"
-          >详情</el-button>
+          <el-button size="small" @click="handleClick(scope.row)">详情</el-button>
+          <el-button size="small" type="primary" @click="handleEdit(scope.row)">更换队员</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <!-- 使用开关组件来控制修改阵容 -->
-    <!-- Edit Lineup Dialog -->
-    <el-dialog
-      title="点击卡片修改阵容"
-      :visible.sync="editLineupDialogVisible"
-      width="50%">
-      <el-form :model="editLineupForm" :rules="editFormRules" ref="editFormRef">
-        <div class="grid-container">
-          <div v-for="(player, index) in lineupDetail" :key="index" class="player-card">
-            <el-card @click.native="openEditDrawer(player)">
-              <div slot="header" class="clearfix">
-                <span>{{ player.PLAYER_NAME }}</span>
-              </div>
-              <div>
-                <p>Position: {{ player.ROLE }}</p>
-              </div>
-            </el-card>
-          </div>
-        </div>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="editLineupDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="saveEdit">确认</el-button>
-      </span>
-    </el-dialog>
-
     <!-- Edit lineup drawer -->
     <el-drawer
-      title="Edit Player"
+      title="选择一个球员"
       :visible.sync="editPlayerDrawerVisible"
       direction="rtl"
-      size="30%">
-      <!-- Drawer content goes here -->
-      <p>test</p>
+      size="50%"
+      >
+      <!-- :before-close="handleBeforeClose" -->
+      <div v-if="players.length === 0" class="loading">暂未查询到球员信息...</div>
+      <div v-else class="player-container">
+        <el-card
+          v-for="player in players"
+          :key="player.PLAYER_ID"
+          :class="{ 
+            'inlineup': isInlineup(player),
+            'selected': isSelected(player) && isInlineup(player)
+            }"
+          @click.native="toggleSelectPlayer(player)"
+          class="player-card">
+          <div class="player-name">{{ player.PLAYER_NAME }}</div>
+          <div class="player-position">{{ player.ROLE }}</div>
+        </el-card>
+      </div>
     </el-drawer>
 
     <!--  -->
     <!--  -->
     <!--  -->
-    <el-button class="test_button" @click="testRoute">this is test</el-button>  
+    <el-button class="test_button" @click="testRoute">this is test</el-button>
     
   </div>
 </template>
@@ -154,6 +136,7 @@ export default {
   data () {
     return {
       loading: true,
+      lineupId: this.$route.params.lineupId,
       lineupDetail: [],
       // search
       searchQuery: '',
@@ -164,14 +147,11 @@ export default {
         { prop: 'HEALTH_STATE', label: '健康状态' },
         { prop: 'GAME_STATE', label: '比赛状态' },
       ],
-      //edit
-      editLineupDialogVisible: false,
+      // edit
       editPlayerDrawerVisible: false,
-      selectedPlayer: {},
-      editLineupForm: {
-        name: '',
-        description: ''
-      }
+      players: [],
+      //editplayer: {},
+      editindex: -1,
     }
   },
   watch: {
@@ -181,8 +161,7 @@ export default {
   },
   created () {
     this.selectedColumn = this.columns[0].prop;
-    const lineupid = this.$route.params.lineupId
-    this.fetchLineupDetail(lineupid)
+    this.fetchLineupDetail(this.lineupId)
   },
   computed: {
     filteredLineupData () {
@@ -215,16 +194,62 @@ export default {
       window.sessionStorage.clear();
       this.$router.go(-1);
     },
-    handleEdit () {
-      this.editLineupDialogVisible = true;
-    },
-    openEditDrawer(player) {
-      this.selectedPlayer = player;
+    // edit lineup
+    handleEdit (row) {
+      this.editindex = this.lineupDetail.indexOf(row);
       this.editPlayerDrawerVisible = true;
+      this.fetchplayers();
     },
-    saveEdit () {
-      this.editLineupDialogVisible = false;
+    fetchplayers () {
+      let teamid = '';
+      if (this.lineupDetail.length > 0) {
+        teamid = this.lineupDetail[0].TEAM_ID;
+      }
+      axios.get(`/api/v1/player/displayall?teamid=${teamid}`)
+        .then(response => {
+          this.players = response.data;
+        })
+        .catch(error => {
+          console.error(error);
+        });
     },
+    // 控制选择列表
+    isInlineup (player) {
+      return this.lineupDetail.some(item => item.PLAYER_ID === player.PLAYER_ID);
+    },
+    isSelected (player) {
+      return this.lineupDetail[this.editindex].PLAYER_ID === player.PLAYER_ID;
+    },
+    toggleSelectPlayer(player) {
+      //console.log("toggleSelectPlayer: ", player);
+      console.log("playerID: ", player.PLAYER_ID);
+    
+      const index = this.lineupDetail.findIndex(p => p.PLAYER_ID === player.PLAYER_ID);
+      console.log("index: ", index);
+
+      if (index === -1) {
+        //code here
+        this.lineupDetail.splice(this.editindex, 1, player);
+        this.saveEditlinup(player);
+      }
+    },
+    saveEditlinup (player) {
+      console.log("lineupid: ", this.lineupId);
+      
+      const data = {};
+      data[`PLAYER${this.editindex + 1}_ID`] = player.PLAYER_ID;
+      console.log("data: ", data);
+      axios.post(`/api/v1/lineup/update?lineupid=${this.lineupId}`, data)
+        .then(response => {
+          console.log(response.data);
+          this.$message.success('修改成功');
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+
+    // 设置标签
     getOptions(selectedColumn) {
       switch (selectedColumn) {
         case 'ROLE':
@@ -259,41 +284,63 @@ export default {
 </script>
   
 <style scoped>
-.el-header {
-  background-color: #373d41;
-  display: flex;
-  justify-content: space-between;
-  padding-left: 20px;
-  align-items: center;
-  color: #fff;
-  font-size: 20px;
-}
-.button-contanier {
-  display: flex;
-  justify-content: flex-end;
-}
-.el-input-group {
-  display: flex;
-  align-items: center;
-}
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-gap: 10px;
-}
-.player-card {
-  width: 100%;
-  height: 150px;
-}
+  .el-header {
+    background-color: #373d41;
+    display: flex;
+    justify-content: space-between;
+    padding-left: 20px;
+    align-items: center;
+    color: #fff;
+    font-size: 20px;
+  }
+  .button-contanier {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .el-input-group {
+    display: flex;
+    align-items: center;
+  }
+  .player-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* 间距 */
+  }
+  .player-card {
+    flex: 0 0 calc(30% - 20px); /* 宽度计算 */
+    max-width: calc(33.333% - 20px);
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    height: 60px;
+    cursor: pointer;
+  }
+  .player-name {
+    font-weight: bold;
+  }
+
+  .player-position {
+    color: #666;
+  }
+  .el-card.inlineup {
+    border: 2px solid #409EFF;
+    background-color: #74756c89;
+    cursor: default;
+  }
+  .el-card.selected {
+    border: 2px solid #409EFF;
+    background-color: #67C23A;
+  }
 
 /*  */
 /*  */
 /*  */
-.test_button {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    width: 100px; /* 设置按钮宽度 */
-    height: 40px; /* 设置按钮高度 */
-  }
+  .test_button {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      width: 100px; /* 设置按钮宽度 */
+      height: 40px; /* 设置按钮高度 */
+    }
 </style>
