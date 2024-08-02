@@ -3,6 +3,7 @@
     <el-card class="user-info-card">
       <h3>用户个人信息</h3>
       
+      <!-- 显示用户信息 -->
       <el-form v-if="!isEditing">
         <el-form-item label="用户ID">
           <span>{{ userInfo.user_id }}</span>
@@ -21,7 +22,7 @@
         </el-form-item>
       </el-form>
 
-      <!-- 编辑表单 -->
+      <!-- 编辑用户信息表单 -->
       <el-form v-if="isEditing" :model="Edituser" ref="userForm">
         <el-form-item label="用户ID">
           <span>{{ Edituser.user_id }}</span>
@@ -36,8 +37,17 @@
           <el-input v-model="Edituser.user_phone" placeholder="请输入电话号码"></el-input>
         </el-form-item>
         <el-form-item label="头像">
-          <el-input v-model="Edituser.user_icon" placeholder="请输入头像URL"></el-input>
-          <img :src="Edituser.user_icon" alt="User Icon" class="user-icon" @error="handleImageError"/>
+          <el-upload
+            class="avatar-uploader"
+            :action="uploadAction"
+            :http-request="customUpload"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+          >
+            <img v-if="Edituser.user_icon" :src="Edituser.user_icon" class="user-icon" @error="handleImageError"/>
+            <i v-else class="el-icon-plus avatar-uploader-icon">上传头像</i>
+          </el-upload>
         </el-form-item>
       </el-form>
       <el-button v-if="!isEditing" type="primary" @click="startEditing">修改信息</el-button>
@@ -64,7 +74,12 @@ export default {
         user_right: '',
         user_phone: '',
         user_icon: ''
-      }
+      },
+      uploadAction: "https://api.imgbb.com/1/upload",
+      imgbbApiKey: "a18b4cdd1ea4b32881a598e7f32b854a",
+      expirationTime: 604800, // 7 days in seconds
+      name:"FoodballManager",
+      currentDeleteUrl:"",
     };
   },
   computed: {
@@ -103,30 +118,29 @@ export default {
             user_password: this.userInfo.user_psw,
           },
         }).then((response) => {
-          console.log("logout's response:", response);
-          if (response.status == 200) {
+          if (response.status === 200) {
+             axios.delete('/api/v1/user/deleteImage',{
+               params: { delete_url: this.currentDeleteUrl }
+            });
             this.$message.success("用户已经注销");
-            this.$store.commit('user/resetUser'); // 重置vuex的全部信息
-            this.$cookies.remove('isLoggedIn'); // 清除 Cookies
+            this.$store.commit('user/resetUser');
+            this.$cookies.remove('isLoggedIn');
             this.$cookies.remove('token');
-            this.$router.push({ name: 'Login' }); // 跳转到登录页面
+            this.$router.push({ name: 'Login' });
           }
         }).catch((error) => {
-          if (error.response) { // 服务器返回的响应错误
-            if (error.response.data == 401) {
+          if (error.response) {
+            if (error.response.data === 401) {
               this.$message.error("注销用户：密码输入不正确")
-            }
-            else if (error.response.data == 404) {
+            } else if (error.response.data === 404) {
               this.$message.error("注销用户：该用户未找到");
-            }
-            else {
+            } else {
               this.$message.error(`Error: ${error.response.data}`);
             }
-          }
-          else {
+          } else {
             this.$message.error('Error: Network Error');
           }
-        })
+        });
     },
     confirmChangeAccount() {
       this.$confirm('你确定要退出登录吗？', '退出登录确认', {
@@ -137,40 +151,81 @@ export default {
         this.changeAccount();
       }).catch(() => {
         this.$message.info("取消退出操作");
-      })
+      });
     },
     changeAccount() {
-      console.log("Change user Account successfully");
       this.$message.success("已经退出当前用户");
-      this.$store.commit('user/resetUser'); // 重置Vuex中的用户信息
-      this.$cookies.remove('isLoggedIn'); // 清除 Cookies
+      this.$store.commit('user/resetUser');
+      this.$cookies.remove('isLoggedIn');
       this.$cookies.remove('token');
-      this.$router.push({ name: 'Login' }); // 跳转到登录页面
+      this.$router.push({ name: 'Login' });
     },
     async saveUserInfo() {
       try {
+      // 如果有头像更新，发送头像信息到服务器
+        if (this.Edituser.user_icon !== this.userInfo.user_icon) {
+          await axios.post('/api/v1/user/saveImage', {
+          icon: this.Edituser.user_icon,
+          delete_icon: this.userInfo.user_icon,
+          user_id: this.Edituser.user_id,
+          });
+        }
+    
         const response = await axios.post('/api/v1/user/changeAttributes', {
           user_id: this.Edituser.user_id,
           new_name: this.Edituser.user_name,
           new_phone: this.Edituser.user_phone,
           new_icon: this.Edituser.user_icon,
-        });
-        console.log('respons of change:',response);
+          });
+    
         if (response.data.code === 200) {
-          // 更新 Vuex 中的用户信息
           this.$store.commit('user/setUser', this.Edituser);
-          console.log('msg:',response.data.msg);
           this.$message.success('修改成功');
           this.isEditing = false;
-        }
+        } 
         else {
           this.$message.error(response.data.msg);
         }
-      }
+      } 
       catch (error) {
         this.$message.error('修改失败，请稍后再试');
+           }
+    },
+    beforeAvatarUpload(file) {
+      const isPNGorJPG = file.type === 'image/jpeg' || file.type === 'image/png';
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isPNGorJPG) {
+        this.$message.error('上传头像图片只能是 JPG 或 PNG 格式!');
       }
-    }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!');
+      }
+      return isPNGorJPG && isLt2M;
+    },
+    customUpload(request) {
+      const formData = new FormData();
+      formData.append('image', request.file);
+      axios.post(`${this.uploadAction}?key=${this.imgbbApiKey}&name=${this.name}&expiration=${this.expirationTime}`, formData)
+        .then(response => {
+          request.onSuccess(response.data);
+        })
+        .catch(error => {
+          request.onError(error);
+        });
+    },
+    handleAvatarSuccess(response) {
+      if (response && response.data && response.data.url) {
+        this.Edituser.user_icon = response.data.url;
+        this.currentDeleteUrl = response.data.delete_url;
+        this.$message.info('头像加载成功！');
+      } else {
+        this.$message.error('头像上传失败，请重试！');
+      }
+    },
+    handleAvatarError(error) {
+      this.$message.error('头像上传失败，请重试！');
+      console.log(error);
+    },
   }
 }
 </script>
@@ -184,8 +239,34 @@ export default {
   margin: auto;
 }
 .user-icon {
-  width: 50px;
-  height: 50px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
+}
+.avatar-uploader .el-upload {
+  border: 2px dashed #4a90e2;
+  border-radius: 10px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  padding: 10px;
+  transition: border-color 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+}
+.avatar-uploader:hover .el-upload {
+  border-color: #007aff;
+}
+.avatar-uploader-icon {
+  font-size: 30px;
+  color: #4a90e2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
