@@ -2,7 +2,7 @@
   <div class="admin-layout">
     <div class="sidebar">
       <div class="sidebar-header">
-        <h2>Admin Panel</h2>
+        <h2>管理员页面</h2>
       </div>
       <ul>
         <li v-for="item in menuItems" :key="item.name">
@@ -25,13 +25,13 @@ export default {
   data() {
     return {
       menuItems: [
-        { name: 'Home', path: '/', icon: 'fas fa-home' },
-        { name: 'Matches', path: '/admin/matches', icon: 'fas fa-futbol' },
-        { name: 'Players', path: '/admin/players', icon: 'fas fa-users' },
-        { name: 'Records', path: '/admin/records', icon: 'fas fa-file-alt' },
-        { name: 'Stadiums', path: '/admin/stadiums', icon: 'fas fa-warehouse' },
-        { name: 'Teams', path: '/admin/teams', icon: 'fas fa-shield-alt' },
-        { name: 'Users', path: '/admin/users', icon: 'fas fa-user-cog' },
+        { name: 'Home', path: '/' },
+        { name: 'Matches', path: '/admin/matches'},
+        { name: 'Players', path: '/admin/players'  },
+        { name: 'Records', path: '/admin/records'  },
+        { name: 'Stadiums', path: '/admin/stadiums' },
+        { name: 'Teams', path: '/admin/teams' },
+        { name: 'Users', path: '/admin/users' },
       ]
     }
   },

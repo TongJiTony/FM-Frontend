@@ -23,31 +23,31 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="teamName"
+        prop="TEAM_NAME"
         header-align="center"
         align="center"
         label="球队名称">
       </el-table-column>
       <el-table-column
-        prop="establishedDate"
+        prop="ESTABLISHED_DATE"
         header-align="center"
         align="center"
         label="成立时间">
       </el-table-column>
       <el-table-column
-        prop="headCoach"
+        prop="HEAD_COACH"
         header-align="center"
         align="center"
         label="主教练">
       </el-table-column>
       <el-table-column
-        prop="city"
+        prop="CITY"
         header-align="center"
         align="center"
         label="所在城市">
       </el-table-column>
       <el-table-column
-        prop="teamId"
+        prop="TEAM_ID"
         header-align="center"
         align="center"
         label="球队id">
@@ -59,8 +59,8 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.teamId)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.teamId)">删除</el-button>
+          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.TEAM_ID)">修改</el-button>
+          <el-button type="text" size="small" @click="deleteHandle(scope.row.TEAM_ID)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -110,16 +110,20 @@ export default {
     // 获取数据列表
     getDataList() {
       this.dataListLoading = true;
-      axios.get('/api/admin/teams/list', {
+      // 检查如果当前页码为2且带有搜索关键词，则调整为第一页
+      if (this.pageIndex > 1 && this.dataForm.key) {
+        this.pageIndex = 1;
+      }
+      axios.get('/api/v1/team/admin/displayall', {
         params: {
           page: this.pageIndex,
           limit: this.pageSize,
           key: this.dataForm.key
         }
       }).then(({ data }) => {
-        if (data && data.code === 0) {
-          this.dataList = data.page.list;
-          this.totalPage = data.page.totalCount;
+        if (data) {
+          this.dataList = data.data;
+          this.totalPage = data.total;
         } else {
           this.dataList = [];
           this.totalPage = 0;
@@ -151,15 +155,21 @@ export default {
     },
     // 删除
     deleteHandle(id) {
-      const ids = id ? [id] : this.dataListSelections.map(item => item.teamId);
+      const ids = id ? [id] : this.dataListSelections.map(item => item.TEAM_ID);
       this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        axios.post('/api/admin/teams/delete', ids)
+        console.log(ids)
+        axios.delete('/api/v1/team/admin/delete', {
+          data: ids,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
             .then(({ data }) => {
-              if (data && data.code === 0) {
+              if (data.deletedCount) {
                 this.$message({
                   message: '操作成功',
                   type: 'success',

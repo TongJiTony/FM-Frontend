@@ -104,8 +104,8 @@
         </el-form-item>
         <el-form-item label="场上状态" :label-width="formLabelWidth">
           <el-radio-group v-model="editForm.GAME_STATE">
-            <el-radio :label="0">首发</el-radio>
-            <el-radio :label="1">替补</el-radio>
+            <el-radio :label="0">允许出场</el-radio>
+            <el-radio :label="1">禁赛</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="转会状态" :label-width="formLabelWidth">
@@ -165,12 +165,12 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="等级" :label-width="formLabelWidth">
-          <el-input-number v-model="editForm.RANK" :min="0" :max="100" label="等级"></el-input-number>
+          <el-input-number v-model="addForm.RANK" :min="0" :max="100" label="等级"></el-input-number>
         </el-form-item>
         <el-form-item label="场上状态" :label-width="formLabelWidth" prop="GAME_STATE">
           <el-radio-group v-model="addForm.GAME_STATE">
-            <el-radio :label="0">首发</el-radio>
-            <el-radio :label="1">替补</el-radio>
+            <el-radio :label="0">允许出场</el-radio>
+            <el-radio :label="1">禁赛</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="转会状态" :label-width="formLabelWidth" prop="TRANS_STATE">
@@ -254,98 +254,98 @@ export default {
       allData: [],
     };
   },
-methods: {
-  // Fetch players based on teamId or fetch all players
-  fetchPlayers() {
-    const teamId = this.$route.params.teamId;
-    if (teamId) {
-      console.log('Fetching data for team ID:', teamId);
-      axios.get(`/api/v1/player/displayall?teamid=${teamId}`)
-        .then(response => {
-          console.log('Received data:', response.data);
-          this.tableData = response.data;
-          this.allData = response.data;
-          this.total = response.data.length;
-          this.updatePagedData();
+  methods: {
+    // Fetch players based on teamId or fetch all players
+    fetchPlayers() {
+      const teamId = this.$route.params.teamId;
+      if (teamId) {
+        console.log('Fetching data for team ID:', teamId);
+        axios.get(`/api/v1/player/displayall?teamid=${teamId}`)
+          .then(response => {
+            console.log('Received data:', response.data);
+            this.tableData = response.data;
+            this.allData = response.data;
+            this.total = response.data.length;
+            this.updatePagedData();
+          })
+          .catch(error => {
+            console.error('Failed to fetch player list for team:', error);
+          });
+      } else {
+        console.log('Fetching all players');
+        axios.get('/api/v1/player/displayall')
+          .then(response => {
+            console.log('Received data:', response.data);
+            this.tableData = response.data;
+            this.allData = response.data;
+            this.total = response.data.length;
+            this.updatePagedData();
+          })
+          .catch(error => {
+            console.error('Failed to fetch player list:', error);
+          });
+      }
+    },
+
+    // Navigate to player detail page
+    handleClick(player) {
+      console.log('Navigating to player detail page for:', player.PLAYER_ID);
+      const playerId = player.PLAYER_ID;
+      const route = `/player-display/${playerId}`;
+      this.$router.push(route);
+    },
+
+    // Open add player dialog
+    openAddPlayerDialog() {
+      console.log('Opening add player dialog');
+      this.addDialogVisible = true;
+    },
+
+    // Handle closing of dialogs
+    handleDialogClose() {
+      console.log('Closing delete confirmation dialog');
+      this.dialogVisible = false;
+    },
+
+    handleAddDialogClose() {
+      console.log('Closing add player dialog');
+      this.addDialogVisible = false;
+    },
+
+    handleEditDialogClose() {
+      console.log('Closing edit dialog');
+      this.editDialogVisible = false;
+    },
+
+    // Confirm deletion of a player
+    confirmDelete(player) {
+      console.log('Confirming delete for player:', player.PLAYER_NAME);
+      this.selectedPlayer = player;
+      this.dialogVisible = true;
+    },
+
+    // Delete player with correct API endpoint
+    handleDelete() {
+      console.log('Deleting player:', this.selectedPlayer.PLAYER_NAME);
+      axios.delete(`/api/v1/player/delete?playerid=${this.selectedPlayer.PLAYER_ID}`) //用delete方法！
+        .then(() => {
+          console.log('Player deleted successfully');
+          this.fetchPlayers();
+          this.dialogVisible = false;
         })
         .catch(error => {
-          console.error('Failed to fetch player list for team:', error);
+          console.error('Failed to delete player:', error);
         });
-    } else {
-      console.log('Fetching all players');
-      axios.get('/api/v1/player/displayall')
-        .then(response => {
-          console.log('Received data:', response.data);
-          this.tableData = response.data;
-          this.allData = response.data;
-          this.total = response.data.length;
-          this.updatePagedData();
-        })
-        .catch(error => {
-          console.error('Failed to fetch player list:', error);
-        });
-    }
-  },
+    },
 
-  // Navigate to player detail page
-  handleClick(player) {
-    console.log('Navigating to player detail page for:', player.PLAYER_ID);
-    const playerId = player.PLAYER_ID;
-    const route = `/player-display/${playerId}`;
-    this.$router.push(route);
-  },
+    // Confirm editing of a player
+    confirmEdit(player) {
+      console.log('Opening edit dialog for player:', player.PLAYER_NAME);
+      this.editForm = { ...player };
+      this.editDialogVisible = true;
+    },
 
-  // Open add player dialog
-  openAddPlayerDialog() {
-    console.log('Opening add player dialog');
-    this.addDialogVisible = true;
-  },
-
-  // Handle closing of dialogs
-  handleDialogClose() {
-    console.log('Closing delete confirmation dialog');
-    this.dialogVisible = false;
-  },
-
-  handleAddDialogClose() {
-    console.log('Closing add player dialog');
-    this.addDialogVisible = false;
-  },
-
-  handleEditDialogClose() {
-    console.log('Closing edit dialog');
-    this.editDialogVisible = false;
-  },
-
-  // Confirm deletion of a player
-  confirmDelete(player) {
-    console.log('Confirming delete for player:', player.PLAYER_NAME);
-    this.selectedPlayer = player;
-    this.dialogVisible = true;
-  },
-
-  // Delete player with correct API endpoint
-  handleDelete() {
-    console.log('Deleting player:', this.selectedPlayer.PLAYER_NAME);
-    axios.delete(`/api/v1/player/delete?playerid=${this.selectedPlayer.PLAYER_ID}`) //用delete方法！
-      .then(() => {
-        console.log('Player deleted successfully');
-        this.fetchPlayers();
-        this.dialogVisible = false;
-      })
-      .catch(error => {
-        console.error('Failed to delete player:', error);
-      });
-  },
-
-  // Confirm editing of a player
-  confirmEdit(player) {
-    console.log('Opening edit dialog for player:', player.PLAYER_NAME);
-    this.editForm = { ...player };
-    this.editDialogVisible = true;
-  },
-
-  // Save edited player data with correct API endpoint
+    // Save edited player data with correct API endpoint
     handleSave() {
     console.log('Saving player data for:', this.editForm.PLAYER_NAME);
 
@@ -371,100 +371,101 @@ methods: {
           this.updatePagedData(this.currentPage); // Ensure the correct page is displayed after data is fetched
           this.editDialogVisible = false;
         })
-    .catch(error => {
-      console.error('Failed to update player:', error);
-    });
-  },
-
-// Add a new player
-handleAddPlayer() {
-  console.log('Adding new player');
-  this.$refs.addFormRef.validate((valid) => {
-    if (valid) {
-
-      // Construct the JSON object as per server's expectations
-      const newPlayerData = {
-        PLAYER_NAME: this.addForm.PLAYER_NAME,
-        BIRTHDAY: this.addForm.BIRTHDAY,
-        TEAM_ID: Number(this.addForm.TEAM_ID),  // Convert to number
-        ROLE: this.addForm.ROLE,
-        USED_FOOT: Number(this.addForm.USED_FOOT), // Convert to number
-        HEALTH_STATE: Number(this.addForm.HEALTH_STATE), // Convert to number
-        RANK: Number(this.addForm.RANK), // Convert to number
-        GAME_STATE: Number(this.addForm.GAME_STATE), // Convert to number
-        TRANS_STATE: Number(this.addForm.TRANS_STATE), // Convert to number
-        IS_SHOW: Number(this.addForm.IS_SHOW) // Convert to number
-      };
-
-      // Use the correct API endpoint
-      axios.post(`api/v1/player/add`, newPlayerData) 
-        .then(() => {
-          console.log('Player added successfully');
-          this.fetchPlayers(); // 刷新玩家列表
-          this.addDialogVisible = false; // 关闭对话框
-        })
-        .catch(error => {
-          if (error.response) {
-            // 服务器返回的错误响应
-            console.error('Failed to add player:', error.response.data);
-          } else if (error.request) {
-            // 请求已发出，但没有收到响应
-            console.error('No response received:', error.request);
-          } else {
-            // 设置请求时出错
-            console.error('Error setting up request:', error.message);
-          }
-        });
-    }
-  });
-},
-
-
-  // Perform a search
-  handleSearch() {
-    console.log('Performing search with type:', this.searchType, 'and query:', this.searchQuery);
-    if (this.searchType && this.searchQuery) {
-      this.pagedData = this.allData.filter(player => {
-        return player[this.searchType].toString().includes(this.searchQuery);
+      .catch(error => {
+        console.error('Failed to update player:', error);
       });
-      this.total = this.pagedData.length;
+    },
+
+    // Add a new player
+    handleAddPlayer() {
+      console.log('Adding new player');
+      this.$refs.addFormRef.validate((valid) => {
+        if (valid) {
+
+          // Construct the JSON object as per server's expectations
+          // Convert to number
+          const newPlayerData = {
+            PLAYER_NAME: this.addForm.PLAYER_NAME,
+            BIRTHDAY: this.addForm.BIRTHDAY,
+            TEAM_ID: Number(this.addForm.TEAM_ID), 
+            ROLE: this.addForm.ROLE,
+            USED_FOOT: Number(this.addForm.USED_FOOT), 
+            HEALTH_STATE: Number(this.addForm.HEALTH_STATE),
+            RANK: Number(this.addForm.RANK), 
+            GAME_STATE: Number(this.addForm.GAME_STATE), 
+            TRANS_STATE: Number(this.addForm.TRANS_STATE), 
+            IS_SHOW: Number(this.addForm.IS_SHOW) 
+          };
+
+          // Use the correct API endpoint
+          axios.post(`api/v1/player/add`, newPlayerData) 
+            .then(() => {
+              console.log('Player added successfully');
+              this.fetchPlayers(); // 刷新玩家列表
+              this.addDialogVisible = false; // 关闭对话框
+            })
+            .catch(error => {
+              if (error.response) {
+                // 服务器返回的错误响应
+                console.error('Failed to add player:', error.response.data);
+              } else if (error.request) {
+                // 请求已发出，但没有收到响应
+                console.error('No response received:', error.request);
+              } else {
+                // 设置请求时出错
+                console.error('Error setting up request:', error.message);
+              }
+            });
+        }
+      });
+    },
+
+
+    // Perform a search
+    handleSearch() {
+      console.log('Performing search with type:', this.searchType, 'and query:', this.searchQuery);
+        const searchType = this.searchType;
+        const searchQuery = this.searchQuery.toLowerCase();
+        this.tableData = this.allData.filter(player =>
+          player[searchType].toString().toLowerCase().includes(searchQuery)
+        );
+        this.total = this.tableData.length;
+        this.currentPage = 1;
+        this.updatePagedData();
+
+    },
+
+    // Reset search criteria
+    resetSearch() {
+      console.log('Resetting search');
+      this.searchType = '';
+      this.searchQuery = '';
+      this.currentPage = 1;
+      this.tableData = this.allData;
+      this.total = this.allData.length;
       this.updatePagedData();
-    } else {
-      console.warn('Search type or query is missing');
-    }
-  },
+    },
 
-  // Reset search criteria
-  resetSearch() {
-    console.log('Resetting search');
-    this.searchType = '';
-    this.searchQuery = '';
-    this.pagedData = this.allData;
-    this.total = this.allData.length;
-    this.updatePagedData();
-  },
+    // Handle pagination page change
+    handleCurrentChange(page) {
+      console.log('Changing page to:', page);
+      this.currentPage = page;
+      this.updatePagedData(page);
+    },
 
-  // Handle pagination page change
-  handleCurrentChange(page) {
-    console.log('Changing page to:', page);
-    this.updatePagedData(page);
-  },
-
-  // Update paged data
+    // Update paged data
     updatePagedData(currentPage = this.currentPage) {
-      console.log('Updating paged data for page:', currentPage);
+      //console.log('Updating paged data for page:', currentPage);
       const start = (currentPage - 1) * this.pageSize;
       const end = currentPage * this.pageSize;
-      this.pagedData = this.allData.slice(start, end);
+      this.pagedData = this.tableData.slice(start, end);
     }
-
-},
-
-created() {
-  this.fetchPlayers();
-}
-,
-};
+  },
+  
+    created() {
+      this.fetchPlayers();
+    },
+  };
 </script>
 
 <style scoped>
