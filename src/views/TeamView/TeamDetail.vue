@@ -56,6 +56,7 @@
             <el-card shadow="never" class="box-card">
               <div slot="header" class="clearfix">
                 <span style="font-size: 20px;font-weight: bold;">球员信息</span>
+                <el-button type="primary" icon="el-icon-user" @click="recruitPlayer" class="back-button1">招募球员</el-button>
                 <el-container>
                   <el-main>
                     <el-table :data="filteredPlayers" style="width: 100% ;height:250px" >
