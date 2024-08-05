@@ -45,6 +45,11 @@ const router = new Router({
           component: () => import("@/views/PlayerView/PlayerDisplay.vue"),
         },
         {
+          path: "medical",
+          name: "medical",
+          component: () => import("@/views/MedicalView/MedicalList.vue"),
+        },
+        {
           path: "changepsw",
           name: "Changepsw",
           component: () => import("@/views/UserSetting/ChangePassword.vue"),
@@ -111,8 +116,6 @@ const router = new Router({
     },
   ],
 });
-
-
 
 // 导航守卫
 /*
