@@ -13,6 +13,11 @@ import ElementUI from 'element-ui';
 import VueCookies from "vue-cookies";
 import 'element-ui/lib/theme-chalk/index.css';
 
+//引入echarts
+import * as echarts from 'echarts'
+//vue全局注入echarts
+Vue.prototype.$echarts = echarts;
+
 
 import store from './store'; // 引入 Vuex store
 

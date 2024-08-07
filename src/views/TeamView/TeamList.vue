@@ -29,14 +29,14 @@
         </el-form-item>
         <el-form-item label="城市" :label-width="formLabelWidth" prop="CITY">
           <el-input v-model="addForm.CITY"></el-input>
-        </el-form-item>
-       
+        </el-form-item>     
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleAddDialogClose">取消</el-button>
         <el-button type="primary" @click="handleAddTeam">添加</el-button>
       </span>
     </el-dialog>
+
       </el-col>
       <el-col :span="6">
         <el-input v-model="search" placeholder="输入球队名称搜索" clearable>
@@ -161,8 +161,8 @@
     },
 
     handleAddTeam() {
-  console.log('Adding new team');
-  this.$refs.addFormRef.validate((valid) => {
+    console.log('Adding new team');
+    this.$refs.addFormRef.validate((valid) => {
     if (valid) {
       // Construct the JSON object as per server's expectations
       const newTeamData = {
@@ -172,6 +172,7 @@
         HEAD_COACH: this.addForm.HEAD_COACH,
         CITY: this.addForm.CITY,
       };
+      console.log(newTeamData);
       // Use the correct API endpoint
       axios.post('/api/v1/team/add', newTeamData)
         .then(() => {

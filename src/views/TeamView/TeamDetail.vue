@@ -10,16 +10,16 @@
                 <span style="font-size: 20px;font-weight: bold;">球队简介</span>
                 <el-button type="primary" icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
               </div>
-              <el-row :gutter="20">
-              
+             
                 <el-col :span="6">
- 
                   <div class="team-image">
                     <img src="https://img.51miz.com/Element/00/91/85/34/422e1064_E918534_f98a4621.png" alt="Team Image" />
                   </div>
-                </el-col>
-                <h2 style="font-size: 24px;">{{ team[0].TEAM_NAME }}</h2>
-                <el-col :span="18" class="team-info">                  
+                </el-col>                 
+                <h2 style="font-size: 24px;">{{ team[0].TEAM_NAME }}</h2>                                          
+                <el-col :span="18" class="team-info">   
+                
+                           
                   <el-row :gutter="12">
                     <el-col :span="12">
                       <p>
@@ -46,17 +46,19 @@
                       </p>
                     </el-col>
                   </el-row>
-                </el-col>
-              </el-row>
+                </el-col>           
             </el-card>
         </el-row>
+
         <el-col :span="24" style="height: 20px;"></el-col> 
-        <el-row >
-          <el-col :span="24">
+
+       
+          <el-row :gutter="20">
+          <el-col :span="12">
             <el-card shadow="never" class="box-card">
               <div slot="header" class="clearfix">
                 <span style="font-size: 20px;font-weight: bold;">球员信息</span>
-                <el-button type="primary" icon="el-icon-user" @click="recruitPlayer" class="back-button1">招募球员</el-button>
+                <el-button type="primary" icon="el-icon-user" size='small' @click="handleRecruitPlayer" class="back-button1">招募球员</el-button>
                 <el-container>
                   <el-main>
                     <el-table :data="filteredPlayers" style="width: 100% ;height:250px" >
@@ -86,79 +88,21 @@
                 </el-container>
               </div> 
             </el-card>
-          </el-col>
-        </el-row>
-        <el-col :span="24" style="height: 20px;"></el-col> 
-        <el-row :gutter="20">
-          <el-col :span="12">
+
+            <el-col :span="24" style="height: 20px;"></el-col> 
+
             <el-card shadow="never" class="box-card">
               <div slot="header" class="clearfix">
-                <span style="font-size: 20px;font-weight: bold;">财务记录</span>
-                <el-container>
-                  <el-main>         
-                    <el-table :data="filteredRecords" style="width: 100% ;height:250px">
-                      <el-table-column prop="RECORD_ID" label="财务记录ID" width="150" >
-                      </el-table-column>
-                      <el-table-column prop="DESCRIPTION" label="交易描述" width="150">
-                      </el-table-column>
-                      <el-table-column prop="TRANSACTION_DATE" label="交易日期" width="190">
-                      </el-table-column>
-                      <el-table-column prop="AMOUNT" label="金额">
-                      </el-table-column>            
-                    </el-table>
-                    <el-pagination
-                    @size-change="handleSizeChange2"
-                    @current-change="handleCurrentChange2"
-                    :current-page.sync="currentPage2"
-                    :page-sizes="[3]"
-                    :page-size="pageSize2"
-                    layout="sizes, prev, pager, next, jumper"
-                    :total="record.length"
-                    ></el-pagination>
-                  </el-main>    
-                </el-container>
-              </div>
-            </el-card>
-          </el-col>
-           <el-col :span="12">
-            <el-card shadow="never" class="box-card">
-              <div slot="header" class="clearfix">
-                <span style="font-size: 20px;font-weight: bold;">阵容信息</span>
-                <el-container>
-                  <el-main>   
-                    <el-table :data="filteredLineups" style="width: 100%;height:250px" >
-                      <el-table-column prop="LINEUP_ID" label="阵容ID">
-                      </el-table-column>
-                    </el-table>
-                     <el-pagination
-                    @size-change="handleSizeChange2"
-                    @current-change="handleCurrentChange2"
-                    :current-page.sync="currentPage2"
-                    :page-sizes="[3]"
-                    :page-size="pageSize2"
-                    layout="sizes, prev, pager, next, jumper"
-                    :total="record.length"
-                    ></el-pagination>
-                  </el-main>    
-                </el-container>
-              </div> 
-            </el-card>
-          </el-col>
-        </el-row>
-        <el-col :span="24" style="height: 20px;"></el-col> 
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-card shadow="never" class="box-card">
-              <div slot="header" class="clearfix">
-                <span style="font-size: 20px;font-weight: bold;">比赛信息</span>
+                <span style="font-size: 20px;font-weight: bold;">竞争对手</span>
+                <el-button type="primary"  size='small' @click="handleRecruitPlayer" class="back-button1">查看比赛</el-button>
                 <el-container>
                   <el-main>         
                     <el-table :data="filteredMatches" style="width: 100%;height:250px ">
                       <el-table-column prop="MATCH_ID" label="比赛ID" width="150" >
                       </el-table-column>
-                      <el-table-column prop="HOME_TEAM_ID" label="主场球队ID" width="150" >
+                      <el-table-column prop="HOME_TEAM_NAME" label="主场球队" width="150" >
                       </el-table-column>
-                      <el-table-column prop="AWAY_TEAM_ID" label="客场球队ID" >
+                      <el-table-column prop="AWAY_TEAM_NAME" label="客场球队" >
                       </el-table-column>
                     </el-table>
                     <el-pagination
@@ -170,77 +114,30 @@
                     layout="sizes, prev, pager, next, jumper"
                     :total="record.length"
                     ></el-pagination>
-                  </el-main>    
+                  </el-main>   
                 </el-container>
               </div>
             </el-card>
           </el-col>
+
+          
           <el-col :span="12">
-            <el-card shadow="never" class="box-card">
+            <el-card shadow="never" class="box-card2">
               <div slot="header" class="clearfix">
-                <span style="font-size: 20px;font-weight: bold;">医疗信息</span>
-                <el-container>
-                  <el-main>         
-                    <el-table :data="filteredMedicals" style="width: 100%;height:250px ">
-                      <el-table-column prop="medical_id" label="医疗处理ID" width="150" >
-                      </el-table-column>
-                      <el-table-column prop="player_id" label="球员ID">
-                      </el-table-column>      
-                    </el-table>
-                    <el-pagination
-                    @size-change="handleSizeChange2"
-                    @current-change="handleCurrentChange2"
-                    :current-page.sync="currentPage2"
-                    :page-sizes="[3]"
-                    :page-size="pageSize2"
-                    layout="sizes, prev, pager, next, jumper"
-                    :total="record.length"
-                    ></el-pagination>
-                  </el-main>    
-                </el-container>
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>  
-        <el-col :span="24" style="height: 20px;"></el-col> 
-        <el-row gutter="20">
-          <el-col :span="6" >
-            <el-card :body-style="{ padding: '14px' }" shadow="hover" @click="handleClickRecord">
-              <img src="" class="image">
-                <div style="padding: 14px;">
-                  <span >财务记录</span>
-                </div>
-            </el-card>
-          </el-col>
-          <el-col :span="6" >
-            <el-card :body-style="{ padding: '14px' }" shadow="hover" @click="handleClickMatch">
-              <img src="" class="image">
-                <div style="padding: 14px;">
-                  <span>赛事信息</span>
-                    
-                </div>
-            </el-card>
-          </el-col>
-          <el-col :span="6" >
-            <el-card :body-style="{ padding: '14px' }" shadow="hover" @click="handleClickLineup">
-              <img src="" class="image">
-                <div style="padding: 14px;">
-                  <span>阵容信息</span>
-                    
-                </div>
-            </el-card>
-          </el-col>
-          <el-col :span="6" >
-            <el-card :body-style="{ padding: '14px' }" shadow="hover" @click="handleClickMedical">
-              <img src="" class="image">
-                <div style="padding: 14px;">
-                  <span>医疗记录</span>
-                   
-                </div>
+                <span style="font-size: 20px;font-weight: bold;">财务信息</span>
+                <el-button type="primary"  size='small' @click="handleClickRecord" class="back-button1">查看详情</el-button>
+                <container>
+                  <e1-main>
+                  
+                  </e1-main>
+                </container>
+              </div> 
             </el-card>
           </el-col>
         </el-row>
+        <el-col :span="24" style="height: 20px;"></el-col> 
       </div>
+
       <div v-else>
         <p>No team data available.</p>
       </div>
@@ -250,8 +147,9 @@
 
   <script>
   import axios from 'axios';
-
+  //import Chart from 'chart.js';
   export default {
+    
     data() {
       return {
         drawer: false,
@@ -272,8 +170,10 @@
     },
     created() {
       this.fetchTeamDetail()
-  
+     
     },
+
+   
     computed: {
     filteredPlayers() {
       const { player, search } = this;
@@ -305,7 +205,13 @@
       filteredMatches() {
       const { match, search } = this;
       if (!search) {
-        return match.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
+        const matches=match.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
+        return matches.filter(match => {
+      return (
+        match.HOME_TEAM_NAME === this.team[0].TEAM_NAME ||
+        match.AWAY_TEAM_NAME === this.team[0].TEAM_NAME
+      );
+    });
       } else {
         const filtered = match.filter(data => data.MATCH_ID.includes(search));
         return filtered.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
@@ -321,6 +227,8 @@
       }
       },
   },
+
+
     methods: {
     handlePlayerDetails(row) {
       console.log('Navigating to player detail page for:', row.PLAYER_ID);
@@ -342,6 +250,25 @@
     handleCurrentChange2(val) {
       this.currentPage2 = val;
     },
+    handleRecruitPlayer(){
+
+    },
+    handleClickLineup(){
+      const teamID = this.$route.params.teamID;
+      console.log('Click line up:',teamID);
+      this.$router.push(`/lineup/${teamID}`); 
+    },
+    handleClickRecord(){
+      const teamID = this.$route.params.teamID;
+      console.log('Click Record:',teamID);
+      this.$router.push(`/record/${teamID}`); 
+    },
+    handleClickMedical(){
+
+    },
+    handleClickMatch(){
+
+    },
     fetchTeamDetail() {
         const teamID = this.$route.params.teamID;
         console.log('Fetching data for team ID:', teamID);
@@ -353,6 +280,7 @@
           .catch(error => {
             console.error('Failed to fetch team data:', error);
           });
+
         axios.get(`/api/v1/player/displayall?teamid=${teamID}`)
           .then(response => {
             console.log('Received data:', response.data);
@@ -362,19 +290,19 @@
         .catch(error => {
           console.error('Failed to fetch player data:',error);
           this.loading = false;
-        })
+        });
+
         axios.get(`/api/v1/lineup/displayall?teamid=${teamID}`)
           .then(response => {
             console.log('Received data:', response.data);
             this.lineup = response.data;
-            this.loading = false;
-
-           
+            this.loading = false;        
         })
         .catch(error => {
           console.error('Failed to fetch lineup data:',error);
           this.loading = false;
-        })
+        });
+
         axios.get(`/api/v1/match/displayall?match_id=${teamID}`)
           .then(response => {
             console.log('Received data:', response.data);
@@ -384,7 +312,8 @@
         .catch(error => {
           console.error('Failed to fetch match data:',error);
           this.loading = false;
-        })
+        });
+
         axios.get(`/api/v1/medical/displayall?teamid=${teamID}`)
           .then(response => {
             console.log('Received data:', response.data);
@@ -394,7 +323,8 @@
         .catch(error => {
           console.error('Failed to fetch medical data:',error);
           this.loading = false;
-        })
+        });
+
         axios.get(`/api/v1/record/getbyTeam/${teamID}`)
           .then(response => {
             console.log('Received data:', response.data);
@@ -444,9 +374,14 @@
   margin-left: 1rem;
 }
 
+.box-card2 {
+    width: 100%;
+    height: 720px;
+   
+  }
 .box-card {
     width: 100%;
-    height: 370px;
+    height: 350px;
    
   }
   .card-header{
@@ -481,7 +416,14 @@
   .clearfix:after {
       clear: both
   }
+
   .el-card .el-card__body {
   text-align: center;
+}
+h2 {
+    margin-left: 0px;
+}
+canvas {
+  max-width: 100%;
 }
   </style>
