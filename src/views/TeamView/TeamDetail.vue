@@ -58,7 +58,7 @@
             <el-card shadow="never" class="box-card">
               <div slot="header" class="clearfix">
                 <span style="font-size: 20px;font-weight: bold;">球员信息</span>
-                <el-button type="primary" icon="el-icon-user" size='small' @click="handleRecruitPlayer" class="back-button1">招募球员</el-button>
+                <el-button type="primary" size='small' @click="handleRecruitPlayer" class="back-button1">招募球员</el-button>
                 <el-container>
                   <el-main>
                     <el-table :data="filteredPlayers" style="width: 100% ;height:250px" >
@@ -128,7 +128,7 @@
                 <el-button type="primary"  size='small' @click="handleClickRecord" class="back-button1">查看详情</el-button>
                 <container>
                   <e1-main>
-                  
+                    <div class="echart-box" ref="pieChart"></div>
                   </e1-main>
                 </container>
               </div> 
@@ -147,9 +147,9 @@
 
   <script>
   import axios from 'axios';
-  //import Chart from 'chart.js';
+
   export default {
-    
+
     data() {
       return {
         drawer: false,
@@ -170,7 +170,7 @@
     },
     created() {
       this.fetchTeamDetail()
-     
+      this.fetchTeamRecords()
     },
 
    
@@ -292,17 +292,6 @@
           this.loading = false;
         });
 
-        axios.get(`/api/v1/lineup/displayall?teamid=${teamID}`)
-          .then(response => {
-            console.log('Received data:', response.data);
-            this.lineup = response.data;
-            this.loading = false;        
-        })
-        .catch(error => {
-          console.error('Failed to fetch lineup data:',error);
-          this.loading = false;
-        });
-
         axios.get(`/api/v1/match/displayall?match_id=${teamID}`)
           .then(response => {
             console.log('Received data:', response.data);
@@ -313,38 +302,109 @@
           console.error('Failed to fetch match data:',error);
           this.loading = false;
         });
-
-        axios.get(`/api/v1/medical/displayall?teamid=${teamID}`)
-          .then(response => {
-            console.log('Received data:', response.data);
-            this.medical = response.data;
-            this.loading = false;
-        })
-        .catch(error => {
-          console.error('Failed to fetch medical data:',error);
-          this.loading = false;
-        });
-
-        axios.get(`/api/v1/record/getbyTeam/${teamID}`)
-          .then(response => {
-            console.log('Received data:', response.data);
-            this.record = response.data;
-            this.loading = false;
-        })
-        .catch(error => {
-          console.error('Failed to fetch record data:',error);
-          this.loading = false;
-        })
       },
     goBack() {
       this.$router.go(-1); // Navigate to the previous page
-    }
     },
-   
+    fetchTeamRecords() {
+      const teamID = this.$route.params.teamID;
+      axios.get(`/api/v1/record/getbyTeam/${teamID}`)
+        .then(response => {
+          console.log('Received record data:', response.data);
+          this.records = response.data;
+          this.loading = false;
+          this.renderPie();
+        })
+        .catch(error => {
+          console.error('Failed to fetch record data:', error);
+          this.loading = false;
+        });
+    },
+    renderPie() {
+      const pieDom = this.$refs.pieChart; // 使用新的 ref
+      const myChart = this.$echarts.init(pieDom);
+      
+      const pieData = this.records.map(record => ({
+        name: record.DESCRIPTION,
+        value: record.AMOUNT,
+      }));
+
+      const option = {
+        title: {
+          text: '总交易占比',
+          left: 'center',
+        },
+        tooltip: {
+          trigger: 'item',
+        },
+        legend: {
+          orient: 'vertical',
+          left: 'left',
+        },
+        series: [{
+          name: 'Amount',
+          type: 'pie',
+          radius: '50%',
+          data: pieData,
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+            },
+          },
+        }],
+      };
+
+      myChart.setOption(option);
+    },
+    },
+    mounted(){
+                            // 基于准备好的dom，初始化echarts实例
+            const userdom = this.$refs.box
+            const mycart = this.$echarts.init(userdom)
+                const option = {
+  title: {
+    text: 'Referer of a Website',
+    subtext: 'Fake Data',
+    left: 'center'
+  },
+  tooltip: {
+    trigger: 'item'
+  },
+  legend: {
+    orient: 'vertical',
+    left: 'left'
+  },
+  series: [
+    {
+      name: 'Access From',
+      type: 'pie',
+      radius: '50%',
+      data: [
+        { value: 1048, name: 'Search Engine' },
+        { value: 735, name: 'Direct' },
+        { value: 580, name: 'Email' },
+        { value: 484, name: 'Union Ads' },
+        { value: 300, name: 'Video Ads' }
+      ],
+      emphasis: {
+        itemStyle: {
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowColor: 'rgba(0, 0, 0, 0.5)'
+        }
+      }
+    }
+  ]
+};
+            mycart.setOption(option)
+        },
   };
+  
   </script>
 
-  <style>
+  <style scoped>
 .team-image {
   width: 60%;
   height: 190px;
@@ -423,7 +483,9 @@
 h2 {
     margin-left: 0px;
 }
-canvas {
-  max-width: 100%;
+.echart-box {
+  width: 500px;
+  height: 250px;
+  margin: 20px auto;
 }
   </style>
