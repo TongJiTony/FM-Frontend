@@ -592,6 +592,7 @@ export default {
 .el-input-group {
   display: flex;
   align-items: center;
+  gap: 8px;
 }
 
 .player-card {

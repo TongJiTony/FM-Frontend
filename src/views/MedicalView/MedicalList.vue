@@ -35,28 +35,44 @@
       </el-col>
     </el-row>
     <el-row :gutter="20">
-      <el-col v-for="(medical, index) in pagedData" :key="index" :span="12">
+      <el-col v-for="(medical, index) in pagedData" :key="index" :span="24">
         <el-card shadow="always" class="medical-card">
-          <h3>{{ medical.PLAYER_NAME }}</h3>
-          <p><strong>医疗编号:</strong> {{ medical.MEDICAL_ID }}</p>
-          <p><strong>球员编号:</strong> {{ medical.PLAYER_ID }}</p>
-          <p><strong>受伤部位:</strong> {{ medical.HURT_PART }}</p>
-          <p><strong>受伤时间:</strong> {{ medical.HURT_TIME }}</p>
-          <p><strong>医疗护理:</strong> {{ medical.MEDICAL_CARE }}</p>
-          <el-button
-            @click="confirmEdit(medical)"
-            type="text"
-            size="small"
-            style="color: blue"
-            >编辑</el-button
-          >
-          <el-button
-            @click="confirmDelete(medical)"
-            type="text"
-            size="small"
-            style="color: red"
-            >删除</el-button
-          >
+          <div class="medical-card-content">
+            <div class="medical-item">
+              <strong>球员姓名:</strong> {{ medical.PLAYER_NAME }}
+            </div>
+            <div class="medical-item">
+              <strong>医疗编号:</strong> {{ medical.MEDICAL_ID }}
+            </div>
+            <div class="medical-item">
+              <strong>球员编号:</strong> {{ medical.PLAYER_ID }}
+            </div>
+            <div class="medical-item">
+              <strong>受伤部位:</strong> {{ medical.HURT_PART }}
+            </div>
+            <div class="medical-item">
+              <strong>受伤时间:</strong> {{ medical.HURT_TIME }}
+            </div>
+            <div class="medical-item">
+              <strong>医疗护理:</strong> {{ medical.MEDICAL_CARE }}
+            </div>
+            <div class="medical-actions">
+              <el-button
+                @click="confirmEdit(medical)"
+                type="text"
+                size="small"
+                style="color: blue"
+                >编辑</el-button
+              >
+              <el-button
+                @click="confirmDelete(medical)"
+                type="text"
+                size="small"
+                style="color: red"
+                >删除</el-button
+              >
+            </div>
+          </div>
         </el-card>
       </el-col>
     </el-row>
@@ -404,8 +420,29 @@ export default {
   margin-bottom: 20px;
 }
 
+.medical-card-content {
+  display: flex; /* Use Flexbox to arrange elements in a row */
+  align-items: center; /* Align items vertically in the center */
+  justify-content: space-between; /* Distribute space evenly between items */
+  padding: 10px; /* Add some padding for better spacing */
+}
+
+.medical-item {
+  flex: 1; /* Allow items to grow and fill the available space */
+  min-width: 100px; /* Ensure minimum width for each item */
+  margin-right: 10px; /* Add some space between items */
+}
+
+.medical-actions {
+  flex: 0 0 auto; /* Prevent actions from growing or shrinking */
+}
+
 .medical-card {
-  margin-bottom: 20px;
+  margin-bottom: 20px; /* Space between cards */
+}
+
+.el-card {
+  width: 100%; /* Make sure the card takes the full width */
 }
 
 .dialog-footer {
@@ -415,5 +452,6 @@ export default {
 .el-input-group {
   display: flex;
   gap: 8px;
+  align-items: center;
 }
 </style>
