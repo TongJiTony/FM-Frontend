@@ -1,30 +1,35 @@
 <template>
   <el-container class="default-layout">
     <el-header>
-      <el-menu
-        :default-active="$route.path"
-        class="el-menu-custom"
-        mode="horizontal"
-        @select="handleSelect"
-        background-color="#333"
-        text-color="#fff"
-        active-text-color="#ffd04b"
-      >
-        <el-menu-item index="/">Home</el-menu-item>
-        <el-menu-item index="/test">Test</el-menu-item>
-        <el-menu-item index="/team">Team</el-menu-item>
-        <el-menu-item index="/player-list">Player List</el-menu-item>
-        <el-menu-item index="/lineup">Lineup</el-menu-item>
-        <el-submenu>
-          <template slot="title">
-            <i class="el-icon-setting"></i>
-            <span class="username-title">{{this.$store.getters['user/getUserName']}}</span>
-            <img :src= "this.$store.getters['user/getUserIcon']" class="user-icon"/>
-          </template>
-          <el-menu-item class="user-action-item" index="/changepsw" >Change Password</el-menu-item>
-          <el-menu-item class="user-action-item" index="/userinfo" > {{this.$store.getters['user/getUserName']}}'s info</el-menu-item>
-        </el-submenu>
-      </el-menu>
+      <div class="header-content">
+        <img src="../assets/img/FM-Logo.png" class="logo" alt="Logo">
+        <el-menu
+          :default-active="$route.path"
+          class="el-menu-custom"
+          mode="horizontal"
+          @select="handleSelect"
+          background-color="#333"
+          text-color="#fff"
+          active-text-color="#ffd04b"
+        >
+          <el-menu-item index="/">Home</el-menu-item>
+          <el-menu-item index="/test">Test</el-menu-item>
+          <el-menu-item index="/team">Team</el-menu-item>
+          <el-menu-item index="/player-list">Player List</el-menu-item>
+          <el-menu-item index="/lineup">Lineup</el-menu-item>
+          <div class="menu-right">
+            <el-submenu>
+              <template slot="title">
+                <i class="el-icon-setting"></i>
+                <span class="username-title">{{this.$store.getters['user/getUserName']}}</span>
+                <img :src="this.$store.getters['user/getUserIcon']" class="user-icon"/>
+              </template>
+              <el-menu-item class="user-action-item" index="/changepsw">Change Password</el-menu-item>
+              <el-menu-item class="user-action-item" index="/userinfo">{{this.$store.getters['user/getUserName']}}'s info</el-menu-item>
+            </el-submenu>
+          </div>
+        </el-menu>
+      </div>
     </el-header>
     <el-container>
       <el-main>
@@ -38,7 +43,6 @@
     </el-footer>
   </el-container>
 </template>
-
 <script>
 export default {
   name: 'DefaultLayout',
@@ -62,8 +66,24 @@ export default {
 
 .el-header {
   background: #333;
+
   color: white;
   line-height: 60px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-around; 
+  height: 100%;
+}
+
+.logo {
+  max-height: 100%; 
+  width: auto;      
+  object-fit: contain; 
+  margin-right: 0px; 
+  transition: transform 0.3s ease;
 }
 
 .el-menu-custom {
@@ -77,29 +97,38 @@ export default {
 }
 
 .user-icon {
-  width: 40px; /* 头像大小 */
+  width: 40px;
   height: 40px;
-  border-radius: 50%; /* 圆形头像 */
-  object-fit: cover; /* 确保图片覆盖容器，不会变形 */
-  margin-left: 10px; /* 添加一些间距 */
+  border-radius: 50%;
+  object-fit: cover;
+  margin-left: 10px;
 }
 
 .user-action-item:hover {
   color: white;
   font-weight: bold;
 }
-.user-action-item{
+
+.user-action-item {
   color: white;
 }
 
 .el-main {
   padding: 1rem;
+  background: linear-gradient(rgba(255, 255, 255, 0.3), rgba(162, 239, 172, 0.3)), url('~@/assets/img/main-bg2.png') no-repeat center center;
+  background-size: cover;
 }
 
 .el-footer {
-  background: #333;
+  background: linear-gradient(90deg, #333, #555);
   color: white;
   text-align: center;
   padding: 1rem;
+}
+
+.menu-right {
+  margin-left: auto; /* 将用户名菜单项推到右侧 */
+  display: flex;
+  align-items: center;
 }
 </style>
