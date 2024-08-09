@@ -2,15 +2,17 @@
   <el-container class="default-layout">
     <el-header>
       <div class="header-content">
-        <img src="../assets/img/FM-Logo.png" class="logo" alt="Logo">
+        <img src="../assets/img/FM-Logo-2.png" class="logo" alt="Logo">
+        <div class="site-title">FOOTBALLMANAGER</div> 
         <el-menu
           :default-active="$route.path"
           class="el-menu-custom"
           mode="horizontal"
           @select="handleSelect"
-          background-color="#333"
+          background-color="#CDDC39"
           text-color="#fff"
-          active-text-color="#ffd04b"
+          active-text-color="#fff"
+          font-weight: bold
         >
           <el-menu-item index="/">Home</el-menu-item>
           <el-menu-item index="/test">Test</el-menu-item>
@@ -65,8 +67,7 @@ export default {
 }
 
 .el-header {
-  background: #333;
-
+  background:  #CDDC39;
   color: white;
   line-height: 60px;
 }
@@ -74,7 +75,7 @@ export default {
 .header-content {
   display: flex;
   align-items: center;
-  justify-content: space-around; 
+  justify-content: flex-start; 
   height: 100%;
 }
 
@@ -86,6 +87,17 @@ export default {
   transition: transform 0.3s ease;
 }
 
+.site-title {
+  font-family: 'Arial', sans-serif; 
+  font-size: 24px; 
+  font-weight: bold;
+  color: #fff; 
+  margin-left: 0px;
+  margin-right: 180px; 
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* 增加阴影效果 */
+}
+
+
 .el-menu-custom {
   display: flex;
   justify-content: center;
@@ -93,7 +105,7 @@ export default {
 }
 
 .username-title {
-  color: #ffd04b;
+  color: #212121;
 }
 
 .user-icon {
@@ -117,17 +129,18 @@ export default {
   padding: 1rem;
   background: linear-gradient(rgba(255, 255, 255, 0.3), rgba(162, 239, 172, 0.3)), url('~@/assets/img/main-bg2.png') no-repeat center center;
   background-size: cover;
+  background-attachment: fixed;
 }
 
 .el-footer {
-  background: linear-gradient(90deg, #333, #555);
+  background: #8BC34A;
   color: white;
   text-align: center;
   padding: 1rem;
 }
 
 .menu-right {
-  margin-left: auto; /* 将用户名菜单项推到右侧 */
+  margin-left: 300px;
   display: flex;
   align-items: center;
 }
