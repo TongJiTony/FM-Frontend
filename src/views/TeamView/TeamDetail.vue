@@ -1,6 +1,5 @@
 <template>
    <div>
-    <h1></h1>
     <p v-if="loading">Loading team data...</p>
     <div v-else>
       <div v-if="team">

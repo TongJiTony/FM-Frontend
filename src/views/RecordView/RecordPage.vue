@@ -1,6 +1,8 @@
 <template>
   <div>
+    <el-button type="primary" size='small' icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
     <h1 style="font-size: 20px">财政</h1>
+   
     <p style="font-size: 12px">财政状况：安全</p>
     <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="摘要" name="first">
@@ -48,6 +50,9 @@
   height: 350px;
   margin: 20px auto;
 }
+.back-button1 {
+  float: right;
+}
 </style>
 
 <script>
@@ -66,6 +71,9 @@ export default {
   },
 
   methods: {
+    goBack() {
+      this.$router.go(-1); // Navigate to the previous page
+    },
     fetchTeamRecords() {
       const teamID = this.$route.params.teamID;
       axios.get(`/api/v1/record/displayall?team_id=${teamID}`)
