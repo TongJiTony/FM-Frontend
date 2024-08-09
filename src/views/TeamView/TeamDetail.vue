@@ -4,11 +4,12 @@
     <p v-if="loading">Loading team data...</p>
     <div v-else>
       <div v-if="team">
+
         <el-row>        
-            <el-card shadow="never" class="box-card">
+            <el-card shadow="never" class="box-card3">
               <div slot="header" class="clearfix">
                 <span style="font-size: 20px;font-weight: bold;">球队简介</span>
-                <el-button type="primary" icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
+                <el-button type="primary" size='small' icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
               </div>
              
                 <el-col :span="6">
@@ -50,15 +51,16 @@
             </el-card>
         </el-row>
 
-        <el-col :span="24" style="height: 20px;"></el-col> 
+        <el-col :span="24" style="height: 20px;"></el-col>  
 
-       
           <el-row :gutter="20">
+
           <el-col :span="12">
             <el-card shadow="never" class="box-card">
               <div slot="header" class="clearfix">
                 <span style="font-size: 20px;font-weight: bold;">球员信息</span>
-                <el-button type="primary" size='small' @click="handleRecruitPlayer" class="back-button1">招募球员</el-button>
+                <el-button type="primary" size='small' @click="handleRecruitPlayer" class="back-button1">招募球员</el-button>             
+              </div> 
                 <el-container>
                   <el-main>
                     <el-table :data="filteredPlayers" style="width: 100% ;height:250px" >
@@ -79,22 +81,23 @@
                     @size-change="handleSizeChange1"
                     @current-change="handleCurrentChange1"
                     :current-page.sync="currentPage1"
+                    :pager-count="5"
                     :page-sizes="[3]"
                     :page-size="pageSize1"
                     layout="sizes, prev, pager, next, jumper"
                     :total="player.length"
                     ></el-pagination>
                   </el-main>    
-                </el-container>
-              </div> 
+                </el-container>          
             </el-card>
 
             <el-col :span="24" style="height: 20px;"></el-col> 
-
+            
             <el-card shadow="never" class="box-card">
               <div slot="header" class="clearfix">
                 <span style="font-size: 20px;font-weight: bold;">竞争对手</span>
                 <el-button type="primary"  size='small' @click="handleRecruitPlayer" class="back-button1">查看比赛</el-button>
+              </div>
                 <el-container>
                   <el-main>         
                     <el-table :data="filteredMatches" style="width: 100%;height:250px ">
@@ -109,29 +112,33 @@
                     @size-change="handleSizeChange2"
                     @current-change="handleCurrentChange2"
                     :current-page.sync="currentPage2"
+                    :pager-count="5"
                     :page-sizes="[3]"
                     :page-size="pageSize2"
                     layout="sizes, prev, pager, next, jumper"
                     :total="record.length"
                     ></el-pagination>
                   </el-main>   
-                </el-container>
-              </div>
+                </el-container>           
             </el-card>
           </el-col>
-
           
           <el-col :span="12">
             <el-card shadow="never" class="box-card2">
               <div slot="header" class="clearfix">
                 <span style="font-size: 20px;font-weight: bold;">财务信息</span>
                 <el-button type="primary"  size='small' @click="handleClickRecord" class="back-button1">查看详情</el-button>
+              </div> 
                 <container>
                   <e1-main>
-                    <div class="echart-box" ref="pieChart"></div>
+                  <e1-row  class="echart-box" ref="pieChart">
+                  </e1-row>
+                  <el-col :span="24" style="height: 20px;"></el-col> 
+                  <e1-row  class="echart-box" ref="barChart">
+                  </e1-row>                 
                   </e1-main>
                 </container>
-              </div> 
+            
             </el-card>
           </el-col>
         </el-row>
@@ -184,24 +191,6 @@
         return filtered.slice((this.currentPage1 - 1) * this.pageSize1, this.currentPage1 * this.pageSize1);
       }
     },
-    filteredRecords() {
-      const { record, search } = this;
-      if (!search) {
-        return record.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
-      } else {
-        const filtered = record.filter(data => data.RECORD_ID.includes(search));
-        return filtered.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
-      }
-      },
-     filteredLineups() {
-      const { lineup, search } = this;
-      if (!search) {
-        return lineup.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
-      } else {
-        const filtered = lineup.filter(data => data.LINEUP_ID.includes(search));
-        return filtered.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
-      }
-      },
       filteredMatches() {
       const { match, search } = this;
       if (!search) {
@@ -217,15 +206,7 @@
         return filtered.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
       }
       },
-     filteredMedicals() {
-      const { medical, search } = this;
-      if (!search) {
-        return medical.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
-      } else {
-        const filtered = medical.filter(data => data.medical_id.includes(search));
-        return filtered.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
-      }
-      },
+    
   },
 
 
@@ -308,12 +289,13 @@
     },
     fetchTeamRecords() {
       const teamID = this.$route.params.teamID;
-      axios.get(`/api/v1/record/getbyTeam/${teamID}`)
+      axios.get(`/api/v1/record/displayall?team_id=${teamID}`)
         .then(response => {
           console.log('Received record data:', response.data);
           this.records = response.data;
           this.loading = false;
           this.renderPie();
+          this.renderBar();
         })
         .catch(error => {
           console.error('Failed to fetch record data:', error);
@@ -353,6 +335,33 @@
               shadowColor: 'rgba(0, 0, 0, 0.5)',
             },
           },
+        }],
+      };
+
+      myChart.setOption(option);
+    },
+    renderBar() {
+      const barDom = this.$refs.barChart; // 使用新的 ref
+      const myChart = this.$echarts.init(barDom);
+      
+      const dates = this.records.map(record => record.TRANSACTION_DATE);
+      const amounts = this.records.map(record => record.AMOUNT);
+
+      const option = {
+        title: {
+          text: '每月收支',
+          left: 'center',
+        },
+        xAxis: {
+          type: 'category',
+          data: dates,
+        },
+        yAxis: {
+          type: 'value',
+        },
+        series: [{
+          data: amounts,
+          type: 'line',
         }],
       };
 
@@ -433,15 +442,19 @@
 .el-tag {
   margin-left: 1rem;
 }
-
+.box-card3 {
+    width: 100%;
+    height: 350px;
+   
+  }
 .box-card2 {
     width: 100%;
-    height: 720px;
+    height: 800px;
    
   }
 .box-card {
     width: 100%;
-    height: 350px;
+    height: 390px;
    
   }
   .card-header{
@@ -484,8 +497,9 @@ h2 {
     margin-left: 0px;
 }
 .echart-box {
-  width: 500px;
-  height: 250px;
+  width: 600px;
+  height: 350px;
   margin: 20px auto;
+  
 }
   </style>

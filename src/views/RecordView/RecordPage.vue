@@ -1,27 +1,48 @@
 <template>
-  <div class="parent-container">
+  <div>
+    <h1 style="font-size: 20px">财政</h1>
+    <p style="font-size: 12px">财政状况：安全</p>
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+    <el-tab-pane label="摘要" name="first">
+     
     <e1-row gutter="20">
-      <e1-col span="12">
-        <e1-card class="echart-box" ref="pieChart">
-        </e1-card>
-        
-       
+      <e1-col span="12" >
+          <e1-card class="box-card2">
+            <p>总盈亏：¥{{ sum_amount }}</p>
+            <p>预算：</p>
+          </e1-card>
       </e1-col>
       <e1-col span="12">
-        <e1-card class="echart-box" ref="barChart">
+        <e1-card class="box-card">
+          <div class="echart-box" ref="pieChart"></div>
+        </e1-card>  
+        <e1-card class="box-card">
+          <div class="echart-box" ref="barChart"></div>
         </e1-card>
       </e1-col>
     </e1-row>
+ 
+    </el-tab-pane>
+    <el-tab-pane label="收入" name="second">配置管理</el-tab-pane>
+    <el-tab-pane label="支出" name="third">角色管理</el-tab-pane>
+    <el-tab-pane label="工资" name="fourth">定时任务补偿</el-tab-pane>
+  </el-tabs>
+ 
   </div>
+  
 </template>
 
 <style scoped>
-.parent-container {
-  width: 100%;
-  display: flex; /* 使用Flex布局 */
-  justify-content: space-between; /* 控制子元素的排列方式 */
-}
-
+.box-card {
+    width: 100%;
+    height: 390px;
+   
+  }
+.box-card2 {
+    width: 100%;
+    height: 800px;
+   
+  }
 .echart-box {
   width: 500px;
   height: 350px;
@@ -36,6 +57,7 @@ export default {
   data() {
     return {
       records: [],
+      sum_amount:[],
     };
   },
 
@@ -46,13 +68,18 @@ export default {
   methods: {
     fetchTeamRecords() {
       const teamID = this.$route.params.teamID;
-      axios.get(`/api/v1/record/getbyTeam/${teamID}`)
+      axios.get(`/api/v1/record/displayall?team_id=${teamID}`)
         .then(response => {
           console.log('Received record data:', response.data);
           this.records = response.data;
           this.loading = false;
+          this.sum_amount = this.records.reduce((acc, record) => {
+          return acc + record.AMOUNT;
+          }, 0);
           this.renderPie();
           this.renderBar();
+      
+          console.log('sum_amount:',this.sum_amount)
         })
         .catch(error => {
           console.error('Failed to fetch record data:', error);
