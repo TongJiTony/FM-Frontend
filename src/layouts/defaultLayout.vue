@@ -68,7 +68,6 @@ export default {
 
 .el-header {
   background:  #CDDC39;
-  color: white;
   line-height: 60px;
 }
 
@@ -101,7 +100,6 @@ export default {
 .el-menu-custom {
   display: flex;
   justify-content: center;
-  background-color: #333;
 }
 
 .username-title {
