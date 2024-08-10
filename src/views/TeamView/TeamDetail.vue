@@ -57,17 +57,24 @@
           <el-col :span="12">
             <el-card shadow="never" class="box-card">
               <div slot="header" class="clearfix">
-                <span style="font-size: 20px;font-weight: bold;">球员信息</span>
-                <el-button type="primary" size='small' @click="handleRecruitPlayer" class="back-button1">招募球员</el-button>             
+                <span style="font-size: 20px;font-weight: bold;">关键人物</span>
+                <e1-button-group>
+                  <el-button type="primary" size='small' @click="handleRecruitPlayer" class="back-button1">更多球员</el-button>    
+                  <el-button type="primary" size='small' @click="handleRecruitPlayer" class="back-button2">招募球员</el-button> 
+                </e1-button-group>
+               
+                       
               </div> 
                 <el-container>
                   <el-main>
-                    <el-table :data="filteredPlayers" style="width: 100% ;height:250px" >
-                      <el-table-column prop="PLAYER_ID" label="球员编号" width="150">
-                      </el-table-column>
+                    
+                    <el-table :data="topPlayers" style="width: 100% ;height:250px" >
+                      
                       <el-table-column prop="PLAYER_NAME" label="球员姓名" width="150">
                       </el-table-column>
-                      <el-table-column prop="ROLE" label="战术角色" width="150">
+                      <el-table-column prop="ROLE" label="位置" width="150">
+                      </el-table-column>
+                      <el-table-column prop="RANK" label="评分" width="150">
                       </el-table-column>
                       <el-table-column>
                       <!-- eslint-disable-next-line -->           
@@ -75,17 +82,9 @@
                           <el-button @click="handlePlayerDetails(scope.row)" type="text" size="small">查看详情</el-button>
                         </template>
                        </el-table-column>
+                    
                     </el-table>
-                    <el-pagination
-                    @size-change="handleSizeChange1"
-                    @current-change="handleCurrentChange1"
-                    :current-page.sync="currentPage1"
-                    :pager-count="5"
-                    :page-sizes="[3]"
-                    :page-size="pageSize1"
-                    layout="sizes, prev, pager, next, jumper"
-                    :total="player.length"
-                    ></el-pagination>
+                   
                   </el-main>    
                 </el-container>          
             </el-card>
@@ -172,16 +171,19 @@
         pageSize1: 3, // 每页显示条数
         currentPage2: 1, // 当前页码
         pageSize2: 3, // 每页显示条数
+        topPlayers:[],
       };
     },
     created() {
       this.fetchTeamDetail()
       this.fetchTeamRecords()
+      this.getTopPlayers()
     },
 
    
     computed: {
     filteredPlayers() {
+     
       const { player, search } = this;
       if (!search) {
         return player.slice((this.currentPage1 - 1) * this.pageSize1, this.currentPage1 * this.pageSize1);
@@ -210,6 +212,7 @@
 
 
     methods: {
+ 
     handlePlayerDetails(row) {
       console.log('Navigating to player detail page for:', row.PLAYER_ID);
       const playerId = row.PLAYER_ID;
@@ -233,18 +236,10 @@
     handleRecruitPlayer(){
 
     },
-    handleClickLineup(){
-      const teamID = this.$route.params.teamID;
-      console.log('Click line up:',teamID);
-      this.$router.push(`/lineup/${teamID}`); 
-    },
     handleClickRecord(){
       const teamID = this.$route.params.teamID;
       console.log('Click Record:',teamID);
       this.$router.push(`/record/${teamID}`); 
-    },
-    handleClickMedical(){
-
     },
     handleClickMatch(){
 
@@ -265,6 +260,10 @@
           .then(response => {
             console.log('Received data:', response.data);
             this.player = response.data;
+            this.topPlayers = this.player
+      .sort((a, b) => b.RANK - a.RANK) // 按 RANK 降序排序
+      .slice(0, 3); // 取前三个元素
+      console.log('TOPPLAYER',this.topPlayers)
             this.loading = false;
         })
         .catch(error => {
@@ -293,7 +292,19 @@
           console.log('Received record data:', response.data);
           this.records = response.data;
           this.loading = false;
-          this.renderPie();
+          let positiveSum = 0;
+          let negativeSum = 0;
+          this.records.forEach(record => {
+          if (record.AMOUNT > 0) {
+            positiveSum += record.AMOUNT;
+          } else if (record.AMOUNT < 0) {
+            negativeSum += record.AMOUNT;
+          }
+          });
+          const amounts=[positiveSum,negativeSum];
+          console.log("Positive Sum:", positiveSum);
+          console.log("Negative Sum:", negativeSum);
+          this.renderPie(amounts);
           this.renderBar();
         })
         .catch(error => {
@@ -301,18 +312,23 @@
           this.loading = false;
         });
     },
-    renderPie() {
+    renderPie(amounts) {
       const pieDom = this.$refs.pieChart; // 使用新的 ref
       const myChart = this.$echarts.init(pieDom);
       
-      const pieData = this.records.map(record => ({
-        name: record.DESCRIPTION,
-        value: record.AMOUNT,
-      }));
+      const pieData = amounts.map((amount, index) => {
+  // 根据索引确定数据的类别（收入或支出）
+      const category = index === 0 ? '收入' : '支出';
+  // 创建包含 name 和 value 属性的对象
+      return {
+        name: category,
+        value: Math.abs(amount), // 取绝对值，因为支出可能是负数
+      };
+      });
 
       const option = {
         title: {
-          text: '总交易占比',
+          text: '总收支占比',
           left: 'center',
         },
         tooltip: {
@@ -348,7 +364,7 @@
 
       const option = {
         title: {
-          text: '每月收支',
+          text: '每月收支变化',
           left: 'center',
         },
         xAxis: {
@@ -367,47 +383,6 @@
       myChart.setOption(option);
     },
     },
-    mounted(){
-                            // 基于准备好的dom，初始化echarts实例
-            const userdom = this.$refs.box
-            const mycart = this.$echarts.init(userdom)
-                const option = {
-  title: {
-    text: 'Referer of a Website',
-    subtext: 'Fake Data',
-    left: 'center'
-  },
-  tooltip: {
-    trigger: 'item'
-  },
-  legend: {
-    orient: 'vertical',
-    left: 'left'
-  },
-  series: [
-    {
-      name: 'Access From',
-      type: 'pie',
-      radius: '50%',
-      data: [
-        { value: 1048, name: 'Search Engine' },
-        { value: 735, name: 'Direct' },
-        { value: 580, name: 'Email' },
-        { value: 484, name: 'Union Ads' },
-        { value: 300, name: 'Video Ads' }
-      ],
-      emphasis: {
-        itemStyle: {
-          shadowBlur: 10,
-          shadowOffsetX: 0,
-          shadowColor: 'rgba(0, 0, 0, 0.5)'
-        }
-      }
-    }
-  ]
-};
-            mycart.setOption(option)
-        },
   };
   
   </script>
@@ -458,10 +433,16 @@
   }
   .card-header{
   margin-left: 1rem;
-  background-color: rgb(22, 111, 62); /* 设置你想要的底色 */
+ 
   }
-  .back-button1 {
+.back-button2 {
   float: right;
+  margin-right: 10px;
+  background-color: #0bac51;
+}
+.back-button1 {
+  float: right;
+  margin-left: 10px;
 }
 .bottom {
     margin-top: 13px;

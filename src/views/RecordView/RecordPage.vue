@@ -5,8 +5,7 @@
    
     <p style="font-size: 12px">财政状况：安全</p>
     <el-tabs v-model="activeName" @tab-click="handleClick">
-    <el-tab-pane label="摘要" name="first">
-     
+    <el-tab-pane label="摘要" name="first"> 
     <e1-row gutter="20">
       <e1-col span="12" >
           <e1-card class="box-card2">
@@ -23,10 +22,25 @@
         </e1-card>
       </e1-col>
     </e1-row>
- 
     </el-tab-pane>
-    <el-tab-pane label="收入" name="second">配置管理</el-tab-pane>
-    <el-tab-pane label="支出" name="third">角色管理</el-tab-pane>
+
+    <el-tab-pane label="收入" name="second">
+      <el-table :data=" records.filter(record => record.AMOUNT > 0)" style="width: 100%">
+              <el-table-column prop="DESCRIPTION" label="项目" width="200">
+              </el-table-column>
+              <el-table-column prop="AMOUNT" label="本月" width="200">
+              </el-table-column>
+            </el-table>
+    </el-tab-pane>
+
+    <el-tab-pane label="支出" name="third">
+      <el-table :data=" records.filter(record => record.AMOUNT < 0)" style="width: 100%">
+              <el-table-column prop="DESCRIPTION" label="项目" width="200">
+              </el-table-column>
+              <el-table-column prop="AMOUNT" label="本月" width="200"  :formatter="formatAmount">
+              </el-table-column>
+            </el-table>
+    </el-tab-pane>
     <el-tab-pane label="工资" name="fourth">定时任务补偿</el-tab-pane>
   </el-tabs>
  
@@ -62,7 +76,9 @@ export default {
   data() {
     return {
       records: [],
-      sum_amount:[],
+      sum_amount:0,
+      positiveSum:0,
+      negativeSum:0,
     };
   },
 
@@ -74,6 +90,9 @@ export default {
     goBack() {
       this.$router.go(-1); // Navigate to the previous page
     },
+    formatAmount(row, column, cellValue) {
+    return Math.abs(cellValue);
+  },
     fetchTeamRecords() {
       const teamID = this.$route.params.teamID;
       axios.get(`/api/v1/record/displayall?team_id=${teamID}`)
@@ -84,7 +103,23 @@ export default {
           this.sum_amount = this.records.reduce((acc, record) => {
           return acc + record.AMOUNT;
           }, 0);
-          this.renderPie();
+
+          let positiveSum = 0;
+          let negativeSum = 0;
+          this.records.forEach(record => {
+          if (record.AMOUNT > 0) {
+            positiveSum += record.AMOUNT;
+          } else if (record.AMOUNT < 0) {
+            negativeSum += record.AMOUNT;
+          }
+          });
+          this.negativeSum=negativeSum;
+          this.positiveSum=positiveSum;
+          const amounts=[positiveSum,negativeSum];
+          console.log("Positive Sum:", positiveSum);
+          console.log("Negative Sum:", negativeSum);
+      
+          this.renderPie(amounts);
           this.renderBar();
       
           console.log('sum_amount:',this.sum_amount)
@@ -95,18 +130,23 @@ export default {
         });
     },
 
-    renderPie() {
+    renderPie(amounts) {
       const pieDom = this.$refs.pieChart; // 使用新的 ref
       const myChart = this.$echarts.init(pieDom);
       
-      const pieData = this.records.map(record => ({
-        name: record.DESCRIPTION,
-        value: record.AMOUNT,
-      }));
+      const pieData = amounts.map((amount, index) => {
+  // 根据索引确定数据的类别（收入或支出）
+      const category = index === 0 ? '收入' : '支出';
+  // 创建包含 name 和 value 属性的对象
+      return {
+        name: category,
+        value: Math.abs(amount), // 取绝对值，因为支出可能是负数
+      };
+      });
 
       const option = {
         title: {
-          text: '总交易占比',
+          text: '总收支占比',
           left: 'center',
         },
         tooltip: {
@@ -143,7 +183,7 @@ export default {
 
       const option = {
         title: {
-          text: '每月收支',
+          text: '每月收支变化',
           left: 'center',
         },
         xAxis: {
