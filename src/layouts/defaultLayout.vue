@@ -3,16 +3,15 @@
     <el-header>
       <div class="header-content">
         <img src="../assets/img/FM-Logo-2.png" class="logo" alt="Logo">
-        <div class="site-title">FOOTBALLMANAGER</div> 
+        <div class="site-title">FOOTBALLMANAGER</div>
         <el-menu
           :default-active="$route.path"
           class="el-menu-custom"
           mode="horizontal"
           @select="handleSelect"
-          background-color="#CDDC39"
-          text-color="#fff"
-          active-text-color="#fff"
-          font-weight: bold
+          :background-color="currentTheme.primaryBackground"
+          :text-color="currentTheme.textColor"
+          :active-text-color="currentTheme.activeTextColor"
         >
           <el-menu-item index="/">Home</el-menu-item>
           <el-menu-item index="/test">Test</el-menu-item>
@@ -23,14 +22,15 @@
             <el-submenu>
               <template slot="title">
                 <i class="el-icon-setting"></i>
-                <span class="username-title">{{this.$store.getters['user/getUserName']}}</span>
-                <img :src="this.$store.getters['user/getUserIcon']" class="user-icon"/>
+                <span class="username-title">{{ this.$store.getters['user/getUserName'] }}</span>
+                <img :src="this.$store.getters['user/getUserIcon']" class="user-icon" />
               </template>
               <el-menu-item class="user-action-item" index="/changepsw">Change Password</el-menu-item>
-              <el-menu-item class="user-action-item" index="/userinfo">{{this.$store.getters['user/getUserName']}}'s info</el-menu-item>
+              <el-menu-item class="user-action-item" index="/userinfo">{{ this.$store.getters['user/getUserName'] }}'s info</el-menu-item>
             </el-submenu>
           </div>
         </el-menu>
+        <el-button @click="toggleTheme" class="el--button-change-theme" type="text">切换主题</el-button>
       </div>
     </el-header>
     <el-container>
@@ -38,27 +38,52 @@
         <router-view />
       </el-main>
     </el-container>
-    <el-footer style="height:auto">
+    <el-footer :style="{ background: currentTheme.footerBackground, color: currentTheme.textColor }">
       <h4>关于我们</h4>
       <p>我们来自同济大学软件学院，这是我们的数据库课程设计项目，也是我们第一次接触软件项目开发，学习前后端开发的相关知识后的成果。</p>
       <p class="copyright">Copyright © 2024 TJ Football Manager. All rights reserved.</p>
     </el-footer>
   </el-container>
 </template>
+
 <script>
 export default {
   name: 'DefaultLayout',
+  data() {
+    return {
+      themes: {
+        green: {
+          primaryBackground: '#CDDC39',
+          footerBackground: '#8BC34A',
+          textColor: '#fff',
+          activeTextColor: '#fff',
+        },
+        purpleBlack: {
+          primaryBackground: '#4A148C',
+          footerBackground: '#212121',
+          textColor: '#fff',
+          activeTextColor: '#CE93D8',
+        },
+      },
+      currentThemeName: 'green', // 当前主题名称
+    };
+  },
+  computed: {
+    currentTheme() {
+      return this.themes[this.currentThemeName];
+    },
+  },
   methods: {
     handleSelect(key) {
       if (this.$route.path !== key) {
         this.$router.push(key);
       }
     },
+    toggleTheme() {
+      this.currentThemeName = this.currentThemeName === 'green' ? 'purpleBlack' : 'green';
+    },
   },
-  created() {
-    console.log('Vuex 状态:', this.$store.state.user);
-  },
-}
+};
 </script>
 
 <style>
@@ -67,35 +92,33 @@ export default {
 }
 
 .el-header {
-  background:  #CDDC39;
   line-height: 60px;
 }
 
 .header-content {
   display: flex;
   align-items: center;
-  justify-content: flex-start; 
+  justify-content: flex-start;
   height: 100%;
 }
 
 .logo {
-  max-height: 100%; 
-  width: auto;      
-  object-fit: contain; 
-  margin-right: 0px; 
+  max-height: 100%;
+  width: auto;
+  object-fit: contain;
+  margin-right: 0px;
   transition: transform 0.3s ease;
 }
 
 .site-title {
-  font-family: 'Arial', sans-serif; 
-  font-size: 24px; 
+  font-family: 'Arial', sans-serif;
+  font-size: 24px;
   font-weight: bold;
-  color: #fff; 
+  color: var(--text-color);
   margin-left: 0px;
-  margin-right: 180px; 
+  margin-right: 180px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* 增加阴影效果 */
 }
-
 
 .el-menu-custom {
   display: flex;
@@ -104,6 +127,7 @@ export default {
 
 .username-title {
   color: #212121;
+  font-weight: bold;
 }
 
 .user-icon {
@@ -130,16 +154,12 @@ export default {
   background-attachment: fixed;
 }
 
-.el-footer {
-  background: #8BC34A;
-  color: white;
-  text-align: center;
-  padding: 1rem;
-}
-
 .menu-right {
-  margin-left: 300px;
+  margin-left: 100px;
   display: flex;
   align-items: center;
+}
+.el--button-change-theme {
+  margin-left: 500px;
 }
 </style>
