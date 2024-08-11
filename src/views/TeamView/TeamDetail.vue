@@ -278,8 +278,26 @@
           const amounts=[positiveSum,negativeSum];
           console.log("Positive Sum:", positiveSum);
           console.log("Negative Sum:", negativeSum);
+          // 用于存储每个日期的金额之和
+          const dateAmountMap = {};
+          // 遍历 records 数组
+          this.records.forEach(record => {
+          const date = record.TRANSACTION_DATE;
+          const amount = record.AMOUNT;
+          // 如果日期不存在于 dateAmountMap 中，初始化它
+          if (!dateAmountMap[date]) {
+            dateAmountMap[date] = 0;
+          }
+          // 累加金额到对应日期
+          dateAmountMap[date] += amount;
+          });
+          // 将结果转换为数组形式
+          const result = Object.keys(dateAmountMap).map(date => ({
+          TRANSACTION_DATE: date,
+          TOTAL_AMOUNT: dateAmountMap[date]
+          }));
           this.renderPie(amounts);
-          this.renderBar();
+          this.renderBar(result);
         })
         .catch(error => {
           console.error('Failed to fetch record data:', error);
@@ -329,33 +347,44 @@
 
       myChart.setOption(option);
     },
-    renderBar() {
-      const barDom = this.$refs.barChart; // 使用新的 ref
-      const myChart = this.$echarts.init(barDom);
-      
-      const dates = this.records.map(record => record.TRANSACTION_DATE);
-      const amounts = this.records.map(record => record.AMOUNT);
+    renderBar(result) {
+  const barDom = this.$refs.barChart; // 使用新的 ref
+  const myChart = this.$echarts.init(barDom);
 
-      const option = {
-        title: {
-          text: '每月收支变化',
-          left: 'center',
-        },
-        xAxis: {
-          type: 'category',
-          data: dates,
-        },
-        yAxis: {
-          type: 'value',
-        },
-        series: [{
-          data: amounts,
-          type: 'line',
-        }],
-      };
+  const dates = result.map(record => record.TRANSACTION_DATE);
+  const amounts = result.map(record => record.TOTAL_AMOUNT);
 
-      myChart.setOption(option);
+  const option = {
+    title: {
+      text: '每月收支变化',
+      left: 'center',
     },
+    xAxis: {
+      type: 'category',
+      data: dates,
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: function (value) {
+          return (value / 10000).toFixed(2) + '万';
+        }
+      }
+    },
+    series: [{
+      data: amounts,
+      type: 'line',
+      label: {
+        show: true,
+        formatter: function (params) {
+          return (params.value / 10000).toFixed(2) + '万';
+        }
+      }
+    }],
+  };
+
+  myChart.setOption(option);
+},
     },
   };
   
