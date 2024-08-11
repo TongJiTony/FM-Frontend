@@ -2,16 +2,16 @@
   <el-container class="default-layout">
     <el-header>
       <div class="header-content">
-        <img src="../assets/img/FM-Logo-2.png" class="logo" alt="Logo">
+        <img src="../assets/img/FM-Logo-2.png" class="logo" alt="Logo" />
         <div class="site-title">FOOTBALLMANAGER</div>
         <el-menu
           :default-active="$route.path"
           class="el-menu-custom"
           mode="horizontal"
           @select="handleSelect"
-          :background-color="currentTheme.primaryBackground"
-          :text-color="currentTheme.textColor"
-          :active-text-color="currentTheme.activeTextColor"
+          background-color="var(--primary-background)"
+          text-color="var(--text-color)"
+          active-text-color="var(--active-text-color)"
         >
           <el-menu-item index="/">Home</el-menu-item>
           <el-menu-item index="/test">Test</el-menu-item>
@@ -22,15 +22,32 @@
             <el-submenu>
               <template slot="title">
                 <i class="el-icon-setting"></i>
-                <span class="username-title">{{ this.$store.getters['user/getUserName'] }}</span>
-                <img :src="this.$store.getters['user/getUserIcon']" class="user-icon" />
+                <span class="username-title">{{
+                  this.$store.getters["user/getUserName"]
+                }}</span>
+                <img
+                  :src="this.$store.getters['user/getUserIcon']"
+                  class="user-icon"
+                />
               </template>
-              <el-menu-item class="user-action-item" index="/changepsw">Change Password</el-menu-item>
-              <el-menu-item class="user-action-item" index="/userinfo">{{ this.$store.getters['user/getUserName'] }}'s info</el-menu-item>
+              <el-menu-item class="user-action-item" index="/changepsw"
+                >Change Password</el-menu-item
+              >
+              <el-menu-item class="user-action-item" index="/userinfo"
+                >{{ this.$store.getters["user/getUserName"] }}'s
+                info</el-menu-item
+              >
             </el-submenu>
           </div>
         </el-menu>
-        <el-button @click="toggleTheme" class="el--button-change-theme" type="text">切换主题</el-button>
+        <el-button class="el--button-change-theme" @click="toggleTheme"
+          >切换主题</el-button
+        >
+        <el-button
+          class="el--button-change-BackGroundImages"
+          @click="toggleBackgroundImage"
+          >切换背景</el-button
+        >
       </div>
     </el-header>
     <el-container>
@@ -38,50 +55,84 @@
         <router-view />
       </el-main>
     </el-container>
-    <el-footer :style="{ background: currentTheme.footerBackground, color: currentTheme.textColor }">
+    <el-footer style="height: auto">
       <h4>关于我们</h4>
-      <p>我们来自同济大学软件学院，这是我们的数据库课程设计项目，也是我们第一次接触软件项目开发，学习前后端开发的相关知识后的成果。</p>
-      <p class="copyright">Copyright © 2024 TJ Football Manager. All rights reserved.</p>
+      <p>
+        我们来自同济大学软件学院，这是我们的数据库课程设计项目，也是我们第一次接触软件项目开发，学习前后端开发的相关知识后的成果。
+      </p>
+      <p class="copyright">
+        Copyright © 2024 TJ Football Manager. All rights reserved.
+      </p>
     </el-footer>
   </el-container>
 </template>
 
 <script>
+import { themes } from "@/assets/color/color.js"; // 引入主题配色
+
 export default {
-  name: 'DefaultLayout',
   data() {
     return {
-      themes: {
-        green: {
-          primaryBackground: '#CDDC39',
-          footerBackground: '#8BC34A',
-          textColor: '#fff',
-          activeTextColor: '#fff',
-        },
-        purpleBlack: {
-          primaryBackground: '#4A148C',
-          footerBackground: '#212121',
-          textColor: '#fff',
-          activeTextColor: '#CE93D8',
-        },
+      themes,
+      currentThemeName: "green", // 初始主题
+      currentThemeIndex: 0,
+      backgroundViews: {
+        greenGradient: "linear-gradient(to right, #43cea2, #185a9d)",
+        purpleGradient: "linear-gradient(to right, #8e2de2, #4a00e0)",
+        orangeGradient: "linear-gradient(to right, #ff7e5f, #feb47b)",
+        image1: `url(${require("@/assets/img/main-bg-1.png")})`,
+        image2: `url(${require("@/assets/img/main-bg-2.png")})`,
       },
-      currentThemeName: 'green', // 当前主题名称
+      currentBackgroundName: "image1", // 初始背景
+      currentBackgroundIndex: 0,
     };
   },
   computed: {
     currentTheme() {
       return this.themes[this.currentThemeName];
     },
+    currentBackground() {
+      return this.backgroundViews[this.currentBackgroundName];
+    },
   },
   methods: {
+    applyTheme(theme) {
+      for (let key in theme) {
+        document.documentElement.style.setProperty(key, theme[key]);
+      }
+    },
+    applyBackView(background) {
+      document.documentElement.style.setProperty(
+        "--background-views",
+        background
+      );
+    },
+    toggleTheme() {
+      const themeNames = Object.keys(this.themes);
+      console.log("themeNames:", themeNames);
+      this.currentThemeIndex = (this.currentThemeIndex + 1) % themeNames.length;
+      this.currentThemeName = themeNames[this.currentThemeIndex];
+      this.$message.info(`主题切换至 ${this.currentThemeName}`);
+      this.applyTheme(this.currentTheme);
+    },
+    toggleBackgroundImage() {
+      const backgroundNames = Object.keys(this.backgroundViews);
+      this.currentBackgroundIndex =
+        (this.currentBackgroundIndex + 1) % backgroundNames.length;
+      this.currentBackgroundName = backgroundNames[this.currentBackgroundIndex];
+      this.$message.info(`背景切换至 ${this.currentBackgroundName}`);
+      this.applyBackView(this.currentBackground);
+    },
     handleSelect(key) {
       if (this.$route.path !== key) {
         this.$router.push(key);
       }
     },
-    toggleTheme() {
-      this.currentThemeName = this.currentThemeName === 'green' ? 'purpleBlack' : 'green';
-    },
+  },
+  created() {
+    this.applyTheme(this.currentTheme);
+    this.applyBackView(this.currentBackground);
+    console.log("Vuex 状态:", this.$store.state.user);
   },
 };
 </script>
@@ -92,6 +143,7 @@ export default {
 }
 
 .el-header {
+  background: var(--primary-background);
   line-height: 60px;
 }
 
@@ -111,7 +163,7 @@ export default {
 }
 
 .site-title {
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   font-size: 24px;
   font-weight: bold;
   color: var(--text-color);
@@ -126,7 +178,7 @@ export default {
 }
 
 .username-title {
-  color: #212121;
+  color: var(--username-title-color);
   font-weight: bold;
 }
 
@@ -139,19 +191,27 @@ export default {
 }
 
 .user-action-item:hover {
-  color: white;
+  color: var(--text-color);
   font-weight: bold;
 }
 
 .user-action-item {
-  color: white;
+  color: var(--text-color);
 }
 
 .el-main {
   padding: 1rem;
-  background: linear-gradient(rgba(255, 255, 255, 0.3), rgba(162, 239, 172, 0.3)), url('~@/assets/img/main-bg2.png') no-repeat center center;
+  background: var(--main-bg-gradient),
+    var(--background-views) no-repeat center center;
   background-size: cover;
   background-attachment: fixed;
+}
+
+.el-footer {
+  background: var(--footer-background);
+  color: var(--text-color);
+  text-align: center;
+  padding: 1rem;
 }
 
 .menu-right {
@@ -159,7 +219,9 @@ export default {
   display: flex;
   align-items: center;
 }
+
 .el--button-change-theme {
-  margin-left: 500px;
+  margin-left: 0px;
+  margin-right: 0px;
 }
 </style>
