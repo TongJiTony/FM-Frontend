@@ -3,57 +3,50 @@
     <p v-if="loading">Loading team data...</p>
     <div v-else>
       <div v-if="team">
-
         <el-row>        
-            <el-card shadow="never" class="box-card3">
-              <div slot="header" class="clearfix">
-                <span style="font-size: 20px;font-weight: bold;">球队简介</span>
-                <el-button type="primary" size='small' icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
+          <el-card shadow="never" class="box-card3">
+            <div slot="header" class="clearfix">
+              <span style="font-size: 20px;font-weight: bold;">球队简介</span>
+              <el-button type="primary" size='small' icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
+            </div>
+            <el-col :span="6">
+              <div class="team-image">
+                <img src="https://img.51miz.com/Element/00/91/85/34/422e1064_E918534_f98a4621.png" alt="Team Image" />
               </div>
-             
-                <el-col :span="6">
-                  <div class="team-image">
-                    <img src="https://img.51miz.com/Element/00/91/85/34/422e1064_E918534_f98a4621.png" alt="Team Image" />
-                  </div>
-                </el-col>                 
-                <h2 style="font-size: 24px;">{{ team[0].TEAM_NAME }}</h2>                                          
-                <el-col :span="18" class="team-info">   
-                
-                           
-                  <el-row :gutter="12">
-                    <el-col :span="12">
-                      <p>
-                        <strong>队伍编号:</strong>
-                        <el-tag>{{ team[0].TEAM_ID }}</el-tag>
-                      </p>
-                    </el-col>
-                    <el-col :span="12">
-                      <p>
-                        <strong>主教练:</strong>
-                        <el-tag>{{ team[0].HEAD_COACH }}</el-tag>
-                      </p>
-                    </el-col>
-                    <el-col :span="12">
-                      <p>
-                        <strong>成立时间:</strong>
-                        <el-tag>{{ team[0].ESTABLISHED_DATE }}</el-tag>
-                      </p>
-                    </el-col>
-                    <el-col :span="12">
-                      <p>
-                        <strong>城市:</strong>
-                        <el-tag>{{ team[0].CITY }}</el-tag>
-                      </p>
-                    </el-col>
-                  </el-row>
-                </el-col>           
-            </el-card>
+            </el-col>                 
+            <h2 style="font-size: 24px;">{{ team[0].TEAM_NAME }}</h2>                                          
+            <el-col :span="18" class="team-info">   
+              <el-row :gutter="12">
+                <el-col :span="12">
+                  <p>
+                    <strong>队伍编号:</strong>
+                    <el-tag>{{ team[0].TEAM_ID }}</el-tag>
+                  </p>
+                </el-col>
+                <el-col :span="12">
+                  <p>
+                    <strong>主教练:</strong>
+                    <el-tag>{{ team[0].HEAD_COACH }}</el-tag>
+                  </p>
+                </el-col>
+                <el-col :span="12">
+                  <p>
+                    <strong>成立时间:</strong>
+                    <el-tag>{{ team[0].ESTABLISHED_DATE }}</el-tag>
+                  </p>
+                </el-col>
+                <el-col :span="12">
+                  <p>
+                    <strong>城市:</strong>
+                    <el-tag>{{ team[0].CITY }}</el-tag>
+                  </p>
+                </el-col>
+              </el-row>
+            </el-col>           
+          </el-card>
         </el-row>
-
         <el-col :span="24" style="height: 20px;"></el-col>  
-
-          <el-row :gutter="20">
-
+        <el-row :gutter="20">
           <el-col :span="12">
             <el-card shadow="never" class="box-card">
               <div slot="header" class="clearfix">
@@ -61,52 +54,38 @@
                 <e1-button-group>
                   <el-button type="primary" size='small' @click="handleRecruitPlayer" class="back-button1">更多球员</el-button>    
                   <el-button type="primary" size='small' @click="handleRecruitPlayer" class="back-button2">招募球员</el-button> 
-                </e1-button-group>
-               
-                       
+                </e1-button-group>        
               </div> 
-                <el-container>
-                  <el-main>
-                    
-                    <el-table :data="topPlayers" style="width: 100% ;height:250px" >
-                      
-                      <el-table-column prop="PLAYER_NAME" label="球员姓名" width="150">
-                      </el-table-column>
-                      <el-table-column prop="ROLE" label="位置" width="150">
-                      </el-table-column>
-                      <el-table-column prop="RANK" label="评分" width="150">
-                      </el-table-column>
-                      <el-table-column>
+              <el-container>
+                <el-main>
+                  <el-table :data="topPlayers" style="width: 100% ;height:250px" >
+                    <el-table-column prop="PLAYER_NAME" label="球员姓名" width="150"></el-table-column>
+                    <el-table-column prop="ROLE" label="位置" width="150"></el-table-column>
+                    <el-table-column prop="RANK" label="评分" width="150"></el-table-column>
+                    <el-table-column>
                       <!-- eslint-disable-next-line -->           
-                        <template slot-scope="scope">
-                          <el-button @click="handlePlayerDetails(scope.row)" type="text" size="small">查看详情</el-button>
-                        </template>
-                       </el-table-column>
-                    
-                    </el-table>
-                   
-                  </el-main>    
-                </el-container>          
+                      <template slot-scope="scope">
+                        <el-button @click="handlePlayerDetails(scope.row)" type="text" size="small">查看详情</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </el-main>    
+              </el-container>          
             </el-card>
-
             <el-col :span="24" style="height: 20px;"></el-col> 
-            
             <el-card shadow="never" class="box-card">
               <div slot="header" class="clearfix">
                 <span style="font-size: 20px;font-weight: bold;">竞争对手</span>
                 <el-button type="primary"  size='small' @click="handleRecruitPlayer" class="back-button1">查看比赛</el-button>
               </div>
-                <el-container>
-                  <el-main>         
-                    <el-table :data="filteredMatches" style="width: 100%;height:250px ">
-                      <el-table-column prop="MATCH_ID" label="比赛ID" width="150" >
-                      </el-table-column>
-                      <el-table-column prop="HOME_TEAM_NAME" label="主场球队" width="150" >
-                      </el-table-column>
-                      <el-table-column prop="AWAY_TEAM_NAME" label="客场球队" >
-                      </el-table-column>
-                    </el-table>
-                    <el-pagination
+              <el-container>
+                <el-main>         
+                  <el-table :data="filteredMatches" style="width: 100%;height:250px ">
+                    <el-table-column prop="MATCH_ID" label="比赛ID" width="150" ></el-table-column>
+                    <el-table-column prop="HOME_TEAM_NAME" label="主场球队" width="150" ></el-table-column>
+                    <el-table-column prop="AWAY_TEAM_NAME" label="客场球队" ></el-table-column>
+                  </el-table>
+                  <el-pagination
                     @size-change="handleSizeChange2"
                     @current-change="handleCurrentChange2"
                     :current-page.sync="currentPage2"
@@ -115,34 +94,29 @@
                     :page-size="pageSize2"
                     layout="sizes, prev, pager, next, jumper"
                     :total="record.length"
-                    ></el-pagination>
-                  </el-main>   
-                </el-container>           
+                  ></el-pagination>
+                </el-main>   
+              </el-container>           
             </el-card>
           </el-col>
-          
           <el-col :span="12">
             <el-card shadow="never" class="box-card2">
               <div slot="header" class="clearfix">
                 <span style="font-size: 20px;font-weight: bold;">财务信息</span>
                 <el-button type="primary"  size='small' @click="handleClickRecord" class="back-button1">查看详情</el-button>
               </div> 
-                <container>
-                  <e1-main>
-                  <e1-row  class="echart-box" ref="pieChart">
-                  </e1-row>
+              <container>
+                <e1-main>
+                  <e1-row  class="echart-box" ref="pieChart"></e1-row>
                   <el-col :span="24" style="height: 20px;"></el-col> 
-                  <e1-row  class="echart-box" ref="barChart">
-                  </e1-row>                 
-                  </e1-main>
-                </container>
-            
+                  <e1-row  class="echart-box" ref="barChart"></e1-row>                 
+                </e1-main>
+              </container>
             </el-card>
           </el-col>
         </el-row>
         <el-col :span="24" style="height: 20px;"></el-col> 
       </div>
-
       <div v-else>
         <p>No team data available.</p>
       </div>
