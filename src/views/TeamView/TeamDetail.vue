@@ -51,10 +51,8 @@
             <el-card shadow="never" class="box-card">
               <div slot="header" class="clearfix">
                 <span style="font-size: 20px;font-weight: bold;">关键人物</span>
-                <e1-button-group>
                   <el-button type="primary" size='small' @click="handleRecruitPlayer" class="back-button1">更多球员</el-button>    
                   <el-button type="primary" size='small' @click="handleRecruitPlayer" class="back-button2">招募球员</el-button> 
-                </e1-button-group>        
               </div> 
               <el-container>
                 <el-main>
@@ -105,13 +103,16 @@
                 <span style="font-size: 20px;font-weight: bold;">财务信息</span>
                 <el-button type="primary"  size='small' @click="handleClickRecord" class="back-button1">查看详情</el-button>
               </div> 
-              <container>
-                <e1-main>
-                  <e1-row  class="echart-box" ref="pieChart"></e1-row>
-                  <el-col :span="24" style="height: 20px;"></el-col> 
-                  <e1-row  class="echart-box" ref="barChart"></e1-row>                 
-                </e1-main>
-              </container>
+              <el-container>
+                <el-main>
+                  <el-row>
+                    <div class="echart-box" ref="pieChart"></div>
+                        <el-divider></el-divider>
+
+                    <div class="echart-box" ref="barChart"></div>
+                  </el-row>                 
+                </el-main>
+              </el-container>
             </el-card>
           </el-col>
         </el-row>
@@ -481,7 +482,7 @@ h2 {
 }
 .echart-box {
   width: 600px;
-  height: 350px;
+  height: 300px;
   margin: 20px auto;
   
 }

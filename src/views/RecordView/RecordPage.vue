@@ -6,40 +6,120 @@
     <p style="font-size: 12px">财政状况：安全</p>
     <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="摘要" name="first"> 
-    <e1-row gutter="20">
-      <e1-col span="12" >
-          <e1-card class="box-card2">
-            <p>总盈亏：¥{{ sum_amount }}</p>
-            <p>预算：</p>
-          </e1-card>
-      </e1-col>
-      <e1-col span="12">
-        <e1-card class="box-card">
+    
+         <el-container>
+        <el-main>
+          <el-row :gutter="12">
+      <el-col :span="24" >
+          <el-card class="box-card3">
+            <h1 style="font-size: 18px;line-height: 0;">总盈亏：¥{{ sum_amount }}</h1>
+            <p style="font-size: 12px;line-height: 1;">预算：</p>
+          </el-card>
+</el-col>
+        <el-col :span="24" style="height: 12px;"></el-col> 
+
+      <el-col :span="12">
+        <el-card class="box-card">
           <div class="echart-box" ref="pieChart"></div>
-        </e1-card>  
-        <e1-card class="box-card">
+        </el-card>  
+          </el-col>
+        <el-col :span="12">
+        <el-card class="box-card">
           <div class="echart-box" ref="barChart"></div>
-        </e1-card>
-      </e1-col>
-    </e1-row>
+        </el-card>
+      </el-col>
+    </el-row>
+          </el-main>
+          </el-container>  
+      
     </el-tab-pane>
 
     <el-tab-pane label="收入" name="second">
-      <el-table :data=" records.filter(record => record.AMOUNT > 0 & record.TRANSACTION_DATE==='2024-07')" style="width: 100%">
-              <el-table-column prop="DESCRIPTION" label="项目" width="200">
+      <el-container>
+        <el-main>
+                <el-col :span="24" >
+          <el-card class="box-card3">
+            <el-row>
+        <el-col :span="12" style="height: 1px;"></el-col> 
+              <el-col :span="6">
+              <p style="font-size: 1px;line-height: 0;">本月</p>
+            </el-col>      
+              <el-col :span="6">
+              <p style="font-size: 1px;line-height: 0;">上月</p>
+            </el-col>      
+            <el-row>
+
+            </el-row>
+             <el-col span="12">
+              <h1>总收入</h1>
+            </el-col>  
+            <el-col span="6">
+              <h1>¥{{ sum_amount }}</h1>
+            </el-col>  
+            <el-col span="6">
+              <h1>¥{{ sum_amount }}</h1>
+            </el-col>  
+            </el-row>
+      </el-card>
+                </el-col>
+            <el-col :span="24" style="height: 12px;"></el-col> 
+
+                 <el-table :data=" records.filter(record => record.AMOUNT > 0 & record.TRANSACTION_DATE==='2024-07')" style="width: 100%">
+              <el-table-column prop="DESCRIPTION" label="项目" width="1100">
               </el-table-column>
               <el-table-column prop="AMOUNT" label="本月" width="200">
               </el-table-column>
-            </el-table>
+              <el-table-column prop="AMOUNT" label="上月">
+              </el-table-column>
+            </el-table>     
+      </el-main>
+        
+              </el-container>          
+         
     </el-tab-pane>
 
     <el-tab-pane label="支出" name="third">
-      <el-table :data=" records.filter(record => record.AMOUNT < 0)" style="width: 100%">
-              <el-table-column prop="DESCRIPTION" label="项目" width="200">
+        <el-container>
+        <el-main>
+                <el-col :span="24" >
+
+          <el-card class="box-card3">
+            <el-row>
+        <el-col :span="12" style="height: 1px;"></el-col> 
+              <el-col :span="6">
+              <p style="font-size: 1px;line-height: 0%;">本月</p>
+            </el-col>      
+              <el-col :span="6">
+              <p style="font-size: 1px;line-height: 0%;">上月</p>
+            </el-col>      
+            <el-row>
+
+            </el-row>
+             <el-col span="12">
+              <h1>总支出</h1>
+            </el-col>  
+            <el-col span="6">
+              <h1>¥{{ sum_amount }}</h1>
+            </el-col>  
+            <el-col span="6">
+              <h1>¥{{ sum_amount }}</h1>
+            </el-col>  
+            </el-row>
+      </el-card>
+                </el-col>
+              <el-col :span="24" style="height: 12px;"></el-col> 
+
+                <el-table :data=" records.filter(record => record.AMOUNT < 0)" style="width: 100%">
+                   <el-table-column prop="DESCRIPTION" label="项目" width="1100">
               </el-table-column>
-              <el-table-column prop="AMOUNT" label="本月" width="200"  :formatter="formatAmount">
+              <el-table-column prop="AMOUNT" label="本月" :formatter="formatAmount">
               </el-table-column>
             </el-table>
+      </el-main>
+        
+              </el-container>          
+         
+      
     </el-tab-pane>
     <el-tab-pane label="工资" name="fourth">
       <time class="time">本月：{{ currentMonth }}</time>
@@ -60,6 +140,11 @@
 .box-card2 {
     width: 100%;
     height: 800px;
+   
+  }
+  .box-card3 {
+    width: 100%;
+    height: 100px;
    
   }
 .echart-box {
@@ -83,6 +168,7 @@ export default {
       positiveSum:0,
       negativeSum:0,
       currentDate: new Date(),
+      activeName:'first'
     };
   },
 
