@@ -55,6 +55,11 @@ const router = new Router({
           component: () => import("@/views/LineupView/LineupDetail.vue"),
         },
         {
+          path: "/training/:teamId?",
+          name: "training",
+          component: () => import("@/views/TrainingView/TrainingView.vue"),
+        },
+        {
           path: "changepsw",
           name: "Changepsw",
           component: () => import("@/views/UserSetting/ChangePassword.vue"),
