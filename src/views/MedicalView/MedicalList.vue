@@ -56,6 +56,13 @@
             <div class="medical-item">
               <strong>医疗护理:</strong> {{ medical.MEDICAL_CARE }}
             </div>
+            <div class="medical-item">
+              <strong>预计康复时间:</strong> {{ medical.PRED_REC_DATE }}
+            </div>
+            <div class="medical-item">
+              <strong>健康状态:</strong>
+              {{ medical.STATE === 0 ? "健康" : "受伤" }}
+            </div>
             <div class="medical-actions">
               <el-button
                 @click="confirmEdit(medical)"
@@ -129,6 +136,20 @@
         <el-form-item label="医疗护理" :label-width="formLabelWidth">
           <el-input v-model="editForm.MEDICAL_CARE"></el-input>
         </el-form-item>
+        <el-form-item label="预计康复时间" :label-width="formLabelWidth">
+          <el-date-picker
+            v-model="editForm.PRED_REC_DATE"
+            type="date"
+            placeholder="选择预计康复时间"
+            value-format="yyyy-MM-dd"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="健康状态" :label-width="formLabelWidth">
+          <el-select v-model="editForm.STATE" placeholder="选择健康状态">
+            <el-option label="健康" :value="0"></el-option>
+            <el-option label="受伤" :value="1"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleEditDialogClose">取消</el-button>
@@ -160,6 +181,24 @@
         <el-form-item label="医疗护理" :label-width="formLabelWidth">
           <el-input v-model="addForm.MEDICAL_CARE"></el-input>
         </el-form-item>
+        <el-form-item
+          label="预计康复时间"
+          :label-width="formLabelWidth"
+          prop="PRE_REC_DATE"
+        >
+          <el-date-picker
+            v-model="addForm.PRED_REC_DATE"
+            type="date"
+            placeholder="选择预计康复时间"
+            value-format="yyyy-MM-dd"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="健康状态" :label-width="formLabelWidth">
+          <el-select v-model="addForm.STATE" placeholder="选择健康状态">
+            <el-option label="健康" :value="0"></el-option>
+            <el-option label="受伤" :value="1"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleAddDialogClose">取消</el-button>
@@ -188,17 +227,21 @@ export default {
       searchQuery: "",
       selectedMedical: null,
       editForm: {
-        medical_id: "", // Change to snake_case if your backend expects this
+        medical_id: "",
         player_id: "",
         hurt_part: "",
         hurt_time: "",
         medical_care: "",
+        pred_rec_date: "",
+        state: "",
       },
       addForm: {
         player_id: "",
         hurt_part: "",
         hurt_time: "",
         medical_care: "",
+        pred_rec_date: "",
+        state: "",
       },
       formRules: {
         player_id: [
@@ -217,6 +260,16 @@ export default {
         ],
         medical_care: [
           { required: true, message: "请输入医疗护理", trigger: "blur" },
+        ],
+        pred_rec_date: [
+          {
+            required: true,
+            message: "请选择预计康复日期",
+            trigger: "change",
+          },
+        ],
+        state: [
+          { required: true, message: "请选择健康状态", trigger: "change" },
         ],
       },
     };
@@ -305,10 +358,12 @@ export default {
       this.$refs.editFormRef.validate((valid) => {
         if (valid) {
           const updatedMedicalData = {
-            PLAYER_ID: this.editForm.PLAYER_ID, // Make sure PLAYER_ID is part of the edit form and correctly populated
+            PLAYER_ID: this.editForm.PLAYER_ID,
             HURT_PART: this.editForm.HURT_PART,
             HURT_TIME: this.editForm.HURT_TIME,
             MEDICAL_CARE: this.editForm.MEDICAL_CARE,
+            PRED_REC_DATE: this.editForm.PRED_REC_DATE,
+            STATE: this.editForm.STATE,
           };
 
           axios
@@ -343,10 +398,16 @@ export default {
           const newMedicalData = {
             PLAYER_ID: Number(this.addForm.PLAYER_ID),
             HURT_PART: this.addForm.HURT_PART,
-            HURT_TIME: this.addForm.HURT_TIME,
+            HURT_TIME: this.formatDateTime(this.addForm.HURT_TIME),
             MEDICAL_CARE: this.addForm.MEDICAL_CARE,
-            STATE: 0,
+            STATE: Number(this.addForm.STATE),
+            PRED_REC_DATE: this.formatDate(this.addForm.PRED_REC_DATE),
           };
+
+          console.log(
+            "Sending JSON data to backend:",
+            JSON.stringify(newMedicalData)
+          );
 
           axios
             .post(`api/v1/medical/add`, newMedicalData)
@@ -365,6 +426,21 @@ export default {
             });
         }
       });
+    },
+
+    formatDateTime(dateTime) {
+      if (!dateTime) return null;
+      return dateTime instanceof Date
+        ? dateTime.toISOString().split(".")[0] // 去除毫秒部分
+        : dateTime;
+    },
+
+    // 格式化日期为 "yyyy-MM-dd"
+    formatDate(date) {
+      if (!date) return null;
+      return date instanceof Date
+        ? date.toISOString().split("T")[0] // 仅保留日期部分
+        : date;
     },
 
     handleSearch() {

@@ -10,11 +10,11 @@
       >
         返回
       </el-button>
-      
+
       <el-row :gutter="20">
         <el-col :span="6">
           <div class="player-image">
-            <img src="path/to/placeholder-image.png" alt="Player Image" />
+            <img :src="player[0].icon" alt="Player Image" />
           </div>
         </el-col>
         <el-col :span="18" class="player-info">
@@ -47,31 +47,49 @@
             <el-col :span="12">
               <p>
                 <strong>惯用脚:</strong>
-                <el-tag>{{ player[0].USED_FOOT === 1 ? '右脚' : '左脚' }}</el-tag>
+                <el-tag>{{
+                  player[0].USED_FOOT === 1 ? "右脚" : "左脚"
+                }}</el-tag>
               </p>
             </el-col>
             <el-col :span="12">
               <p>
                 <strong>健康状态:</strong>
-                <el-tag :type="player[0].HEALTH_STATE === 1 ? 'danger' : 'success'">{{ player[0].HEALTH_STATE === 1 ? '受伤' : '健康' }}</el-tag>
+                <el-tag
+                  :type="player[0].HEALTH_STATE === 1 ? 'danger' : 'success'"
+                  >{{ player[0].HEALTH_STATE === 1 ? "受伤" : "健康" }}</el-tag
+                >
               </p>
             </el-col>
             <el-col :span="12">
               <p>
                 <strong>比赛状态:</strong>
-                <el-tag :type="player[0].GAME_STATE === 1 ? 'danger' : 'success'">{{ player[0].GAME_STATE === 1 ? '禁赛' : '允许出场' }}</el-tag>
+                <el-tag
+                  :type="player[0].GAME_STATE === 1 ? 'danger' : 'success'"
+                  >{{
+                    player[0].GAME_STATE === 1 ? "禁赛" : "允许出场"
+                  }}</el-tag
+                >
               </p>
             </el-col>
             <el-col :span="12">
               <p>
                 <strong>转会状态:</strong>
-                <el-tag :type="player[0].TRANS_STATE === 1 ? 'success' : 'danger'">{{ player[0].TRANS_STATE === 1 ? '允许转会' : '禁止转会' }}</el-tag>
+                <el-tag
+                  :type="player[0].TRANS_STATE === 1 ? 'success' : 'danger'"
+                  >{{
+                    player[0].TRANS_STATE === 1 ? "允许转会" : "禁止转会"
+                  }}</el-tag
+                >
               </p>
             </el-col>
             <el-col :span="12">
               <p>
                 <strong>评分:</strong>
-                <el-tag>{{ player[0].RANK }}</el-tag>
+                <el-progress
+                  type="circle"
+                  :percentage="player[0].RANK"
+                ></el-progress>
               </p>
             </el-col>
             <el-col :span="12">
@@ -93,15 +111,14 @@
   </div>
 </template>
 
-
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
     return {
       loading: true,
-      player: null
+      player: null,
     };
   },
   created() {
@@ -110,25 +127,25 @@ export default {
   methods: {
     fetchPlayerData() {
       const playerId = this.$route.params.playerId;
-      console.log('Fetching data for player ID:', playerId);
-      axios.get(`/api/v1/player/displayone?playerid=${playerId}`)
-        .then(response => {
-          console.log('Received data:', response.data);
+      console.log("Fetching data for player ID:", playerId);
+      axios
+        .get(`/api/v1/player/displayone?playerid=${playerId}`)
+        .then((response) => {
+          console.log("Received data:", response.data);
           this.player = response.data;
           this.loading = false;
         })
-        .catch(error => {
-          console.error('Failed to fetch player data:', error);
+        .catch((error) => {
+          console.error("Failed to fetch player data:", error);
           this.loading = false;
         });
     },
     goBack() {
       this.$router.go(-1); // Navigate to the previous page
-    }
-  }
+    },
+  },
 };
 </script>
-
 
 <style scoped>
 .player-display {
