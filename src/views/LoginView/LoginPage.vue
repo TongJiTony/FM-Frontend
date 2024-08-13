@@ -146,6 +146,7 @@ export default {
                 VueCookies.set("isLoggedIn", "true", "1h"); // 设置 Cookie
                 VueCookies.set("token", data.token);//
                 this.getUserInfo(this.dataForm.userID);//获取用户信息
+                //此处要进行修改，对不同的用户权限显示不同的内容
                 this.$router.replace({ name: "Home" }); // 跳转到主界面
               }
             })
