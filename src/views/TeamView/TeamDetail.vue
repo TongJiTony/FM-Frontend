@@ -55,7 +55,6 @@
                   <el-button type="primary" size='small' @click="handleRecruitPlayer" class="back-button2">招募球员</el-button> 
               </div> 
               <el-container>
-                <el-main>
                   <el-table :data="topPlayers" style="width: 100% ;height:250px" >
                     <el-table-column prop="PLAYER_NAME" label="球员姓名" width="150"></el-table-column>
                     <el-table-column prop="ROLE" label="位置" width="150"></el-table-column>
@@ -66,8 +65,7 @@
                         <el-button @click="handlePlayerDetails(scope.row)" type="text" size="small">查看详情</el-button>
                       </template>
                     </el-table-column>
-                  </el-table>
-                </el-main>    
+                  </el-table>       
               </el-container>          
             </el-card>
             <el-col :span="24" style="height: 20px;"></el-col> 
@@ -76,25 +74,24 @@
                 <span style="font-size: 20px;font-weight: bold;">竞争对手</span>
                 <el-button type="primary"  size='small' @click="handleRecruitPlayer" class="back-button1">查看比赛</el-button>
               </div>
-              <el-container>
-                <el-main>         
-                  <el-table :data="filteredMatches" style="width: 100%;height:250px ">
-                    <el-table-column prop="MATCH_ID" label="比赛ID" width="150" ></el-table-column>
+                  <div>
+                    <el-table :data="filteredMatches" style="width: 100%;height:250px ">
+                    <el-table-column prop="MATCH_DATE" label="比赛日期" width="150" ></el-table-column>
                     <el-table-column prop="HOME_TEAM_NAME" label="主场球队" width="150" ></el-table-column>
-                    <el-table-column prop="AWAY_TEAM_NAME" label="客场球队" ></el-table-column>
+                    <el-table-column prop="AWAY_TEAM_NAME" label="客场球队" width="150" ></el-table-column>
+                    <el-table-column prop="MATCH_STADIUM_NAME" label="地点"></el-table-column>
                   </el-table>
                   <el-pagination
-                    @size-change="handleSizeChange2"
-                    @current-change="handleCurrentChange2"
-                    :current-page.sync="currentPage2"
-                    :pager-count="5"
-                    :page-sizes="[3]"
-                    :page-size="pageSize2"
-                    layout="sizes, prev, pager, next, jumper"
-                    :total="record.length"
-                  ></el-pagination>
-                </el-main>   
-              </el-container>           
+      @current-change="handlePageChange"
+      :current-page="currentPage"
+      :page-size="pageSize"
+      :total="filteredData.length"
+      layout="total, prev, pager, next"
+    ></el-pagination>
+                  </div>        
+                 
+                 
+                       
             </el-card>
           </el-col>
           <el-col :span="12">
@@ -104,14 +101,14 @@
                 <el-button type="primary"  size='small' @click="handleClickRecord" class="back-button1">查看详情</el-button>
               </div> 
               <el-container>
-                <el-main>
+               
                   <el-row>
                     <div class="echart-box" ref="pieChart"></div>
                         <el-divider></el-divider>
 
                     <div class="echart-box" ref="barChart"></div>
                   </el-row>                 
-                </el-main>
+               
               </el-container>
             </el-card>
           </el-col>
@@ -142,17 +139,14 @@
         medical:[],
         tabPosition: "left",
         search:'',
-        currentPage1: 1, // 当前页码
-        pageSize1: 3, // 每页显示条数
-        currentPage2: 1, // 当前页码
-        pageSize2: 3, // 每页显示条数
+        currentPage: 1,
+        pageSize: 3,
         topPlayers:[],
       };
     },
     created() {
       this.fetchTeamDetail()
       this.fetchTeamRecords()
-      this.getTopPlayers()
     },
 
    
@@ -167,20 +161,16 @@
         return filtered.slice((this.currentPage1 - 1) * this.pageSize1, this.currentPage1 * this.pageSize1);
       }
     },
-      filteredMatches() {
-      const { match, search } = this;
-      if (!search) {
-        const matches=match.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
-        return matches.filter(match => {
-      return (
-        match.HOME_TEAM_NAME === this.team[0].TEAM_NAME ||
-        match.AWAY_TEAM_NAME === this.team[0].TEAM_NAME
+    filteredData() {
+      return this.match.filter(mat => 
+        mat.HOME_TEAM_NAME === this.team[0].TEAM_NAME || 
+        mat.AWAY_TEAM_NAME === this.team[0].TEAM_NAME
       );
-    });
-      } else {
-        const filtered = match.filter(data => data.MATCH_ID.includes(search));
-        return filtered.slice((this.currentPage2 - 1) * this.pageSize2, this.currentPage2 * this.pageSize2);
-      }
+    },
+      filteredMatches() {
+        const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.filteredData.slice(start, end);
       },
     
   },
@@ -194,19 +184,8 @@
       const route = `/player-display/${playerId}`;
       this.$router.push(route);
     },
-    handleSizeChange1(val) {
-      this.pageSize1 = val;
-      this.currentPage1 = 1; // 每次改变每页条数时，重置当前页为第一页
-    },
-    handleCurrentChange1(val) {
-      this.currentPage1 = val;
-    },
-    handleSizeChange2(val) {
-      this.pageSize2= val;
-      this.currentPage2 = 1; // 每次改变每页条数时，重置当前页为第一页
-    },
-    handleCurrentChange2(val) {
-      this.currentPage2 = val;
+    handlePageChange(page) {
+      this.currentPage = page;
     },
     handleRecruitPlayer(){
 

@@ -34,68 +34,45 @@
       <el-container>
         <el-main>
           <el-row>
-            <el-col :span="24" >
-              <el-card class="box-card3">
-                <el-row>
-                  <el-col :span="12" style="height: 1px;"></el-col> 
-                  <el-col :span="6">
-                    <p style="font-size: 1px;line-height: 0;">本月</p>
-                  </el-col>      
-                  <el-col :span="6">
-                    <p style="font-size: 1px;line-height: 0;">上月</p>
-                  </el-col>      
-                  <el-col span="12">
-                    <h1 style="font-size: 20px;line-height: 0;">总收入：¥{{ positiveSum }}</h1>
-                  </el-col>             
-                </el-row>
-              </el-card>
-            </el-col>
-          </el-row>
+            <el-card>
+              <h1 style="font-size: 20px;line-height: 0;">总收入：¥{{ positiveSum }}</h1>
+              <div class="echart-box2" ref="barChart2"></div>
+            </el-card>          
+          </el-row>  
           <el-col :span="24" style="height: 12px;"></el-col> 
-          <el-row>
-            <div class="echart-box2" ref="barChart2"></div>
-          </el-row>          
+          <el-card>
+            <h2 style="font-size: 20px">收入明细</h2>
             <el-table :data=" records.filter(record => record.AMOUNT > 0 & record.TRANSACTION_DATE===pre_month)" style="width: 100%">
               <el-table-column prop="DESCRIPTION" label="项目" width="800">
               </el-table-column>
               <el-table-column prop="AMOUNT" label="本月" width="200">
               </el-table-column>
-            </el-table>     
+            </el-table>  
+          </el-card>        
         </el-main>      
       </el-container>               
     </el-tab-pane>
 
     <el-tab-pane label="支出" name="third">
       <el-container>
-        <el-main>
-           <el-row>
-            <el-col :span="24" >
-              <el-card class="box-card3">
-                <el-row>
-                <el-col :span="12" style="height: 1px;"></el-col> 
-                <el-col :span="6">
-                  <p style="font-size: 1px;line-height: 0%;">本月</p>
-                </el-col>      
-                <el-col :span="6">
-                  <p style="font-size: 1px;line-height: 0%;">上月</p>
-                </el-col>      
-                <el-col span="12">
-                  <h1 style="font-size: 20px;line-height: 0;">总支出：¥{{ Math.abs(negativeSum) }}</h1>
-                </el-col>    
-                </el-row>
-              </el-card>
-            </el-col>
+        <el-main>        
+          <el-row>
+            <el-card>
+              <h1 style="font-size: 20px;line-height: 0;">总支出：¥{{ Math.abs(negativeSum) }}</h1>
+              <div class="echart-box2" ref="barChart3"></div>      
+            </el-card>                 
           </el-row>
           <el-col :span="24" style="height: 12px;"></el-col> 
-          <el-row>
-            <div class="echart-box2" ref="barChart3"></div>
-          </el-row>
+          <el-card>
+            <h2 style="font-size: 20px">支出明细</h2>
             <el-table :data=" records.filter(record => record.AMOUNT < 0 & record.TRANSACTION_DATE===pre_month)" style="width: 100%">
               <el-table-column prop="DESCRIPTION" label="项目" width="800">
               </el-table-column>
               <el-table-column prop="AMOUNT" label="本月" :formatter="formatAmount" width="200">
               </el-table-column>
             </el-table>
+          </el-card>
+        
           </el-main>       
         </el-container>              
     </el-tab-pane>
