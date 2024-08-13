@@ -37,6 +37,9 @@
     <el-tab-pane label="收入" name="second">
       <el-container>
         <el-main>
+                     <el-row>
+
+
                 <el-col :span="24" >
           <el-card class="box-card3">
             <el-row>
@@ -47,23 +50,25 @@
               <el-col :span="6">
               <p style="font-size: 1px;line-height: 0;">上月</p>
             </el-col>      
-            <el-row>
-
-            </el-row>
+ 
              <el-col span="12">
-              <h1>总收入</h1>
+              <h1 style="font-size: 20px;line-height: 0;">总收入</h1>
             </el-col>  
             <el-col span="6">
-              <h1>¥{{ sum_amount }}</h1>
+              <h2>¥{{ positiveSum }}</h2>
             </el-col>  
             <el-col span="6">
-              <h1>¥{{ sum_amount }}</h1>
+              <h2>¥{{ positiveSum }}</h2>
             </el-col>  
             </el-row>
       </el-card>
                 </el-col>
+                            </el-row>
             <el-col :span="24" style="height: 12px;"></el-col> 
-
+                        <el-row>
+                           <div class="echart-box2" ref="barChart2"></div>
+                        </el-row>
+              
                  <el-table :data=" records.filter(record => record.AMOUNT > 0 & record.TRANSACTION_DATE==='2024-07')" style="width: 100%">
               <el-table-column prop="DESCRIPTION" label="项目" width="1100">
               </el-table-column>
@@ -81,6 +86,8 @@
     <el-tab-pane label="支出" name="third">
         <el-container>
         <el-main>
+           <el-row>
+
                 <el-col :span="24" >
 
           <el-card class="box-card3">
@@ -96,19 +103,22 @@
 
             </el-row>
              <el-col span="12">
-              <h1>总支出</h1>
+               <h1 style="font-size: 20px;line-height: 0;">总支出</h1>
             </el-col>  
             <el-col span="6">
-              <h1>¥{{ sum_amount }}</h1>
+              <h2>¥{{ Math.abs(negativeSum) }}</h2>
             </el-col>  
             <el-col span="6">
-              <h1>¥{{ sum_amount }}</h1>
+              <h2>¥{{ Math.abs(negativeSum) }}</h2>
             </el-col>  
             </el-row>
       </el-card>
                 </el-col>
+                </el-row>
               <el-col :span="24" style="height: 12px;"></el-col> 
-
+ <el-row>
+                           <div class="echart-box2" ref="barChart3"></div>
+                        </el-row>
                 <el-table :data=" records.filter(record => record.AMOUNT < 0)" style="width: 100%">
                    <el-table-column prop="DESCRIPTION" label="项目" width="1100">
               </el-table-column>
@@ -150,6 +160,11 @@
 .echart-box {
   width: 600px;
   height: 350px;
+  margin: 20px auto;
+}
+.echart-box2 {
+  width: 1500px;
+  height: 300px;
   margin: 20px auto;
 }
 .back-button1 {
@@ -226,6 +241,8 @@ export default {
           
           // 用于存储每个日期的金额之和
           const dateAmountMap = {};
+          const datenegativeAmountMap = {};
+          const datepositiveAmountMap = {};
           // 遍历 records 数组
           this.records.forEach(record => {
           const date = record.TRANSACTION_DATE;
@@ -233,14 +250,34 @@ export default {
           // 如果日期不存在于 dateAmountMap 中，初始化它
           if (!dateAmountMap[date]) {
             dateAmountMap[date] = 0;
+            }
+            if (!datenegativeAmountMap[date]) {
+            datenegativeAmountMap[date] = 0;
+            }
+            if (!datepositiveAmountMap[date]) {
+            datepositiveAmountMap[date] = 0;
           }
           // 累加金额到对应日期
-          dateAmountMap[date] += amount;
+            dateAmountMap[date] += amount;
+            if (amount > 0) {
+              datepositiveAmountMap[date] += amount;
+            }
+            else {
+              datenegativeAmountMap[date] += Math.abs(amount);
+            }
           });
           // 将结果转换为数组形式
           const result = Object.keys(dateAmountMap).map(date => ({
           TRANSACTION_DATE: date,
           TOTAL_AMOUNT: dateAmountMap[date]
+          }));
+          const positiveresult = Object.keys(datepositiveAmountMap).map(date => ({
+          TRANSACTION_DATE: date,
+          TOTAL_AMOUNT: datepositiveAmountMap[date]
+          }));
+          const negativeresult = Object.keys(datenegativeAmountMap).map(date => ({
+          TRANSACTION_DATE: date,
+          TOTAL_AMOUNT: datenegativeAmountMap[date]
           }));
 
           // 输出结果
@@ -248,7 +285,8 @@ export default {
 
           this.renderPie(amounts);
           this.renderBar(result);
-      
+          this.renderBar2(positiveresult);
+          this.renderBar3(negativeresult);
           console.log('sum_amount:',this.sum_amount)
         })
         .catch(error => {
@@ -338,7 +376,84 @@ export default {
   };
 
   myChart.setOption(option);
-},
+    },
+    renderBar2(result) {
+  const barDom = this.$refs.barChart2; // 使用新的 ref
+  const myChart = this.$echarts.init(barDom);
+
+  const dates = result.map(record => record.TRANSACTION_DATE);
+  const amounts = result.map(record => record.TOTAL_AMOUNT);
+
+  const option = {
+    title: {
+      text: '每月收入变化',
+      left: 'center',
+    },
+    xAxis: {
+      type: 'category',
+      data: dates,
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: function (value) {
+          return (value / 10000).toFixed(2) + '万';
+        }
+      }
+    },
+    series: [{
+      data: amounts,
+      type: 'line',
+      label: {
+        show: true,
+        formatter: function (params) {
+          return (params.value / 10000).toFixed(2) + '万';
+        }
+      }
+    }],
+  };
+
+  myChart.setOption(option);
+    },
+ renderBar3(result) {
+  const barDom = this.$refs.barChart3; // 使用新的 ref
+  const myChart = this.$echarts.init(barDom);
+
+  const dates = result.map(record => record.TRANSACTION_DATE);
+  const amounts = result.map(record => record.TOTAL_AMOUNT);
+
+  const option = {
+    title: {
+      text: '每月支出变化',
+      left: 'center',
+    },
+    xAxis: {
+      type: 'category',
+      data: dates,
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: function (value) {
+          return (value / 10000).toFixed(2) + '万';
+        }
+      }
+    },
+    series: [{
+      data: amounts,
+      type: 'line',
+      label: {
+        show: true,
+        formatter: function (params) {
+          return (params.value / 10000).toFixed(2) + '万';
+        }
+      }
+    }],
+  };
+
+  myChart.setOption(option);
+    },
+
   },
 };
 </script>
