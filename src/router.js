@@ -50,6 +50,16 @@ const router = new Router({
           component: () => import("@/views/MedicalView/MedicalList.vue"),
         },
         {
+          path: "/lineup/:teamID?",
+          name: "lineup",
+          component: () => import("@/views/LineupView/LineupView.vue"),
+        },
+        {
+          path: "/lineupDetail/:lineupId",
+          name: "lineupDetail",
+          component: () => import("@/views/LineupView/LineupDetail.vue"),
+        },
+        {
           path: "changepsw",
           name: "Changepsw",
           component: () => import("@/views/UserSetting/ChangePassword.vue"),
