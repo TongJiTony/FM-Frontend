@@ -166,6 +166,9 @@
             <el-radio :label="0">隐藏</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="球员图片" :label-width="formLabelWidth">
+          <el-input v-model="editForm.ICON"></el-input>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleEditDialogClose">取消</el-button>
@@ -272,6 +275,17 @@
             <el-radio :label="0">隐藏</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="球员图像：" prop="ICON">
+          <el-upload
+            class="avatar-uploader"
+            :action="uploadAction"
+            :http-request="customUpload"
+            :show-file-list="false"
+          >
+            <img v-if="addForm.icon" :src="addForm.icon" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon">上传球员头像</i>
+          </el-upload>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleAddDialogClose">取消</el-button>
@@ -309,6 +323,7 @@ export default {
         GAME_STATE: 0, // 场上状态
         TRANS_STATE: 0, // 转会状态
         IS_SHOW: 1, // 展示状态
+        ICON: "",
       },
       formLabelWidth: "100px",
       addDialogVisible: false,
@@ -323,6 +338,7 @@ export default {
         GAME_STATE: 0,
         TRANS_STATE: 0,
         IS_SHOW: 1,
+        ICON: "https://s2.loli.net/2024/08/09/WaSdBU7j94w2JpI.jpg",
       },
       addFormRules: {
         PLAYER_NAME: [
@@ -349,12 +365,70 @@ export default {
         IS_SHOW: [
           { required: true, message: "请选择展示状态", trigger: "change" },
         ],
+        ICON: [{ required: false, message: "请上传图片", trigger: "blur" }],
       },
       tableData: [],
       allData: [],
+      uploadAction: "https://api.imgbb.com/1/upload",
+      imgbbApiKey: "a18b4cdd1ea4b32881a598e7f32b854a",
+      name: "playerimage",
+      expirationTime: 604800, // 7 days in seconds
     };
   },
   methods: {
+    customUpload(request) {
+      if (request.file) {
+        // 如果用户上传了图片，则执行上传逻辑
+        const formData = new FormData();
+        formData.append("image", request.file);
+
+        axios
+          .post(
+            `${this.uploadAction}?key=${this.imgbbApiKey}&name=${this.name}&expiration=${this.expirationTime}`,
+            formData
+          )
+          .then((response) => {
+            const imageUrl = response.data.data.url;
+            console.log("Returned URL:", response.data.data.url); // 打印图床返回的URL
+            this.addForm.ICON = imageUrl;
+            console.log("ICON field set to:", this.addForm.ICON);
+            request.onSuccess(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+            request.onError(error);
+          });
+      }
+    },
+
+    handleAvatarSuccess(response) {
+      console.log("response:", response);
+      if (response && response.data && response.data.url) {
+        this.deleteCurrentImageUrl();
+        this.registerForm.icon = response.data.url;
+        //this.currentDeleteUrl = response.data.delete_url;
+        this.$message.info("图片加载成功！");
+      } else {
+        this.$message.error("图片上传失败，请重试！");
+      }
+    },
+    handleAvatarError(error) {
+      console.error("图片上传失败", error);
+      this.$message.error("图片上传失败，请重试！");
+    },
+    beforeAvatarUpload(file) {
+      const isPNGorJPG =
+        file.type === "image/jpeg" || file.type === "image/png";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isPNGorJPG) {
+        this.$message.error("上传图片只能是 JPG 或 PNG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传图片大小不能超过 2MB!");
+      }
+      return isPNGorJPG && isLt2M;
+    },
+
     // Fetch players based on teamId or fetch all players
     fetchPlayers() {
       const teamId = this.$route.params.teamId;
@@ -466,6 +540,7 @@ export default {
         GAME_STATE: this.editForm.GAME_STATE,
         TRANS_STATE: this.editForm.TRANS_STATE,
         IS_SHOW: this.editForm.IS_SHOW,
+        ICON: this.editForm.ICON,
       };
 
       // 使用正确的 API 路径
@@ -488,6 +563,7 @@ export default {
     // Add a new player
     handleAddPlayer() {
       console.log("Adding new player");
+      console.log("Form data before validation:", this.addForm);
       this.$refs.addFormRef.validate((valid) => {
         if (valid) {
           // Construct the JSON object as per server's expectations
@@ -503,12 +579,15 @@ export default {
             GAME_STATE: Number(this.addForm.GAME_STATE),
             TRANS_STATE: Number(this.addForm.TRANS_STATE),
             IS_SHOW: Number(this.addForm.IS_SHOW),
+            ICON: this.addForm.ICON,
           };
+          console.log("New player data:", newPlayerData);
 
           // Use the correct API endpoint
           axios
             .post(`api/v1/player/add`, newPlayerData)
             .then(() => {
+              console.log("Saving player info with image URL:", this.imageUrl);
               console.log("Player added successfully");
               this.fetchPlayers(); // 刷新玩家列表
               this.addDialogVisible = false; // 关闭对话框
@@ -601,5 +680,22 @@ export default {
 
 .dialog-footer {
   text-align: right;
+}
+
+.avatar-uploader-icon {
+  font-size: 30px;
+  color: #4a90e2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover; /* 确保图片填充容器并保持比例 */
 }
 </style>

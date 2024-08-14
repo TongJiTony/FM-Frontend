@@ -14,7 +14,7 @@
       <el-row :gutter="20">
         <el-col :span="6">
           <div class="player-image">
-            <img :src="player[0].icon" alt="Player Image" />
+            <img :src="player[0].ICON" alt="Player Image" />
           </div>
         </el-col>
         <el-col :span="18" class="player-info">
