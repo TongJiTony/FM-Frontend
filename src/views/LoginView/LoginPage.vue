@@ -128,6 +128,23 @@ export default {
     this.getCaptcha();
   },
   methods: {
+    // 根据权限进行跳转页面
+    ShowPageUpToRight(){
+      const userRight = this.$store.getters['user/getUserRight'];
+      console.log('userRight:',userRight);
+      switch(userRight){
+        case 'coach':
+          this.$router.replace({name:'TeamPage'})
+          break;
+        case 'manager':
+          this.$router.replace({name:'Team'})
+          break;
+        default:
+          this.$router.replace({name:'Home'})
+          break;
+      }
+     
+    },
     // 提交表单
     dataFormSubmit() {
       this.$refs["dataForm"].validate((valid) => {
@@ -144,10 +161,9 @@ export default {
               if (data.code == 200) {
                 // code == 200 表示成功
                 VueCookies.set("isLoggedIn", "true", "1h"); // 设置 Cookie
-                VueCookies.set("token", data.token);//
-                this.getUserInfo(this.dataForm.userID);//获取用户信息
-                //此处要进行修改，对不同的用户权限显示不同的内容
-                this.$router.replace({ name: "Home" }); // 跳转到主界面
+                VueCookies.set("token", data.token);//               
+                this.getUserInfo(this.dataForm.userID)
+                
               }
             })
             .catch((error) => {
@@ -196,6 +212,7 @@ export default {
             user_phone: user.USER_PHONE,
             user_icon: user.ICON,
           })
+          this.ShowPageUpToRight();//显示页面
         })
         .catch((error) => {
           console.error(error);
