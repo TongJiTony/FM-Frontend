@@ -42,7 +42,7 @@
           <el-col :span="24" style="height: 12px;"></el-col> 
           <el-card>
             <h2 style="font-size: 20px">收入明细</h2>
-            <el-table :data=" records.filter(record => record.AMOUNT > 0 & record.TRANSACTION_DATE===pre_month)" style="width: 100%">
+            <el-table :data=" records.filter(record => record.AMOUNT > 0 & record.TRANSACTION_DATE===cur_month)" style="width: 100%">
               <el-table-column prop="DESCRIPTION" label="项目" width="800">
               </el-table-column>
               <el-table-column prop="AMOUNT" label="本月" width="200">
@@ -65,7 +65,7 @@
           <el-col :span="24" style="height: 12px;"></el-col> 
           <el-card>
             <h2 style="font-size: 20px">支出明细</h2>
-            <el-table :data=" records.filter(record => record.AMOUNT < 0 & record.TRANSACTION_DATE===pre_month)" style="width: 100%">
+            <el-table :data=" records.filter(record => record.AMOUNT < 0 & record.TRANSACTION_DATE===cur_month)" style="width: 100%">
               <el-table-column prop="DESCRIPTION" label="项目" width="800">
               </el-table-column>
               <el-table-column prop="AMOUNT" label="本月" :formatter="formatAmount" width="200">
