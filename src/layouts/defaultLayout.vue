@@ -28,6 +28,7 @@
                 <img
                   :src="this.$store.getters['user/getUserIcon']"
                   class="user-icon"
+                  @error="handleImageError"
                 />
               </template>
               <el-menu-item class="user-action-item" index="/changepsw"
@@ -69,6 +70,7 @@
 
 <script>
 import { themes } from "@/assets/color/color.js"; // 引入主题配色
+import defaultAvatar from '@/assets/img/defaultIcon.jpg';
 
 export default {
   data() {
@@ -127,6 +129,9 @@ export default {
       if (this.$route.path !== key) {
         this.$router.push(key);
       }
+    },
+    handleImageError(event) {
+      event.target.src = defaultAvatar;
     },
   },
   created() {

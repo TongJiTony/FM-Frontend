@@ -142,17 +142,14 @@ router.beforeEach((to, from, next) => {
   ) {
     next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
   } else if (to.name === "Login" && isLoggedIn === "true") {
-      if(userRole === 'coach'){
-        next({ name: "TeamPage" });
-        
-      }
-      else if(userRole === 'manager'){
-        next({ name: "Team" }); 
-      }
-      else{
-        next({name: "Home"});
-      }
-      
+    // 用户已经登录并试图访问登录页面
+    if (userRole === "coach") {
+      next({ name: "TeamPage" });
+    } else if (userRole === "manager") {
+      next({ name: "Team" });
+    } else {
+      next({ name: "Home" });
+    }
   }
   else {
     next();
