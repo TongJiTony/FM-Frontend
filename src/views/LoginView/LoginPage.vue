@@ -195,14 +195,12 @@ export default {
           }
         })
         .then(({data}) => {
-          console.log("API Response Data :", data);
           const user = data[0];//当前只返回一个用户的数据
 
            console.log("User info:", {
             "\nuser_id: ": user.USER_ID,
             "\nuser_name: ": user.USER_NAME,
             "\nuser_right: ": user.USER_RIGHT,
-            "\nuser_psw: ": user.USER_PASSWORD,
             "\nuser_phone: ": user.USER_PHONE,
             "\nuser_icon: ": user.ICON,
           });
@@ -211,16 +209,32 @@ export default {
             user_id: user.USER_ID,
             user_name: user.USER_NAME,
             user_right: user.USER_RIGHT,
-            user_psw: user.USER_PASSWORD,
             user_phone: user.USER_PHONE,
             user_icon: user.ICON,
-          })
-          this.ShowPageUpToRight();//显示页面
+          });
+          console.log("USER:",user);
+          return axios.get('/api/v1/user/getDeleteImage', {
+              params:{
+                userId: user.USER_ID,
+              }
+            });
+        })
+        .then((response) => {
+          console.log(response);
+          const deleteIcon = response.data[0].DELETE_ICON;
+          console.log('Delete Icon:', deleteIcon);
+          this.$store.commit( 'user/updateDeleteIcon',{//保存用户删除图标的状态
+            user_delete_icon: deleteIcon,
+          });
         })
         .catch((error) => {
           console.error(error);
-          this.$message.error("获取用户信息失败");
+          this.$message.error("获取用户信息或删除图标失败");
         })
+        .finally(() => {
+          this.ShowPageUpToRight();
+        })
+        
     },
 
     //跳转到注册路由

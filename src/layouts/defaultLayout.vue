@@ -137,7 +137,6 @@ export default {
   created() {
     this.applyTheme(this.currentTheme);
     this.applyBackView(this.currentBackground);
-    console.log("Vuex 状态:", this.$store.state.user);
   },
 };
 </script>
