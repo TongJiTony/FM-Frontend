@@ -40,15 +40,16 @@
               >
             </el-submenu>
           </div>
-        </el-menu>
-        <el-button class="el--button-change-theme" @click="toggleTheme"
-          >切换主题</el-button
-        >
-        <el-button
-          class="el--button-change-BackGroundImages"
+          <button class="button-change-theme" @click="toggleTheme"
+          >切换主题</button
+          >
+          <button
+          class="button-change-BackGroundImages"
           @click="toggleBackgroundImage"
-          >切换背景</el-button
-        >
+          >切换背景</button
+          >
+        </el-menu>
+       
       </div>
     </el-header>
     <el-container>
@@ -223,9 +224,28 @@ export default {
   display: flex;
   align-items: center;
 }
+.button-change-theme,
+.button-change-BackGroundImages {
+  margin-left: 10px;
+  padding: 0.5vw 1vw;
+  font-size: 1.0vw;
+  background-color: var(--primary-color); /* 使用主题颜色 */
+  color: var(--text-color); /* 使用主题文本颜色 */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
+}
 
-.el--button-change-theme {
-  margin-left: 0px;
-  margin-right: 0px;
+.button-change-theme:hover,
+.button-change-BackGroundImages:hover {
+  background-color: var(--active-text-color); /* 鼠标悬停时的颜色变化 */
+  color: var(--primary-background);
+  transform: scale(1.05); /* 鼠标悬停时略微放大 */
+}
+
+.button-change-theme:active,
+.button-change-BackGroundImages:active {
+  transform: scale(0.95); /* 点击时按钮缩小 */
 }
 </style>
