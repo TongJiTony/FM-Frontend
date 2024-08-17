@@ -9,7 +9,7 @@
       <p style="text-align: center; font-size: larger; color: gray; font-weight: bold;">训练列表</p>
       <el-menu>
         <el-menu-item
-          v-for="(item, index) in trainingData"
+          v-for="(item, index) in filteredTrainingData"
           :key="item.TRAINING_ID"
           :class="{ 'is-active': selectedIndex === index }"
           @click="selectItem(index)"
@@ -61,88 +61,97 @@
           当前训练信息为空，请使用添加按钮新增训练信息
         </div>
         <div v-else>
-          <el-row>
-            <el-select
-              v-model="selectedColumn"
-              placeholder="选择列"
-              style="width:45%"
-              size="small"
-            >
-              <el-option
-              v-for="column in columns"
-                :key="column.prop"
-                :label="column.label"
-                :value="column.prop"
+          <el-row type="flex" justify="end">
+            <div class='el-input-group' style="display: flex; width: 30%">
+              <el-select
+                v-model="selectedColumn"
+                placeholder="选择列"
+                style="width:40%"
               >
-              </el-option>
-            </el-select>
-            <el-input
-              placeholder="输入关键字搜索"
-              v-model="searchQuery"
-            />            
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8">
-              <el-card class="display-card">
-                <h3 class="title">战术重点</h3>
-                <p style="font-size: 25px">{{ this.trainingData[selectedIndex].TRAIN_FOCUS }}</p>
-              </el-card>
-            </el-col>
-
-            <el-col :span="8">
-              <el-card class="display-card">
-                <h3 class="title">训练强度</h3>
-                <el-tag style="font-size: 20px; padding: 10px 20px 40px 20px;"
-                  :type="getTagType(this.trainingData[selectedIndex].TRAIN_INTENSION)"
+                <el-option
+                v-for="column in columns"
+                  :key="column.prop"
+                  :label="column.label"
+                  :value="column.prop"
                 >
-                  {{ this.trainingData[selectedIndex].TRAIN_INTENSION }}
-                </el-tag>
-              </el-card>
-            </el-col>
-
-            <el-col :span="8">
-              <el-card class="display-card">
-                <h3 class="title">训练评分</h3>
-                <el-progress
-                  type="circle"
-                  :percentage="this.trainingData[selectedIndex].TRAIN_SCORE"
-                  :format="formatPercentage"
-                  :width="100"
-                ></el-progress>
-              </el-card>
-            </el-col>
+                </el-option>
+              </el-select>
+              <el-select v-model="searchQuery" clearable>
+                <el-option
+                  v-for="option in getOptions(selectedColumn)"
+                  :key="option.value"
+                  :label="option.label"
+                  :value="option.value">
+                </el-option>                
+              </el-select>         
+            </div> 
           </el-row>
+          <div v-if="filteredTrainingData.length === 0" class="empty-message">
+            没有找到符合条件的训练信息
+          </div>
+          <div v-else>
+            <el-row :gutter="20">
+              <el-col :span="8">
+                <el-card class="display-card">
+                  <h3 class="title">战术重点</h3>
+                  <p style="font-size: 25px">{{ this.filteredTrainingData[selectedIndex].TRAIN_FOCUS }}</p>
+                </el-card>
+              </el-col>
 
-          <el-row :gutter="20">
-            <el-col :span="8">
-              <el-card class="display-card">
-                <h3 class="title">战术阵型</h3>
-                <p style="font-size: 25px">{{ this.trainingData[selectedIndex].TEAM_FORMATION }}</p>
-              </el-card>
-            </el-col>
+              <el-col :span="8">
+                <el-card class="display-card">
+                  <h3 class="title">训练强度</h3>
+                  <el-tag style="font-size: 20px; padding: 10px 20px 40px 20px;"
+                    :type="getTagType(this.filteredTrainingData[selectedIndex].TRAIN_INTENSION)"
+                  >
+                    {{ this.filteredTrainingData[selectedIndex].TRAIN_INTENSION }}
+                  </el-tag>
+                </el-card>
+              </el-col>
 
-            <el-col :span="8">
-              <el-card class="display-card">
-                <h3 class="title">训练场地</h3>
-                <el-tag type="success" style="font-size: 20px; padding: 10px 20px 40px 20px;">
-                  {{ this.stadiumName }}
-                </el-tag>
-              </el-card>
-            </el-col>
+              <el-col :span="8">
+                <el-card class="display-card">
+                  <h3 class="title">训练评分</h3>
+                  <el-progress
+                    type="circle"
+                    :percentage="this.filteredTrainingData[selectedIndex].TRAIN_SCORE"
+                    :format="formatPercentage"
+                    :width="100"
+                  ></el-progress>
+                </el-card>
+              </el-col>
+            </el-row>
 
-            <el-col :span="8">
-              <el-card class="display-card">
-                <h3 class="title">球队熟悉度</h3>
-                <el-progress
-                  type="circle"
-                  :percentage="this.trainingData[selectedIndex].TEAM_FAMILIARITY"
-                  :format="formatPercentage"
-                  :width="100"
-                ></el-progress>
-              </el-card>
-            </el-col>
-          </el-row>
+            <el-row :gutter="20">
+              <el-col :span="8">
+                <el-card class="display-card">
+                  <h3 class="title">战术阵型</h3>
+                  <p style="font-size: 25px">{{ this.filteredTrainingData[selectedIndex].TEAM_FORMATION }}</p>
+                </el-card>
+              </el-col>
 
+              <el-col :span="8">
+                <el-card class="display-card">
+                  <h3 class="title">训练场地</h3>
+                  <el-tag type="success" style="font-size: 20px; padding: 10px 20px 40px 20px;">
+                    {{ this.stadiumName }}
+                  </el-tag>
+                </el-card>
+              </el-col>
+
+              <el-col :span="8">
+                <el-card class="display-card">
+                  <h3 class="title">球队熟悉度</h3>
+                  <el-progress
+                    type="circle"
+                    :percentage="this.filteredTrainingData[selectedIndex].TEAM_FAMILIARITY"
+                    :format="formatPercentage"
+                    :width="100"
+                  ></el-progress>
+                </el-card>
+              </el-col>
+            </el-row>
+          </div>
         </div>
       </el-main>
     </el-container>
@@ -163,15 +172,14 @@
         </el-form-item>
         <el-form-item label="战术阵型" :label-width="formLabelWidth" prop="team_formation">
           <el-select v-model="form.team_formation" placeholder="请选择战术阵型">
-            <el-option label="443" :value=443></el-option>
+            <el-option label="433" :value=433></el-option>
             <el-option label="4231" :value=4231></el-option>
             <el-option label="4321" :value=4321></el-option>
-            <el-option label="4312" :value=4312></el-option>
-            <el-option label="4222" :value=4222></el-option>
-            <el-option label="4141" :value=4141></el-option>
+            <el-option label="4132" :value=4132></el-option>
+            <el-option label="451" :value=451></el-option>
             <el-option label="442" :value=442></el-option>
-            <el-option label="343" :value=343></el-option>
-            <el-option label="3241" :value=3241></el-option>
+            <el-option label="541" :value=541></el-option>
+            <el-option label="352" :value=352></el-option>
             <el-option label="532" :value=532></el-option>
           </el-select>
         </el-form-item>
@@ -280,7 +288,13 @@ export default {
         { prop: 'TRAIN_INTENSION', label: '训练强度' },
         { prop: 'TRAIN_STADIUM_ID', label: '训练场地'},
       ],
+      stadiumOptions: [], // 用于存储球场选项
     };
+  },
+  watch: {
+    selectedColumn() {
+      this.searchQuery = '';
+    }
   },
   created () {
     this.selectedColumn = this.columns[0].prop;
@@ -288,15 +302,15 @@ export default {
   async mounted () {
     await this.fetchtrainingData();
     this.getStadium();
+    this.getALLStadiumOptions(); // 获取球场选项
   },
   computed: {
     filteredTrainingData () {
       if (!this.selectedColumn || this.searchQuery === '') 
         return this.trainingData;
-      console.log("selectedColumn: ", this.selectedColumn);
-      console.log("searchQuery: ", this.searchQuery);
+      
       return this.trainingData.filter((item) => {
-        return String(item[this.selectedColumn]).toLowerCase().includes(this.searchQuery.toLowerCase());
+        return String(item[this.selectedColumn]).toLowerCase().includes(String(this.searchQuery).toLowerCase());
       });
     },
   },
@@ -310,7 +324,7 @@ export default {
       try {
         const response = await axios.get(apiUrl);
         this.trainingData = response.data;
-        console.log("the data is ", this.trainingData);
+        //console.log("the data is ", this.trainingData);
       } catch (error) {
         console.error(error);
       } finally {
@@ -475,6 +489,59 @@ export default {
     goback () {  // 返回上级页面
       window.sessionStorage.clear();
       this.$router.go(-1);
+    },
+
+    // 搜括框设置标签
+    getOptions(selectedColumn) {
+      switch (selectedColumn) {
+        case 'TRAIN_FOCUS':
+          return [
+            { value: '控球游戏', label: '控球游戏' },
+            { value: '快速反击', label: '快速反击' },
+            { value: '长传反击', label: '长传反击' },
+            { value: '防守反击', label: '防守反击' },
+            { value: '外侧', label: '外侧' },
+            { value: '长传球', label: '长传球' },
+            { value: '全攻全守', label: '全攻全守' },
+          ];
+        case 'TEAM_FORMATION':
+          return [
+            { value: 443, label: '443' },
+            { value: 4231, label: '4231' },
+            { value: 4321, label: '4321' },
+            { value: 4312, label: '4312' },
+            { value: 4222, label: '4222' },
+            { value: 4141, label: '4141' },
+            { value: 442, label: '442' },
+            { value: 343, label: '343' },
+            { value: 3241, label: '3241' },
+            { value: 532, label: '532' },
+          ];
+        case 'TRAIN_INTENSION':
+          return [
+            { value: "高强度", label: '高强度' },
+            { value: "均衡", label: '均衡' },
+            { value: "恢复训练", label: '恢复训练' },
+          ];
+        case 'TRAIN_STADIUM_ID':
+          return [
+            
+          ]
+        default:
+          return [];
+      }
+    },
+    getALLStadiumOptions() {
+      axios.get('/api/v1/stadium/displayall')
+        .then((response) => {
+          this.stadiumOptions = response.data.map(stadium => ({
+            value: stadium.STADIUM_ID,
+            label: stadium.STADIUM_NAME
+          }));
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
   },
 };
