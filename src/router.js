@@ -80,6 +80,7 @@ const router = new Router({
     },
     {
       path: "/admin",
+      name: "Admin",
       component: AdminLayout,
       children: [
         {
@@ -144,10 +145,14 @@ router.beforeEach((to, from, next) => {
   } else if (to.name === "Login" && isLoggedIn === "true") {
     // 用户已经登录并试图访问登录页面
     if (userRole === "coach") {
-      next({ name: "TeamPage" });
+      next({ name: "Home" });
     } else if (userRole === "manager") {
       next({ name: "Team" });
-    } else {
+    } 
+    else if (userRole === "admin") {
+      next({ name: "Admin" });
+    } 
+    else {
       next({ name: "Home" });
     }
   }

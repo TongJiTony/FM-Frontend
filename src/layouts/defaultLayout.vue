@@ -76,7 +76,7 @@ export default {
   data() {
     return {
       themes,
-      currentThemeName: "green", // 初始主题
+      currentThemeName: "purpleBlack", // 初始主题
       currentThemeIndex: 0,
       backgroundViews: {
         greenGradient: "linear-gradient(to right, #43cea2, #185a9d)",
@@ -85,7 +85,7 @@ export default {
         image1: `url(${require("@/assets/img/main-bg-1.png")})`,
         image2: `url(${require("@/assets/img/main-bg-2.png")})`,
       },
-      currentBackgroundName: "image1", // 初始背景
+      currentBackgroundName: "purpleGradient", // 初始背景
       currentBackgroundIndex: 0,
     };
   },

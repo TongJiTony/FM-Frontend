@@ -134,10 +134,13 @@ export default {
       console.log('userRight:',userRight);
       switch(userRight){
         case 'coach':
-          this.$router.replace({name:'TeamPage'})
+          this.$router.replace({name:'Home'})
           break;
         case 'manager':
           this.$router.replace({name:'Team'})
+          break;
+        case 'admin':
+          this.$router.replace({name:'Admin'})
           break;
         default:
           this.$router.replace({name:'Home'})
