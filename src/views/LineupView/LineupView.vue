@@ -299,7 +299,6 @@ export default {
       }
     },
     fetchTeams () {
-      // 这里使用了伪代码来表示API调用，实际应根据API具体情况进行调整
       axios.get('/api/v1/team/displayall')
         .then(response => {
           this.teams = response.data;
@@ -309,7 +308,7 @@ export default {
         });
     },
     selectTeam (team) {
-      console.log("selected team: ", team);
+      //console.log("selected team: ", team);
       this.addForm.TEAM_ID = team.TEAM_ID;
       this.addDrawerVisible_teamID = false;
     },
