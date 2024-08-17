@@ -6,7 +6,7 @@
       style="background-color: rgb(238, 241, 246)"
       title="训练内容"
     >
-      <p style="text-align: center; font-size: larger; color: gray; font-weight: bold;">选择训练内容</p>
+      <p style="text-align: center; font-size: larger; color: gray; font-weight: bold;">训练列表</p>
       <el-menu>
         <el-menu-item
           v-for="(item, index) in trainingData"
@@ -14,7 +14,7 @@
           :class="{ 'is-active': selectedIndex === index }"
           @click="selectItem(index)"
         >
-          {{ item.TRAINING_ID }}
+          {{ item.TRAIN_FOCUS }}
         </el-menu-item>
       </el-menu>
     </el-aside>
@@ -26,22 +26,29 @@
             :span="12"
             style="text-align: left; font-size: 20px"
           >
-            球队训练表
+          <span v-if="teamName" :style="{color: 'lightblue'}"> {{ teamName }}</span>
+          <span v-else :style="{color: 'lightblue'}">所有球队</span>
+             训练表
           </el-col>
           <el-col :span="12">
             <el-dropdown>
               <i
                 class="el-icon-setting"
-                style="margin-right: 15px"
+                style="font-size: 25px; margin-top: 5px; color: white;"
               ></i>
+              <span style="font-size: 20px; margin-right: 20px; color: white">更多</span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item
-                  @click.native="handleAdd">新增</el-dropdown-item>
+                  @click.native="handleAdd" style="font-size: 20px;">新增</el-dropdown-item>
                 <el-dropdown-item
-                  @click.native="handleDelete">删除</el-dropdown-item>
+                  @click.native="handleDelete" style="font-size: 20px;">删除</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-            <span v-if="teamName"> {{ teamName }}</span>
+            <el-button
+              type="info"
+              @click="goback"
+              class="goback_button"
+            >返回上级页面</el-button>
           </el-col>
         </el-row>
       </el-header>
@@ -51,13 +58,33 @@
           v-if="trainingData.length === 0"
           class="empty-message"
         >
-          当前训练信息为空
+          当前训练信息为空，请使用添加按钮新增训练信息
         </div>
         <div v-else>
+          <el-row>
+            <el-select
+              v-model="selectedColumn"
+              placeholder="选择列"
+              style="width:45%"
+              size="small"
+            >
+              <el-option
+              v-for="column in columns"
+                :key="column.prop"
+                :label="column.label"
+                :value="column.prop"
+              >
+              </el-option>
+            </el-select>
+            <el-input
+              placeholder="输入关键字搜索"
+              v-model="searchQuery"
+            />            
+          </el-row>
           <el-row :gutter="20">
             <el-col :span="8">
               <el-card class="display-card">
-                <h3 class="title">训练目标</h3>
+                <h3 class="title">战术重点</h3>
                 <p style="font-size: 25px">{{ this.trainingData[selectedIndex].TRAIN_FOCUS }}</p>
               </el-card>
             </el-col>
@@ -89,7 +116,7 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-card class="display-card">
-                <h3 class="title">战术重点</h3>
+                <h3 class="title">战术阵型</h3>
                 <p style="font-size: 25px">{{ this.trainingData[selectedIndex].TEAM_FORMATION }}</p>
               </el-card>
             </el-col>
@@ -124,10 +151,29 @@
     <el-dialog title="新增训练" :visible.sync="dialogVisible">
       <el-form :model="form" :rules="rules" ref="form">
         <el-form-item label="战术重点" :label-width="formLabelWidth" prop="TRAIN_FOCUS">
-          <el-input v-model="form.TRAIN_FOCUS" autocomplete="off"></el-input>
+          <el-select v-model="form.TRAIN_FOCUS" placeholder="请选择战术重点">
+            <el-option label="控球游戏" value="控球游戏"></el-option>
+            <el-option label="快速反击" value="快速反击"></el-option>
+            <el-option label="长传反击" value="长传反击"></el-option>
+            <el-option label="防守反击" value="防守反击"></el-option>
+            <el-option label="外侧" value="外侧"></el-option>
+            <el-option label="长传球" value="长传球"></el-option>
+            <el-option label="全攻全守" value="全攻全守"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="战术阵型" :label-width="formLabelWidth" prop="team_formation">
-          <el-input v-model.number="form.team_formation" autocomplete="off" type="number"></el-input>
+          <el-select v-model="form.team_formation" placeholder="请选择战术阵型">
+            <el-option label="443" :value=443></el-option>
+            <el-option label="4231" :value=4231></el-option>
+            <el-option label="4321" :value=4321></el-option>
+            <el-option label="4312" :value=4312></el-option>
+            <el-option label="4222" :value=4222></el-option>
+            <el-option label="4141" :value=4141></el-option>
+            <el-option label="442" :value=442></el-option>
+            <el-option label="343" :value=343></el-option>
+            <el-option label="3241" :value=3241></el-option>
+            <el-option label="532" :value=532></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="训练评分" :label-width="formLabelWidth" prop="train_score">
           <el-slider v-model="form.train_score" :min="0" :max="100"></el-slider>
@@ -215,10 +261,6 @@ export default {
       },
       formLabelWidth: '140px',
       rules: {
-        TRAIN_FOCUS: [
-          { required: true, message: '请输入TRAIN_FOCUS', trigger: 'blur' },
-          { max: 20, message: '长度不能超过20个字符', trigger: 'blur' }
-        ],
         train_team_id: [
           { required: true, message: '请输入train_team_id', trigger: 'blur' },
           { type: 'number', message: 'train_team_id必须为数字值', trigger: 'blur' }
@@ -227,13 +269,36 @@ export default {
 
       stadiumDrawerVisible: false, // 选择场地  抽屉可见性控制
       stadiumData: [], // 场地数据
-      selectedStadium: null, // 选中的场地
+      selectedStadium: null, // Add选中的场地
 
+      // 搜索框
+      searchQuery: '',
+      selectedColumn: '', // 默认选中的列
+      columns: [
+        { prop: 'TRAIN_FOCUS', label: '战术重点' },
+        { prop: 'TEAM_FORMATION', label: '战术阵型' },
+        { prop: 'TRAIN_INTENSION', label: '训练强度' },
+        { prop: 'TRAIN_STADIUM_ID', label: '训练场地'},
+      ],
     };
+  },
+  created () {
+    this.selectedColumn = this.columns[0].prop;
   },
   async mounted () {
     await this.fetchtrainingData();
     this.getStadium();
+  },
+  computed: {
+    filteredTrainingData () {
+      if (!this.selectedColumn || this.searchQuery === '') 
+        return this.trainingData;
+      console.log("selectedColumn: ", this.selectedColumn);
+      console.log("searchQuery: ", this.searchQuery);
+      return this.trainingData.filter((item) => {
+        return String(item[this.selectedColumn]).toLowerCase().includes(this.searchQuery.toLowerCase());
+      });
+    },
   },
   methods: {
     async fetchtrainingData () {
@@ -285,7 +350,14 @@ export default {
     },
     getTeamName () {
       if (this.$route.params.teamId) {
-        this.teamName = this.trainingData[0].TRAIN_TEAM_NAME;
+        axios.get(`/api/v1/team/displayone?TeamId=${this.$route.params.teamId}`)
+          .then((response) => {
+            this.teamName = response.data[0].TEAM_NAME;  //response.data是一个只有一个元素的数组
+            //console.log("the team name is ", this.teamName);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       }
     },
     handleDelete () {
@@ -386,7 +458,7 @@ export default {
         });
       }
     },
-    getTeamNames() {
+    getTeamNames() {  // 获取球队名称
       return new Promise((resolve, reject) => {
         axios.get('/api/v1/team/displayall')
           .then(response => {
@@ -399,6 +471,10 @@ export default {
             reject(error);
           });
       });
+    },
+    goback () {  // 返回上级页面
+      window.sessionStorage.clear();
+      this.$router.go(-1);
     },
   },
 };
@@ -428,4 +504,5 @@ export default {
   top: 0;
   left: 10px;
 }
+
 </style>

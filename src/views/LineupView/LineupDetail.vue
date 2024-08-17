@@ -122,7 +122,7 @@
 
     <!--  -->
     <!--  -->
-    <!-- <el-button class="test_button" @click="testRoute">this is test</el-button> -->
+    <el-button class="test_button" @click="testRoute">this is test</el-button>
     
   </div>
 </template>
@@ -226,7 +226,6 @@ export default {
       console.log("index: ", index);
 
       if (index === -1) {
-        //code here
         this.lineupDetail.splice(this.editindex, 1, player);
         this.saveEditlinup(player);
       }
@@ -272,10 +271,11 @@ export default {
       }
     },
 
-    ///////////////////////////////////////////
-    // testRoute() {
-    //   this.$router.push(`/lineup/111111111`);
-    // },
+    /////////////////////////////////////////
+    testRoute() {
+      //this.$router.push(`/lineup/111111111`);
+      this.$router.push(`/training/1000000002`);
+    },
   },
 };
 </script>

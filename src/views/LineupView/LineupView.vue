@@ -221,7 +221,7 @@ export default {
       loading: true,
       lineupData: [],
       teamID: this.$route.params.teamID, //路由参数
-      // search
+      // 搜索框
       searchQuery: '',
       selectedColumn: '',
       columns: [
