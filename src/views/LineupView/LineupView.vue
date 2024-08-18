@@ -4,7 +4,7 @@
     <div v-else>
       <el-container class="home-container">
         <!--头部  -->
-        <el-header>阵容表
+        <el-header style="font-size: 20px; display: flex; justify-content: space-between; align-items: center;">阵容表
           <div class="button-contanier">
             <el-button
               type="primary"
@@ -485,18 +485,9 @@ export default {
   left: 10px;
   cursor: pointer;
 }
-.el-header {
-  background-color: #373d41;
-  display: flex;
-  justify-content: space-between;
-  padding-left: 20px;
-  align-items: center;
-  color: #fff;
-  font-size: 20px;
-}
+
 .button-contanier {
-  display: flex;
-  justify-content: flex-end;
+  margin-left: auto;
 }
 .el-input-group {
   display: flex;

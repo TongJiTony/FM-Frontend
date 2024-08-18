@@ -1,7 +1,8 @@
 <template>
   <p v-if="loading">Loading...</p>
   <div v-else>
-    <el-header>阵容 ID: {{ this.lineupId }}
+    <el-header style="font-size: 20px; display: flex; justify-content: space-between; align-items: center;"
+    >阵容 ID: {{ this.lineupId }}
       <div class="button-contanier">
         <el-button
           type="info"
@@ -281,18 +282,8 @@ export default {
 </script>
   
 <style scoped>
-  .el-header {
-    background-color: #373d41;
-    display: flex;
-    justify-content: space-between;
-    padding-left: 20px;
-    align-items: center;
-    color: #fff;
-    font-size: 20px;
-  }
   .button-contanier {
-    display: flex;
-    justify-content: flex-end;
+    margin-left: auto;
   }
   .el-input-group {
     display: flex;

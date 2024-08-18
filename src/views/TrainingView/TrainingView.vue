@@ -26,8 +26,8 @@
             :span="12"
             style="text-align: left; font-size: 20px"
           >
-          <span v-if="teamName" :style="{color: 'lightblue'}"> {{ teamName }}</span>
-          <span v-else :style="{color: 'lightblue'}">所有球队</span>
+            <span v-if="teamName" :style="{color: '#6A5ACD', fontWeight: 'bold'}"> {{ teamName }}</span>
+            <span v-else :style="{color: '#6A5ACD', fontWeight: 'bold'}">所有球队</span>
              训练表
           </el-col>
           <el-col :span="12">
