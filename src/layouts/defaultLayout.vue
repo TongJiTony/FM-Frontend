@@ -40,16 +40,16 @@
               >
             </el-submenu>
           </div>
-          <button class="button-change-theme" @click="toggleTheme"
-          >切换主题</button
-          >
+          <button class="button-change-theme" @click="toggleTheme">
+            切换主题
+          </button>
           <button
-          class="button-change-BackGroundImages"
-          @click="toggleBackgroundImage"
-          >切换背景</button
+            class="button-change-BackGroundImages"
+            @click="toggleBackgroundImage"
           >
+            切换背景
+          </button>
         </el-menu>
-       
       </div>
     </el-header>
     <el-container>
@@ -71,7 +71,7 @@
 
 <script>
 import { themes } from "@/assets/color/color.js"; // 引入主题配色
-import defaultAvatar from '@/assets/img/defaultIcon.jpg';
+import defaultAvatar from "@/assets/img/defaultIcon.jpg";
 
 export default {
   data() {
@@ -100,9 +100,12 @@ export default {
   },
   methods: {
     applyTheme(theme) {
-      for (let key in theme) {
-        document.documentElement.style.setProperty(key, theme[key]);
-      }
+      const rootStyle = document.documentElement.style;
+      requestAnimationFrame(() => {
+        for (let key in theme) {
+          rootStyle.setProperty(key, theme[key]);
+        }
+      });
     },
     applyBackView(background) {
       document.documentElement.style.setProperty(
@@ -134,10 +137,21 @@ export default {
     handleImageError(event) {
       event.target.src = defaultAvatar;
     },
+    preloadBackgroundImages() {
+      const imagePaths = [
+        require("@/assets/img/main-bg-1.png"),
+        require("@/assets/img/main-bg-2.png"),
+      ];
+      imagePaths.forEach((path) => {
+        const img = new Image();
+        img.src = path;
+      });
+    },
   },
   created() {
     this.applyTheme(this.currentTheme);
     this.applyBackView(this.currentBackground);
+    this.preloadBackgroundImages(); // 预加载背景图像
   },
 };
 </script>
@@ -149,6 +163,7 @@ export default {
 
 .el-header {
   background: var(--primary-background);
+  transition: background 0.3s;
   line-height: 60px;
 }
 
@@ -227,10 +242,10 @@ export default {
 .button-change-theme,
 .button-change-BackGroundImages {
   margin-left: 10px;
-  padding: 0.5vw 1vw;
-  font-size: 1.0vw;
-  background-color: var(--primary-color); /* 使用主题颜色 */
-  color: var(--text-color); /* 使用主题文本颜色 */
+  padding: 0.5vw 0.6vw;
+  font-size: 0.9vw;
+  background-color: var(--primary-color);
+  color: var(--text-color);
   border: none;
   border-radius: 5px;
   cursor: pointer;
