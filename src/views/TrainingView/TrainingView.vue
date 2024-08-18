@@ -291,9 +291,9 @@ export default {
         { prop: 'TRAIN_FOCUS', label: '战术重点' },
         { prop: 'TEAM_FORMATION', label: '战术阵型' },
         { prop: 'TRAIN_INTENSION', label: '训练强度' },
-        { prop: 'TRAIN_STADIUM_ID', label: '训练场地'},
+        // { prop: 'TRAIN_STADIUM_ID', label: '训练场地'},
       ],
-      stadiumOptions: [], // 用于存储球场选项
+      //stadiumOptions: [], // 用于存储球场选项
     };
   },
   watch: {
@@ -307,7 +307,7 @@ export default {
   async mounted () {
     await this.fetchtrainingData();
     this.getStadium();
-    this.getALLStadiumOptions(); // 获取球场选项
+    //this.getALLStadiumOptions(); // 获取球场选项
   },
   computed: {
     filteredTrainingData () {
@@ -544,18 +544,18 @@ export default {
           return [];
       }
     },
-    getALLStadiumOptions() {
-      axios.get('/api/v1/stadium/displayall')
-        .then((response) => {
-          this.stadiumOptions = response.data.map(stadium => ({
-            value: stadium.STADIUM_ID,
-            label: stadium.STADIUM_NAME
-          }));
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
+    // getALLStadiumOptions() {
+    //   axios.get('/api/v1/stadium/displayall')
+    //     .then((response) => {
+    //       this.stadiumOptions = response.data.map(stadium => ({
+    //         value: stadium.STADIUM_ID,
+    //         label: stadium.STADIUM_NAME
+    //       }));
+    //     })
+    //     .catch((error) => {
+    //       console.error(error);
+    //     });
+    // },
   },
 };
 </script>
@@ -571,7 +571,7 @@ export default {
   background-color: #f9f9f9; /* 背景颜色 */
 }
 .display-card {
-  height: 160px;
+  height: 150px;
   display: flex;
   flex-direction: column;
   justify-content: center;

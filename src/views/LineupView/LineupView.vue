@@ -27,31 +27,27 @@
               :data="filteredLineupData"
               stripe
               style="width: 100%"
+              fit
             >
               <el-table-column
                 type="index"
-                width="100"
               />
               <el-table-column
                 prop="TEAM_NAME"
                 label="球队"
-                :width="300"
               >
               </el-table-column>
               <el-table-column
                 prop="LINEUP_ID"
                 label="阵容ID"
-                :width="350"
               >
               </el-table-column>
               <el-table-column
                 prop="NOTE"
                 label="备注"
-                :width="320"
               >
               </el-table-column>
               <el-table-column
-                :width="300"
                 align="right"
               >
                 <template #header>
