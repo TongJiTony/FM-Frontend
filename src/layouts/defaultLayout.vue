@@ -13,7 +13,7 @@
           text-color="var(--text-color)"
           active-text-color="var(--active-text-color)"
         >
-          <el-menu-item index="/">Home</el-menu-item>
+          <el-menu-item class="test" index="/">Home</el-menu-item>
           <el-menu-item index="/test">Test</el-menu-item>
           <el-menu-item index="/team">Team</el-menu-item>
           <el-menu-item index="/player-list">Player List</el-menu-item>
@@ -28,6 +28,7 @@
                 <img
                   :src="this.$store.getters['user/getUserIcon']"
                   class="user-icon"
+                  @error="handleImageError"
                 />
               </template>
               <el-menu-item class="user-action-item" index="/changepsw"
@@ -39,15 +40,16 @@
               >
             </el-submenu>
           </div>
+          <button class="button-change-theme" @click="toggleTheme">
+            切换主题
+          </button>
+          <button
+            class="button-change-BackGroundImages"
+            @click="toggleBackgroundImage"
+          >
+            切换背景
+          </button>
         </el-menu>
-        <el-button class="el--button-change-theme" @click="toggleTheme"
-          >切换主题</el-button
-        >
-        <el-button
-          class="el--button-change-BackGroundImages"
-          @click="toggleBackgroundImage"
-          >切换背景</el-button
-        >
       </div>
     </el-header>
     <el-container>
@@ -69,12 +71,13 @@
 
 <script>
 import { themes } from "@/assets/color/color.js"; // 引入主题配色
+import defaultAvatar from "@/assets/img/defaultIcon.jpg";
 
 export default {
   data() {
     return {
       themes,
-      currentThemeName: "green", // 初始主题
+      currentThemeName: "purpleBlack", // 初始主题
       currentThemeIndex: 0,
       backgroundViews: {
         greenGradient: "linear-gradient(to right, #43cea2, #185a9d)",
@@ -83,7 +86,7 @@ export default {
         image1: `url(${require("@/assets/img/main-bg-1.png")})`,
         image2: `url(${require("@/assets/img/main-bg-2.png")})`,
       },
-      currentBackgroundName: "image1", // 初始背景
+      currentBackgroundName: "purpleGradient", // 初始背景
       currentBackgroundIndex: 0,
     };
   },
@@ -97,9 +100,12 @@ export default {
   },
   methods: {
     applyTheme(theme) {
-      for (let key in theme) {
-        document.documentElement.style.setProperty(key, theme[key]);
-      }
+      const rootStyle = document.documentElement.style;
+      requestAnimationFrame(() => {
+        for (let key in theme) {
+          rootStyle.setProperty(key, theme[key]);
+        }
+      });
     },
     applyBackView(background) {
       document.documentElement.style.setProperty(
@@ -128,11 +134,24 @@ export default {
         this.$router.push(key);
       }
     },
+    handleImageError(event) {
+      event.target.src = defaultAvatar;
+    },
+    preloadBackgroundImages() {
+      const imagePaths = [
+        require("@/assets/img/main-bg-1.png"),
+        require("@/assets/img/main-bg-2.png"),
+      ];
+      imagePaths.forEach((path) => {
+        const img = new Image();
+        img.src = path;
+      });
+    },
   },
   created() {
     this.applyTheme(this.currentTheme);
     this.applyBackView(this.currentBackground);
-    console.log("Vuex 状态:", this.$store.state.user);
+    this.preloadBackgroundImages(); // 预加载背景图像
   },
 };
 </script>
@@ -144,9 +163,18 @@ export default {
 
 .el-header {
   background: var(--primary-background);
+  transition: background 0.3s;
   line-height: 60px;
 }
+.el-menu-item:hover {
+  background-color: var(--active-text-color) !important; /* 强制背景色 */
+  color: var(--primary-background) !important; /* 强制文字颜色 */
+}
 
+.el-submenu :hover{
+  background-color: var(--active-text-color) !important; /* 强制背景色 */
+  color: var(--primary-background) !important; /* 强制文字颜色 */
+}
 .header-content {
   display: flex;
   align-items: center;
@@ -181,6 +209,7 @@ export default {
   color: var(--username-title-color);
   font-weight: bold;
 }
+
 
 .user-icon {
   width: 40px;
@@ -218,10 +247,32 @@ export default {
   margin-left: 100px;
   display: flex;
   align-items: center;
+  
 }
 
-.el--button-change-theme {
-  margin-left: 0px;
-  margin-right: 0px;
+
+.button-change-theme,
+.button-change-BackGroundImages {
+  margin-left: 10px;
+  padding: 0.5vw 0.6vw;
+  font-size: 0.9vw;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
+}
+
+.button-change-theme:hover,
+.button-change-BackGroundImages:hover {
+  background-color: var(--active-text-color); /* 鼠标悬停时的颜色变化 */
+  color: var(--primary-background);
+  transform: scale(1.05); /* 鼠标悬停时略微放大 */
+}
+
+.button-change-theme:active,
+.button-change-BackGroundImages:active {
+  transform: scale(0.95); /* 点击时按钮缩小 */
 }
 </style>
