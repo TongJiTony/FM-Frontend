@@ -87,7 +87,11 @@
             </div> 
           </el-row>
           <div v-if="filteredTrainingData.length === 0" class="empty-message">
-            没有找到符合条件的训练信息
+                <el-empty
+                  description="没有找到符合条件的训练信息"
+                  :image="require('@/assets/img/itemNOTfound/itemNOTfound.jpeg')"
+                  :image-size="400"
+                ></el-empty>
           </div>
           <div v-else>
             <el-row :gutter="20">
@@ -126,7 +130,8 @@
               <el-col :span="8">
                 <el-card class="display-card">
                   <h3 class="title">战术阵型</h3>
-                  <p style="font-size: 25px">{{ this.filteredTrainingData[selectedIndex].TEAM_FORMATION }}</p>
+                  <!-- <p style="font-size: 25px">{{ this.filteredTrainingData[selectedIndex].TEAM_FORMATION }}</p> -->
+                  <img :src="getImageUrl" alt="Team Formation" class="team-formation-img"/>
                 </el-card>
               </el-col>
 
@@ -312,6 +317,14 @@ export default {
       return this.trainingData.filter((item) => {
         return String(item[this.selectedColumn]).toLowerCase().includes(String(this.searchQuery).toLowerCase());
       });
+    },
+    getImageUrl() {
+      const teamFormation = this.filteredTrainingData[this.selectedIndex]?.TEAM_FORMATION;
+      if (teamFormation) {
+        console.log(teamFormation);
+        return require(`@/assets/img/teamFormation/${teamFormation}.webp`);
+      }
+      return ''; // 返回默认图片或空字符串
     },
   },
   methods: {
@@ -558,7 +571,7 @@ export default {
   background-color: #f9f9f9; /* 背景颜色 */
 }
 .display-card {
-  height: 160px; /* 你可以根据需要调整这个高度 */
+  height: 160px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -570,6 +583,11 @@ export default {
   position: absolute;
   top: 0;
   left: 10px;
+}
+.team-formation-img {
+  width: 53%;
+  height: auto;
+  margin: 0 auto 0 30%; /* 调整左边距 */
 }
 
 </style>
