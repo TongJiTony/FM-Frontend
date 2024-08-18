@@ -13,7 +13,7 @@
           text-color="var(--text-color)"
           active-text-color="var(--active-text-color)"
         >
-          <el-menu-item index="/">Home</el-menu-item>
+          <el-menu-item class="test" index="/">Home</el-menu-item>
           <el-menu-item index="/test">Test</el-menu-item>
           <el-menu-item index="/team">Team</el-menu-item>
           <el-menu-item index="/player-list">Player List</el-menu-item>
@@ -166,7 +166,15 @@ export default {
   transition: background 0.3s;
   line-height: 60px;
 }
+.el-menu-item:hover {
+  background-color: var(--active-text-color) !important; /* 强制背景色 */
+  color: var(--primary-background) !important; /* 强制文字颜色 */
+}
 
+.el-submenu :hover{
+  background-color: var(--active-text-color) !important; /* 强制背景色 */
+  color: var(--primary-background) !important; /* 强制文字颜色 */
+}
 .header-content {
   display: flex;
   align-items: center;
@@ -201,6 +209,7 @@ export default {
   color: var(--username-title-color);
   font-weight: bold;
 }
+
 
 .user-icon {
   width: 40px;
@@ -238,7 +247,10 @@ export default {
   margin-left: 100px;
   display: flex;
   align-items: center;
+  
 }
+
+
 .button-change-theme,
 .button-change-BackGroundImages {
   margin-left: 10px;
