@@ -2,7 +2,7 @@
   <div class="change-password-container">
     <h3>修改密码</h3>
     <el-form :model="passwordForm" ref="passwordForm" :rules="rules" label-width="120px" @submit.native.prevent="savePassword">
-      <el-form-item label="当前密码" prop="currentPassword">
+      <el-form-item  label="当前密码" prop="currentPassword">
         <el-input type="password" v-model="passwordForm.currentPassword" />
       </el-form-item>
       <el-form-item label="新密码" prop="newPassword">
@@ -73,14 +73,14 @@ export default {
                 newPassword: '',
                 confirmPassword: ''
               };
-              this.$router.push({ name: 'Home' });
+              this.$router.replace({ name: 'Home' });
             } 
             else {
               this.$message.error(response.data.msg);
             }
           } 
           else {
-            console.log('校验失败');
+            this.$message.error("校验失败");
           }
         });
 
@@ -119,4 +119,5 @@ export default {
 .change-password-container {
   padding: 20px;
 }
+
 </style>
