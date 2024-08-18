@@ -51,7 +51,7 @@
             <el-card shadow="never" class="box-card">
               <div slot="header" class="clearfix">
                 <span style="font-size: 20px;font-weight: bold;">关键人物</span>
-                  <el-button type="primary" size='small' @click="handleRecruitPlayer" class="back-button1">更多球员</el-button>    
+                  <el-button type="primary" size='small' @click="handleMorePlayer" class="back-button1">更多球员</el-button>    
                   <el-button type="primary" size='small' @click="handleRecruitPlayer" class="back-button2">招募球员</el-button> 
               </div> 
               <el-container>
@@ -71,7 +71,7 @@
             <el-col :span="24" style="height: 20px;"></el-col> 
             <el-card shadow="never" class="box-card">
               <div slot="header" class="clearfix">
-                <span style="font-size: 20px;font-weight: bold;">竞争对手</span>
+                <span style="font-size: 20px;font-weight: bold;">比赛日程</span>
                 <el-button type="primary"  size='small' @click="handleRecruitPlayer" class="back-button1">查看比赛</el-button>
               </div>
                   <div>
@@ -106,7 +106,7 @@
                     <div class="echart-box" ref="pieChart"></div>
                         <el-divider></el-divider>
 
-                    <div class="echart-box" ref="barChart"></div>
+                    <div class="echart-box" ref="lineChart"></div>
                   </el-row>                 
                
               </el-container>
@@ -190,6 +190,11 @@
     handleRecruitPlayer(){
 
     },
+    handleMorePlayer(){
+      const teamID = this.$route.params.teamID;
+      const route = `/player-list/${teamID}`;
+      this.$router.push(route);
+    },
     handleClickRecord(){
       const teamID = this.$route.params.teamID;
       console.log('Click Record:',teamID);
@@ -241,7 +246,7 @@
     },
     fetchTeamRecords() {
       const teamID = this.$route.params.teamID;
-      axios.get(`/api/v1/record/displayall?team_id=${teamID}`)
+      axios.get(`/api/v1/record/search?team_id=${teamID}`)
         .then(response => {
           console.log('Received record data:', response.data);
           this.records = response.data;
@@ -277,7 +282,7 @@
           TOTAL_AMOUNT: dateAmountMap[date]
           }));
           this.renderPie(amounts);
-          this.renderBar(result);
+          this.renderLine(result);
         })
         .catch(error => {
           console.error('Failed to fetch record data:', error);
@@ -327,9 +332,9 @@
 
       myChart.setOption(option);
     },
-    renderBar(result) {
-  const barDom = this.$refs.barChart; // 使用新的 ref
-  const myChart = this.$echarts.init(barDom);
+    renderLine(result) {
+  const lineDom = this.$refs.lineChart; // 使用新的 ref
+  const myChart = this.$echarts.init(lineDom);
 
   const dates = result.map(record => record.TRANSACTION_DATE);
   const amounts = result.map(record => record.TOTAL_AMOUNT);
