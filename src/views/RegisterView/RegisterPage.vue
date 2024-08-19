@@ -167,6 +167,7 @@ export default {
         this.deleteCurrentImageUrl();
         this.registerForm.icon = response.data.url;
         this.currentDeleteUrl = response.data.delete_url;
+        console.log("currentDeleteUrl:",this.currentDeleteUrl);
         this.$message.info("头像加载成功！");
       } else {
         this.$message.error("头像上传失败，请重试！");
@@ -218,6 +219,7 @@ export default {
                   })
                   .then(({Imagedata}) => {
                     console.log("saveImage:",Imagedata);
+                    console.log("currentDeleteUrl:",this.currentDeleteUrl);
                     this.$message.success("图片上传成功");
                   })
                   .catch((Imageerror) => {
