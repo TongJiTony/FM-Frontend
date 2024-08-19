@@ -519,15 +519,14 @@ export default {
           ];
         case 'TEAM_FORMATION':
           return [
-            { value: 443, label: '443' },
+            { value: 433, label: '433' },
             { value: 4231, label: '4231' },
             { value: 4321, label: '4321' },
-            { value: 4312, label: '4312' },
-            { value: 4222, label: '4222' },
-            { value: 4141, label: '4141' },
+            { value: 4132, label: '4132' },
+            { value: 451, label: '451' },
             { value: 442, label: '442' },
-            { value: 343, label: '343' },
-            { value: 3241, label: '3241' },
+            { value: 541, label: '541' },
+            { value: 352, label: '352' },
             { value: 532, label: '532' },
           ];
         case 'TRAIN_INTENSION':
