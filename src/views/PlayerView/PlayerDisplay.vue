@@ -161,7 +161,7 @@ export default {
 }
 
 .player-image {
-  width: 100%;
+  width: 300px;
   height: 300px;
   background-color: #f2f2f2;
   display: flex;
@@ -172,8 +172,8 @@ export default {
 }
 
 .player-image img {
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 .player-info {

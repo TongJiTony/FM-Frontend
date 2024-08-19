@@ -278,9 +278,10 @@
         <el-form-item label="球员图像：" prop="ICON">
           <el-upload
             class="avatar-uploader"
+            list-type="picture-card"
             :action="uploadAction"
             :http-request="customUpload"
-            :show-file-list="false"
+            :show-file-list="true"
           >
             <img v-if="addForm.icon" :src="addForm.icon" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon">上传球员头像</i>
@@ -683,7 +684,7 @@ export default {
 }
 
 .avatar-uploader-icon {
-  font-size: 30px;
+  font-size: 15px;
   color: #4a90e2;
   width: 100%;
   height: 100%;
