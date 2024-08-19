@@ -52,7 +52,6 @@
               <div slot="header" class="clearfix">
                 <span style="font-size: 20px;font-weight: bold;">关键人物</span>
                   <el-button type="primary" size='small' @click="handleMorePlayer" class="back-button1">更多球员</el-button>    
-                  <el-button type="primary" size='small' @click="handleRecruitPlayer" class="back-button2">招募球员</el-button> 
               </div> 
               <el-container>
                   <el-table :data="topPlayers" style="width: 100% ;height:250px" >
@@ -72,7 +71,7 @@
             <el-card shadow="never" class="box-card">
               <div slot="header" class="clearfix">
                 <span style="font-size: 20px;font-weight: bold;">比赛日程</span>
-                <el-button type="primary"  size='small' @click="handleRecruitPlayer" class="back-button1">查看比赛</el-button>
+                <el-button type="primary"  size='small' @click="handleClickLineup" class="back-button1">查看阵容</el-button>
               </div>
                   <div>
                     <el-table :data="filteredMatches" style="width: 100%;height:250px ">
@@ -100,16 +99,10 @@
                 <span style="font-size: 20px;font-weight: bold;">财务信息</span>
                 <el-button type="primary"  size='small' @click="handleClickRecord" class="back-button1">查看详情</el-button>
               </div> 
-              <el-container>
-               
-                  <el-row>
                     <div class="echart-box" ref="pieChart"></div>
                         <el-divider></el-divider>
 
                     <div class="echart-box" ref="lineChart"></div>
-                  </el-row>                 
-               
-              </el-container>
             </el-card>
           </el-col>
         </el-row>
@@ -187,21 +180,21 @@
     handlePageChange(page) {
       this.currentPage = page;
     },
-    handleRecruitPlayer(){
-
-    },
     handleMorePlayer(){
       const teamID = this.$route.params.teamID;
       const route = `/player-list/${teamID}`;
       this.$router.push(route);
-    },
+      },
+    
     handleClickRecord(){
       const teamID = this.$route.params.teamID;
       console.log('Click Record:',teamID);
       this.$router.push(`/record/${teamID}`); 
     },
-    handleClickMatch(){
-
+    handleClickLineup(){
+      const teamID = this.$route.params.teamID;
+      console.log('Click Lineup:',teamID);
+      this.$router.push(`/lineup/${teamID}`); 
     },
     fetchTeamDetail() {
         const teamID = this.$route.params.teamID;
