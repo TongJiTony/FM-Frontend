@@ -10,7 +10,11 @@
           <el-row :gutter="12">
             <el-col :span="24" >
               <el-card class="box-card3">
-                <h1 style="font-size: 18px;line-height: 0;">总盈亏：¥{{ sum_amount }}</h1>
+                <h1 style="font-size: 18px;line-height: 0;">
+                  <span style="margin-right: 350px;">总盈亏：¥{{ sum_amount }}</span>
+                  <span style="margin-right: 350px;">总收入：¥{{ positiveSum }}</span>
+                  <span >总支出：¥{{ negativeSum }}</span>
+                </h1>
               </el-card>
             </el-col>
             <el-col :span="24" style="height: 12px;"></el-col> 
@@ -41,6 +45,14 @@
             </el-col>
             <el-col :span="12">
               <el-card class="box-card2">
+                <el-select v-model="selectedDate2" placeholder="请选择日期" class="el-select2"  @change="handlePosDateChange(selectedDate2)">
+              <el-option
+                v-for="item in dateOptions2"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+              </el-select>
                 <div class="echart-box2" ref="posbarChart"></div>
               </el-card> 
             </el-col>
@@ -81,7 +93,14 @@
             </el-col>
              <el-col :span="12">
               <el-card class="box-card2">
-            
+                <el-select v-model="selectedDate2" placeholder="请选择日期" class="el-select2"  @change="handleNegDateChange(selectedDate2)">
+              <el-option
+                v-for="item in dateOptions2"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+              </el-select>
             <div class="echart-box2" ref="negbarChart"></div>      
           </el-card> 
              </el-col>
@@ -132,8 +151,8 @@
   .box-card3 {
     width: 100%;
     height: 100px;
-   
   }
+
 .echart-box {
   width: 600px;
   height: 350px;
@@ -155,6 +174,10 @@
 
 .el-select {
   width: 150px; /* 设置选择器的宽度 */
+}
+.el-select2 {
+  position: absolute;
+  right: 2rem;
 }
 </style>
 
@@ -180,13 +203,22 @@ export default {
         { label: '2024年5月', value: '2024-05' }
         // 可以添加更多日期选项
       ],
+      selectedDate2: '2024-07', // 初始化为空字符串
+      dateOptions2: [
+        { label: '2024年8月', value: '2024-08' },
+        { label: '2024年7月', value: '2024-07' },
+        { label: '2024年6月', value: '2024-06' },
+        { label: '2024年5月', value: '2024-05' }
+      ], // 初始化为空数组
     };
   },
 
   created() {
+   
     this.fetchTeamRecords();
     this.currentMonth();
     this.previousMonth();
+
   },
   computed: {
     filteredPosRecords() {
@@ -197,7 +229,22 @@ export default {
     },
     
   },
+
   methods: {
+    handlePosDateChange(selectedDate2) {
+    this.selectedDate2 = selectedDate2;
+    
+    const filteredRecords = this.records.filter(record => record.TRANSACTION_DATE === this.selectedDate2 && record.AMOUNT>0);
+    this.renderPosBar(filteredRecords)
+    
+  },
+    handleNegDateChange(selectedDate2) {
+    this.selectedDate2 = selectedDate2;
+    
+    const filteredRecords = this.records.filter(record => record.TRANSACTION_DATE === this.selectedDate2 && record.AMOUNT<0);
+    this.renderNegBar(filteredRecords)
+    
+  },
     currentMonth() {
       const date = this.currentDate;
       const year = date.getFullYear();
@@ -286,39 +333,11 @@ export default {
           TRANSACTION_DATE: date,
           TOTAL_AMOUNT: datenegativeAmountMap[date]
           }));
-
-          // 输出结果
-          console.log('amount for data:',result);
-          const itemPosAmount={}
-          const itemNegAmount={}
-          this.records.forEach(record=>{
-            if(record.TRANSACTION_DATE==='2024-07' & record.AMOUNT>0){
-              const item2=record.DESCRIPTION;
-              const amount2=record.AMOUNT;
-            if(!itemPosAmount[item2]){
-              itemPosAmount[item2]=0;
-            }
-            itemPosAmount[item2]+=amount2;
-            }
-            else if(record.TRANSACTION_DATE==='2024-07' & record.AMOUNT<0){
-              const item3=record.DESCRIPTION;
-              const amount3=record.AMOUNT;
-            if(!itemNegAmount[item3]){
-              itemNegAmount[item3]=0;
-            }
-            itemNegAmount[item3]+=Math.abs(amount3);
-            }
-          })      
-            
-          const posBarResult=Object.keys(itemPosAmount).map(item2=>({
-            ITEM:item2,
-            TOTAL_AMOUNT:itemPosAmount[item2]
-          }));
-          const negBarResult=Object.keys(itemNegAmount).map(item3=>({
-            ITEM:item3,
-            TOTAL_AMOUNT:itemNegAmount[item3]
-          }));
          
+          const posBarResult = this.records.filter(record => record.TRANSACTION_DATE === this.selectedDate2 && record.AMOUNT>0);
+          const negBarResult = this.records.filter(record => record.TRANSACTION_DATE === this.selectedDate2 && record.AMOUNT<0);
+        
+          console.log('option3:',this.selectedDate2)
           this.renderPie(amounts);
           this.renderLine(result);
           this.renderLine2(posLineResult);
@@ -453,7 +472,7 @@ export default {
 
   myChart.setOption(option);
     },
- renderLine3(result) {
+    renderLine3(result) {
   const lineDom = this.$refs.lineChart3; // 使用新的 ref
   const myChart = this.$echarts.init(lineDom);
 
@@ -491,12 +510,12 @@ export default {
 
   myChart.setOption(option);
     },
-    renderPosBar(result){
+    renderPosBar(filteredRecords){
     const barDom = this.$refs.posbarChart; // 使用新的 ref
     const myChart = this.$echarts.init(barDom);
 
-    const items = result.map(record => record.ITEM);
-    const amounts = result.map(record => record.TOTAL_AMOUNT);
+    const items = filteredRecords.map(record => record.DESCRIPTION);
+    const amounts = filteredRecords.map(record => Math.abs(record.AMOUNT));
     const option ={
       title: {
       text: '本月各项收入',
@@ -530,12 +549,15 @@ export default {
   };
   myChart.setOption(option);
   },
-  renderNegBar(result){
+    renderNegBar(filteredRecords){
     const barDom = this.$refs.negbarChart; // 使用新的 ref
     const myChart = this.$echarts.init(barDom);
+  
+    const items = filteredRecords.map(record => record.DESCRIPTION);
+    const amounts = filteredRecords.map(record => Math.abs(record.AMOUNT));
 
-    const items = result.map(record => record.ITEM);
-    const amounts = result.map(record => record.TOTAL_AMOUNT);
+    //const items = result.map(record => record.ITEM);
+    //const amounts = result.map(record => record.TOTAL_AMOUNT);
     const option ={
       title: {
       text: '本月各项支出',
