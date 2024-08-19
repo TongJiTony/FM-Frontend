@@ -1,113 +1,137 @@
 <template>
   <div class="player-display">
     <el-card shadow="always">
-      <!-- Back Button -->
-      <el-button
-        type="primary"
-        icon="el-icon-arrow-left"
-        @click="goBack"
-        class="back-button"
-      >
-        返回
-      </el-button>
-
-      <el-row :gutter="20">
+      <!-- 第一层：球员图片，ID/名字/生日，球队，惯用脚 -->
+      <el-row :gutter="20" class="top-layer">
+        <!-- 球员图片 -->
         <el-col :span="6">
-          <div class="player-image">
-            <img :src="player[0].ICON" alt="Player Image" />
-          </div>
+          <el-card class="module-card" shadow="hover">
+            <img :src="player[0].ICON" alt="Player Image" class="card-image" />
+          </el-card>
         </el-col>
-        <el-col :span="18" class="player-info">
-          <h2>{{ player[0].PLAYER_NAME }}</h2>
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <p>
-                <strong>球员编号:</strong>
-                <el-tag>{{ player[0].PLAYER_ID }}</el-tag>
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>生日:</strong>
-                <el-tag>{{ player[0].BIRTHDAY }}</el-tag>
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>队伍:</strong>
-                <el-tag>{{ player[0].TEAM_NAME }}</el-tag>
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>位置:</strong>
-                <el-tag>{{ player[0].ROLE }}</el-tag>
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>惯用脚:</strong>
-                <el-tag>{{
-                  player[0].USED_FOOT === 1 ? "右脚" : "左脚"
-                }}</el-tag>
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>健康状态:</strong>
-                <el-tag
-                  :type="player[0].HEALTH_STATE === 1 ? 'danger' : 'success'"
-                  >{{ player[0].HEALTH_STATE === 1 ? "受伤" : "健康" }}</el-tag
-                >
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>比赛状态:</strong>
-                <el-tag
-                  :type="player[0].GAME_STATE === 1 ? 'danger' : 'success'"
-                  >{{
-                    player[0].GAME_STATE === 1 ? "禁赛" : "允许出场"
-                  }}</el-tag
-                >
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>转会状态:</strong>
-                <el-tag
-                  :type="player[0].TRANS_STATE === 1 ? 'success' : 'danger'"
-                  >{{
-                    player[0].TRANS_STATE === 1 ? "允许转会" : "禁止转会"
-                  }}</el-tag
-                >
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>评分:</strong>
-                <el-progress
-                  type="circle"
-                  :percentage="player[0].RANK"
-                ></el-progress>
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>显示状态:</strong>
-                <el-tag>{{ player[0].IS_SHOW }}</el-tag>
-              </p>
-            </el-col>
-          </el-row>
+
+        <!-- ID，名字，生日 -->
+        <el-col :span="6">
+          <el-card class="module-card" shadow="hover">
+            <div slot="header" class="clearfix">
+              <span>基本信息</span>
+            </div>
+            <el-row class="info-row">
+              <el-col :span="12">
+                <el-tag type="info">{{ player[0].PLAYER_ID }}</el-tag>
+              </el-col>
+              <el-col :span="12">
+                <el-tag type="info">{{ player[0].PLAYER_NAME }}</el-tag>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="24">
+                <el-tag type="info">{{ player[0].BIRTHDAY }}</el-tag>
+              </el-col>
+            </el-row>
+          </el-card>
+        </el-col>
+
+        <!-- 球队 -->
+        <el-col :span="6">
+          <el-card class="module-card" shadow="hover">
+            <div slot="header" class="clearfix">
+              <span>球队</span>
+            </div>
+            <el-tag type="info">{{ player[0].TEAM_NAME }}</el-tag>
+          </el-card>
+        </el-col>
+
+        <!-- 惯用脚 -->
+        <el-col :span="6">
+          <el-card class="module-card" shadow="hover">
+            <div slot="header" class="clearfix">
+              <span>惯用脚</span>
+            </div>
+            <el-tag type="info">{{
+              player[0].USED_FOOT === 1 ? "Right Foot" : "Left Foot"
+            }}</el-tag>
+          </el-card>
+        </el-col>
+      </el-row>
+
+      <!-- 分隔线 -->
+      <el-divider></el-divider>
+
+      <!-- 第二层：球场和评分 -->
+      <el-row :gutter="20" class="middle-layer">
+        <!-- 球场 -->
+        <el-col :span="12">
+          <el-card class="module-card2" shadow="hover">
+            <div slot="header" class="clearfix">
+              <span>{{ player[0].ROLE }}</span>
+            </div>
+            <img
+              src="https://i.ibb.co/2jL5H73/playground.jpg"
+              alt="Football Field"
+              class="field-image"
+            />
+            <div class="player-position" :style="positionStyle"></div>
+          </el-card>
+        </el-col>
+
+        <!-- 评分 -->
+        <el-col :span="12">
+          <el-card class="module-card2" shadow="hover">
+            <div slot="header" class="clearfix">
+              <span>评分</span>
+            </div>
+            <el-progress
+              type="circle"
+              :percentage="player[0].RANK"
+            ></el-progress>
+          </el-card>
+        </el-col>
+      </el-row>
+
+      <!-- 分隔线 -->
+      <el-divider></el-divider>
+
+      <!-- 第三层：医疗，阵容，比赛，转会 -->
+      <el-row :gutter="20" class="bottom-layer">
+        <el-col :span="6">
+          <el-card class="module-card medical-card" shadow="hover">
+            <p>Medical</p>
+            <!-- 横向排列医疗记录 -->
+            <div class="medical-records-container" v-if="tableData.length">
+              <div
+                v-for="record in tableData"
+                :key="record.MEDICAL_ID"
+                class="medical-record"
+              >
+                <p>ID: {{ record.MEDICAL_ID }}</p>
+                <p>Hurt: {{ record.HURT_PART }}</p>
+                <p>Time: {{ record.HURT_TIME }}</p>
+                <p>Care: {{ record.MEDICAL_CARE }}</p>
+                <p>State: {{ record.STATE }}</p>
+                <p>Recovery: {{ record.PRED_REC_DATE }}</p>
+              </div>
+            </div>
+            <p v-else>No medical records found for this player.</p>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="module-card" shadow="hover">
+            <p>Line-up</p>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="module-card" shadow="hover">
+            <p>Match</p>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="module-card" shadow="hover">
+            <p>Transfer</p>
+          </el-card>
         </el-col>
       </el-row>
     </el-card>
-    <p v-if="loading" class="loading-text">Loading player data...</p>
-    <div v-else>
-      <div v-if="!player">
-        <p>No player data available.</p>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -117,14 +141,45 @@ import axios from "axios";
 export default {
   data() {
     return {
+      tableData: [],
+      allData: [],
+      positionStyle: {
+        position: "absolute",
+        top: "50%", // Adjust based on player role/position
+        left: "20%", // Adjust based on player role/position
+        transform: "translate(-50%, -50%)",
+        width: "20px",
+        height: "20px",
+        backgroundColor: "red",
+        borderRadius: "50%",
+      },
       loading: true,
       player: null,
     };
   },
   created() {
     this.fetchPlayerData();
+    this.fetchMedicalRecords();
   },
   methods: {
+    fetchMedicalRecords() {
+      const playerId = this.$route.params.playerId;
+      if (playerId) {
+        axios
+          .get(`/api/v1/medical/displayall?playerid=${playerId}`)
+          .then((response) => {
+            console.log("Received data:", response.data);
+            this.tableData = response.data.sort(
+              (a, b) => a.MEDICAL_ID - b.MEDICAL_ID
+            );
+            this.allData = [...this.tableData];
+          })
+          .catch((error) => {
+            console.error("Failed to fetch medical list for team:", error);
+          });
+      }
+    },
+
     fetchPlayerData() {
       const playerId = this.$route.params.playerId;
       console.log("Fetching data for player ID:", playerId);
@@ -133,6 +188,7 @@ export default {
         .then((response) => {
           console.log("Received data:", response.data);
           this.player = response.data;
+          this.updatePositionStyle(); // 调用方法更新positionStyle
           this.loading = false;
         })
         .catch((error) => {
@@ -140,8 +196,25 @@ export default {
           this.loading = false;
         });
     },
-    goBack() {
-      this.$router.go(-1); // Navigate to the previous page
+    updatePositionStyle() {
+      if (this.player && this.player[0].ROLE) {
+        switch (this.player[0].ROLE) {
+          case "F":
+            this.positionStyle.left = "30%"; // Example value for forward
+            break;
+          case "WB":
+            this.positionStyle.left = "21%"; // Example value for midfielder
+            break;
+          case "B":
+            this.positionStyle.left = "10%"; // Example value for defender
+            break;
+          case "GK":
+            this.positionStyle.left = "7%"; // Example value for goalkeeper
+            break;
+          default:
+            this.positionStyle.left = "20%"; // Default or unknown role
+        }
+      }
     },
   },
 };
@@ -152,60 +225,86 @@ export default {
   padding: 1rem;
 }
 
-.back-button {
-  margin-bottom: 1rem;
-  background-color: #409eff;
-  border-color: #409eff;
-  color: #fff;
-  margin-left: 10px;
-}
-
-.player-image {
+.module-card {
   width: 300px;
   height: 300px;
-  background-color: #f2f2f2;
+  padding: 10px;
+  margin: 10px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.player-image img {
-  width: 100%;
-  height: 100%;
-}
-
-.player-info {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.player-info p {
-  margin-bottom: 1rem;
-}
-
-.player-info p strong {
-  margin-right: 1rem;
-}
-
-.el-tag {
-  margin-left: 1rem;
-}
-
-.el-tag.success {
-  background-color: #dff0d8;
-  color: #3c763d;
-}
-
-.el-tag.danger {
-  background-color: #f2dede;
-  color: #a94442;
-}
-
-.loading-text {
+  align-items: center;
+  border-radius: 5px;
   text-align: center;
-  font-size: 1.5rem;
-  color: #666666;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.medical-card {
+  height: auto;
+  overflow-y: auto;
+}
+
+.medical-records-container {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px; /* 字体更小 */
+}
+
+.medical-record {
+  margin-bottom: 10px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  background-color: #f9f9f9;
+}
+
+.medical-record p {
+  margin: 2px 0;
+  font-size: 10px; /* 更小的字体 */
+}
+
+.module-card2 {
+  width: 600px;
+  height: 300px;
+  padding: 10px;
+  margin: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.el-divider {
+  margin: 10px 0;
+}
+
+.field-image {
+  width: 100%;
+  height: auto;
+}
+
+.player-position {
+  position: absolute;
+  background-color: red;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+}
+
+.el-row {
+  margin-bottom: 20px;
+}
+
+.card-image {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 5px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
