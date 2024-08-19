@@ -35,6 +35,11 @@ const router = new Router({
           component: () => import("@/views/TeamView/TeamDetail.vue"),
         },
         {
+          path: "/record/:teamID",
+          name: "RecordPage",
+          component: () => import("@/views/RecordView/RecordPage.vue"),
+        },
+        {
           path: "/player-list/:teamId?",
           name: "PlayerList",
           component: () => import("@/views/PlayerView/PlayerList.vue"),
@@ -85,6 +90,7 @@ const router = new Router({
     },
     {
       path: "/admin",
+      name: "Admin",
       component: AdminLayout,
       children: [
         {
@@ -135,6 +141,7 @@ next：一个函数，调用它来决定接下来的行为。
 */
 router.beforeEach((to, from, next) => {
   const isLoggedIn = Vue.$cookies.get("isLoggedIn");
+  const userRole = router.app.$store.getters["user/getUserRight"];
   console.log("isLoggedIn status:", isLoggedIn);
   if (
     //如果当前未登录并且没有前往登陆界面或者注册界面
@@ -144,8 +151,20 @@ router.beforeEach((to, from, next) => {
   ) {
     next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
   } else if (to.name === "Login" && isLoggedIn === "true") {
-    next({ name: "Home" }); // 已登录时重定向到首页
-  } else {
+    // 用户已经登录并试图访问登录页面
+    if (userRole === "coach") {
+      next({ name: "Home" });
+    } else if (userRole === "manager") {
+      next({ name: "Team" });
+    } 
+    else if (userRole === "admin") {
+      next({ name: "Admin" });
+    } 
+    else {
+      next({ name: "Home" });
+    }
+  }
+  else {
     next();
   }
 });
