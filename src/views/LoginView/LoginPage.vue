@@ -128,6 +128,26 @@ export default {
     this.getCaptcha();
   },
   methods: {
+    // 根据权限进行跳转页面
+    ShowPageUpToRight(){
+      const userRight = this.$store.getters['user/getUserRight'];
+      console.log('userRight:',userRight);
+      switch(userRight){
+        case 'coach':
+          this.$router.replace({name:'Home'})
+          break;
+        case 'manager':
+          this.$router.replace({name:'Team'})
+          break;
+        case 'admin':
+          this.$router.replace({name:'Admin'})
+          break;
+        default:
+          this.$router.replace({name:'Home'})
+          break;
+      }
+     
+    },
     // 提交表单
     dataFormSubmit() {
       this.$refs["dataForm"].validate((valid) => {
@@ -144,9 +164,9 @@ export default {
               if (data.code == 200) {
                 // code == 200 表示成功
                 VueCookies.set("isLoggedIn", "true", "1h"); // 设置 Cookie
-                VueCookies.set("token", data.token);//
-                this.getUserInfo(this.dataForm.userID);//获取用户信息
-                this.$router.replace({ name: "Home" }); // 跳转到主界面
+                VueCookies.set("token", data.token);//               
+                this.getUserInfo(this.dataForm.userID)
+                
               }
             })
             .catch((error) => {
@@ -175,14 +195,12 @@ export default {
           }
         })
         .then(({data}) => {
-          console.log("API Response Data :", data);
           const user = data[0];//当前只返回一个用户的数据
 
            console.log("User info:", {
             "\nuser_id: ": user.USER_ID,
             "\nuser_name: ": user.USER_NAME,
             "\nuser_right: ": user.USER_RIGHT,
-            "\nuser_psw: ": user.USER_PASSWORD,
             "\nuser_phone: ": user.USER_PHONE,
             "\nuser_icon: ": user.ICON,
           });
@@ -191,15 +209,32 @@ export default {
             user_id: user.USER_ID,
             user_name: user.USER_NAME,
             user_right: user.USER_RIGHT,
-            user_psw: user.USER_PASSWORD,
             user_phone: user.USER_PHONE,
             user_icon: user.ICON,
-          })
+          });
+          console.log("USER:",user);
+          return axios.get('/api/v1/user/getDeleteImage', {
+              params:{
+                userId: user.USER_ID,
+              }
+            });
+        })
+        .then((response) => {
+          console.log(response);
+          const deleteIcon = response.data[0].DELETE_ICON;
+          console.log('Delete Icon:', deleteIcon);
+          this.$store.commit( 'user/updateDeleteIcon',{//保存用户删除图标的状态
+            user_delete_icon: deleteIcon,
+          });
         })
         .catch((error) => {
           console.error(error);
-          this.$message.error("获取用户信息失败");
+          this.$message.error("获取用户信息或删除图标失败");
         })
+        .finally(() => {
+          this.ShowPageUpToRight();
+        })
+        
     },
 
     //跳转到注册路由

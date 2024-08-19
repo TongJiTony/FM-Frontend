@@ -75,6 +75,7 @@ export default {
         user_phone: '',
         user_icon: ''
       },
+      Input_user_psw:'',
       uploadAction: "https://api.imgbb.com/1/upload",
       imgbbApiKey: "a18b4cdd1ea4b32881a598e7f32b854a",
       expirationTime: 604800, // 7 days in seconds
@@ -100,11 +101,15 @@ export default {
       this.isEditing = false;
     },
     confirmLogout() {
-      this.$confirm('你确定要注销吗', '注销确认', {
+      this.$prompt('请输入密码以确认注销','用户注销',{
         confirmButtonText: "确认",
         cancelButtonText: "取消",
-        type: "warning",
-      }).then(() => {
+        inputType:'password',
+        inputPattern: /.+/, 
+        inputErrorMessage: '密码不能为空'
+      })
+      .then(({value}) => {
+        this.Input_user_psw = value;
         this.logout();
       }).catch(() => {
         this.$message.info("取消注销");
@@ -115,26 +120,43 @@ export default {
         .delete('/api/v1/user/delete', {
           data: {
             user_id: this.userInfo.user_id,
-            user_password: this.userInfo.user_psw,
+            user_password: this.Input_user_psw,
           },
         }).then((response) => {
           if (response.status === 200) {
-             axios.delete('/api/v1/user/deleteImage',{
-               params: { delete_url: this.currentDeleteUrl }
-            });
+            this.currentDeleteUrl = this.$store.getters["user/getDeleteIcon"];
+            let delete_url = this.currentDeleteUrl.user_delete_icon;
+            axios.delete('/api/v1/user/deleteImage',{
+              params: { delete_url: delete_url }
+            })
+            .then(response => {
+              if (response.data.code === 200) {
+                this.$message.success("图像已成功删除");
+              } 
+              else {
+                this.$message.error(`删除图像失败: ${response.data.msg}`);
+              }
+            })
+            .catch(error => {
+              console.error("error:",error);
+              this.$message.error('删除图像失败，请重试');
+              });
+            
             this.$message.success("用户已经注销");
             this.$store.commit('user/resetUser');
             this.$cookies.remove('isLoggedIn');
             this.$cookies.remove('token');
-            this.$router.push({ name: 'Login' });
+            this.$router.replace({ name: 'Login' });
           }
         }).catch((error) => {
           if (error.response) {
             if (error.response.data === 401) {
               this.$message.error("注销用户：密码输入不正确")
-            } else if (error.response.data === 404) {
+            } 
+            else if (error.response.data === 404) {
               this.$message.error("注销用户：该用户未找到");
-            } else {
+            } 
+            else {
               this.$message.error(`Error: ${error.response.data}`);
             }
           } else {
@@ -218,6 +240,7 @@ export default {
         this.Edituser.user_icon = response.data.url;
         this.currentDeleteUrl = response.data.delete_url;
         this.$message.info('头像加载成功！');
+        console.log("response:",response);
       } else {
         this.$message.error('头像上传失败，请重试！');
       }
