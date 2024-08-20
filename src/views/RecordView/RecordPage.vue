@@ -10,11 +10,20 @@
           <el-row :gutter="12">
             <el-col :span="24" >
               <el-card class="box-card3">
-                <h1 style="font-size: 18px;line-height: 0;">
-                  <span style="margin-right: 350px;">总盈亏：¥{{ sum_amount }}</span>
-                  <span style="margin-right: 350px;">总收入：¥{{ positiveSum }}</span>
-                  <span >总支出：¥{{ negativeSum }}</span>
-                </h1>
+        <el-col :span="12">
+          <p style="font-size: 15px;line-height: 0;">总盈亏</p>
+            <p style="font-size: 20px;font-weight:bold;line-height: 1;">¥{{ sum_amount }}</p>
+        </el-col> 
+              <el-col :span="6">
+              <p style="font-size: 15px;line-height: 0;">总收入</p>
+                <p style="font-size: 20px;font-weight:bold;line-height: 1;">¥{{ positiveSum }}</p>
+            </el-col>      
+              <el-col :span="6">
+              <p style="font-size: 15px;line-height: 0">总支出</p>
+                <p style="font-size: 20px;font-weight:bold;line-height: 1;">¥{{ Math.abs(negativeSum) }}</p>
+
+            </el-col>      
+            
               </el-card>
             </el-col>
             <el-col :span="24" style="height: 12px;"></el-col> 
@@ -131,7 +140,18 @@
         </el-container>              
     </el-tab-pane>
     <el-tab-pane label="工资" name="fourth">
-     
+      <el-card shadow="never" class="box-card4">
+              <el-table :data="contract" style="width: 100%">
+              <el-table-column prop="player_id" label="球员ID" width="800">
+              </el-table-column>
+              <el-table-column prop="salary" label="薪水">
+              </el-table-column>
+              <el-table-column prop="start date" label="开始日期">
+              </el-table-column>
+              <el-table-column prop="end date" label="结束日期">
+              </el-table-column>
+              </el-table>
+            </el-card>
     </el-tab-pane>
   </el-tabs>
   </div>
@@ -152,7 +172,10 @@
     width: 100%;
     height: 100px;
   }
-
+ .box-card4 {
+    width: 100%;
+    height: 600px;
+  }
 .echart-box {
   width: 600px;
   height: 350px;
@@ -188,6 +211,7 @@ export default {
   data() {
     return {
       records: [],
+      contract:[],
       sum_amount:0,
       positiveSum:0,
       negativeSum:0,
@@ -195,7 +219,7 @@ export default {
       activeName:'first',
       cur_month:'',
       pre_month:'',
-      selectedDate: '2024-07', // 选择的日期
+      selectedDate: '2024-08', // 选择的日期
       dateOptions: [
         { label: '2024年8月', value: '2024-08' },
         { label: '2024年7月', value: '2024-07' },
@@ -203,7 +227,7 @@ export default {
         { label: '2024年5月', value: '2024-05' }
         // 可以添加更多日期选项
       ],
-      selectedDate2: '2024-07', // 初始化为空字符串
+      selectedDate2: '2024-08', // 初始化为空字符串
       dateOptions2: [
         { label: '2024年8月', value: '2024-08' },
         { label: '2024年7月', value: '2024-07' },
@@ -266,6 +290,19 @@ export default {
     },
     formatAmount(row, column, cellValue) {
       return Math.abs(cellValue);
+    },
+    fetchTeamConotracts() {
+       const teamID = this.$route.params.teamID;
+        axios.get(`/api/v1/contract/displayall?teamid=${teamID}`)
+          .then(response => {
+            console.log('Received contract data:', response.data);
+            this.contract = response.data;
+            this.loading = false;
+          })
+          .catch(error => {
+          console.error('Failed to fetch contract data:', error);
+          this.loading = false;
+        });
     },
     fetchTeamRecords() {
       const teamID = this.$route.params.teamID;
