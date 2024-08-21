@@ -11,7 +11,7 @@
             </div>
             <el-col :span="6">
               <div class="team-image">
-                <img src="https://img.51miz.com/Element/00/91/85/34/422e1064_E918534_f98a4621.png" alt="Team Image" />
+                <img v-if="teamURL" :src="teamURL" alt="Team Image" />
               </div>
             </el-col>                 
             <h2 style="font-size: 24px;">{{ team[0].TEAM_NAME }}</h2>                                          
@@ -135,6 +135,7 @@
         currentPage: 1,
         pageSize: 3,
         topPlayers:[],
+        teamURL:'',
       };
     },
     created() {
@@ -203,6 +204,8 @@
           .then(response => {
             console.log('Received data:', response.data);
             this.team = response.data;
+            this.teamURL=this.team[0].TEAM_ICON
+            console.log('URL:',this.teamURL)
           })
           .catch(error => {
             console.error('Failed to fetch team data:', error);

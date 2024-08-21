@@ -10,20 +10,18 @@
           <el-row :gutter="12">
             <el-col :span="24" >
               <el-card class="box-card3">
-        <el-col :span="12">
-          <p style="font-size: 15px;line-height: 0;">总盈亏</p>
-            <p style="font-size: 20px;font-weight:bold;line-height: 1;">¥{{ sum_amount }}</p>
-        </el-col> 
-              <el-col :span="6">
-              <p style="font-size: 15px;line-height: 0;">总收入</p>
-                <p style="font-size: 20px;font-weight:bold;line-height: 1;">¥{{ positiveSum }}</p>
-            </el-col>      
-              <el-col :span="6">
-              <p style="font-size: 15px;line-height: 0">总支出</p>
-                <p style="font-size: 20px;font-weight:bold;line-height: 1;">¥{{ Math.abs(negativeSum) }}</p>
-
-            </el-col>      
-            
+                <el-col :span="12">
+                  <p style="font-size: 15px;line-height: 0;">总盈亏</p>
+                  <p style="font-size: 20px;font-weight:bold;line-height: 1;">¥{{ sum_amount }}</p>
+                </el-col> 
+                <el-col :span="6">
+                  <p style="font-size: 15px;line-height: 0;">总收入</p>
+                  <p style="font-size: 20px;font-weight:bold;line-height: 1;">¥{{ positiveSum }}</p>
+                </el-col>      
+                <el-col :span="6">
+                  <p style="font-size: 15px;line-height: 0">总支出</p>
+                  <p style="font-size: 20px;font-weight:bold;line-height: 1;">¥{{ Math.abs(negativeSum) }}</p>
+                </el-col>                
               </el-card>
             </el-col>
             <el-col :span="24" style="height: 12px;"></el-col> 
@@ -33,9 +31,9 @@
               </el-card>  
             </el-col>
             <el-col :span="12">
-            <el-card class="box-card">
-              <div class="echart-box" ref="lineChart"></div>
-            </el-card>
+              <el-card class="box-card">
+                <div class="echart-box" ref="lineChart"></div>
+              </el-card>
            </el-col>
           </el-row>
         </el-main>
@@ -54,16 +52,17 @@
             </el-col>
             <el-col :span="12">
               <el-card class="box-card2">
-                <el-select v-model="selectedDate2" placeholder="请选择日期" class="el-select2"  @change="handlePosDateChange(selectedDate2)">
-              <el-option
-                v-for="item in dateOptions2"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-              </el-select>
+                <el-select v-model="selectedDate2" placeholder="请选择日期" class="el-select2" @change="handlePosDateChange(selectedDate2)">
+                  <el-option
+                    v-for="item in dateOptions2"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+                <div class="spacing"></div> <!-- 添加额外的容器元素 -->
                 <div class="echart-box2" ref="posbarChart"></div>
-              </el-card> 
+              </el-card>
             </el-col>
           </el-row> 
           <el-col :span="24" style="height: 12px;"></el-col> 
@@ -110,6 +109,7 @@
                 :value="item.value">
               </el-option>
               </el-select>
+              <div class="spacing"></div> <!-- 添加额外的容器元素 -->
             <div class="echart-box2" ref="negbarChart"></div>      
           </el-card> 
              </el-col>
@@ -134,15 +134,15 @@
               <el-table-column prop="AMOUNT" label="本月" :formatter="formatAmount">
               </el-table-column>
             </el-table>
-          </el-card>
-        
+          </el-card>   
           </el-main>       
         </el-container>              
     </el-tab-pane>
+
     <el-tab-pane label="工资" name="fourth">
       <el-card shadow="never" class="box-card4">
               <el-table :data="contract" style="width: 100%">
-              <el-table-column prop="player_id" label="球员ID" width="800">
+              <el-table-column prop="player_id" label="球员编号" width="800">
               </el-table-column>
               <el-table-column prop="salary" label="薪水">
               </el-table-column>
@@ -153,15 +153,19 @@
               </el-table>
             </el-card>
     </el-tab-pane>
-  </el-tabs>
+    </el-tabs>
   </div>
 </template>
 
 <style scoped>
+.spacing {
+  height: 35px; /* 根据需要设置高度 */
+  /* 或者使用 margin 属性来设置垂直间距 */
+  /* margin-bottom: 20px; */
+}
 .box-card {
     width: 100%;
-    height: 390px;
-   
+    height: 390px;   
   }
 .box-card2 {
     width: 100%;
@@ -185,6 +189,7 @@
   width: 600px;
   height: 300px;
   margin: 20px auto;
+ 
 }
 .back-button1 {
   float: right;
@@ -201,6 +206,7 @@
 .el-select2 {
   position: absolute;
   right: 2rem;
+ 
 }
 </style>
 
