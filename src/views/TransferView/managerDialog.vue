@@ -25,7 +25,7 @@
         <!-- 右侧：用户2信息 -->
         <el-col :span="4" class="user-info" offset="1">
           <el-card>
-            <img src="user1-avatar.jpg" alt="User 1" class="avatar">
+            <img src="user2-avatar.jpg" alt="User 1" class="avatar">
             <p>User 2</p>
           </el-card>
         </el-col>
@@ -34,7 +34,7 @@
 
       
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleCancel = false">取消</el-button>
+        <el-button @click="handleCancel">取消</el-button>
         <el-button type="primary" @click="saveTransfer">确认</el-button>
       </div>      
 
@@ -60,6 +60,7 @@ export default {
     },
     saveTransfer() {
       this.$emit('save', this.transferInfo);
+      this.$emit('close');
     },
     handleCancel() {
       this.$emit('close');

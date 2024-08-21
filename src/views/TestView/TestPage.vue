@@ -39,8 +39,12 @@ export default {
       loading: true,
       data: "",
       dialogVisible: false,
-
     };
+  },
+  watch: {
+    dialogVisible(newVal) {
+      console.log("dialogVisible changed to:", newVal);
+    },
   },
   methods: {
     saveTransfer(transferInfo) {
