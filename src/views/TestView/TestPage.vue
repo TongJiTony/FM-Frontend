@@ -8,6 +8,16 @@
       <p>Data from api/testexample:</p>
       <pre>{{ data }}</pre>
     </div>
+    <el-button @click="dialogVisible = true">
+      test_button
+    </el-button>
+
+    <manager-dialog 
+    :visible="dialogVisible" 
+    @close="dialogVisible = false"
+    @save="saveTransfer"
+    ></manager-dialog>
+
   </div>
 </template>
 <!--
@@ -20,13 +30,22 @@ v-else: 当 loading 为 false 时，显示从API获取的数据。
 
 <script>
 import axios from 'axios';
+import managerDialog from '@/views/TransferView/managerDialog.vue';
 
 export default {
+  components: { managerDialog },
   data() {
     return {
       loading: true,
       data: "",
+      dialogVisible: false,
+
     };
+  },
+  methods: {
+    saveTransfer(transferInfo) {
+      console.log("saveTransfer called with:", transferInfo);
+    },
   },
   created() {
     axios.get('/api/v1/testexampleapi')
@@ -38,8 +57,8 @@ export default {
           console.error(error);
           this.loading = false;
         });
-  }
-};
+  },
+}
 </script>
 
 <!--
