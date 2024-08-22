@@ -48,6 +48,13 @@
             class="input-field"
           ></el-input>
         </el-form-item>
+        <el-form-item label="Team ID：" prop="teamID">
+          <el-input
+            v-model="registerForm.TeamId"
+            placeholder="请输入 Team ID"
+            class="input-field"
+          ></el-input>
+        </el-form-item>
         <el-form-item label="头像图像：" prop="icon">
           <el-upload
             class="avatar-uploader"
@@ -71,7 +78,8 @@
             type="primary"
             @click="registerFormSubmit()"
             class="register-button"
-          >注册</el-button>
+            >注册</el-button
+          >
         </el-form-item>
       </el-form>
     </el-main>
@@ -91,6 +99,7 @@ export default {
         userPassword: "",
         userPhone: "",
         icon: "",
+        TeamId: "",
       },
       registerRule: {
         userName: [
@@ -105,20 +114,23 @@ export default {
         userPhone: [
           { required: true, message: "电话号码不可以为空", trigger: "blur" },
         ],
+        TeamId: [
+          { required: true, message: "Team ID 不能为空", trigger: "blur" },
+        ],
         icon: [
           { required: true, message: "头像信息不可以为空", trigger: "blur" },
         ],
+       
       },
       userRights: [
         { value: "player", label: "球员" },
         { value: "coach", label: "教练" },
         { value: "manager", label: "经理" },
       ],
-      uploadAction:
-        "https://api.imgbb.com/1/upload",
-      currentDeleteUrl:"",
+      uploadAction: "https://api.imgbb.com/1/upload",
+      currentDeleteUrl: "",
       imgbbApiKey: "a18b4cdd1ea4b32881a598e7f32b854a",
-      name:"FoodballManager",
+      name: "FoodballManager",
       expirationTime: 604800, // 7 days in seconds
     };
   },
@@ -128,7 +140,10 @@ export default {
       formData.append("image", request.file);
 
       axios
-        .post(`${this.uploadAction}?key=${this.imgbbApiKey}&name=${this.name}&expiration=${this.expirationTime}`, formData)
+        .post(
+          `${this.uploadAction}?key=${this.imgbbApiKey}&name=${this.name}&expiration=${this.expirationTime}`,
+          formData
+        )
         .then((response) => {
           request.onSuccess(response.data);
         })
@@ -136,38 +151,44 @@ export default {
           request.onError(error);
         });
     },
-    deleteCurrentImageUrl(){
-      if(this.currentDeleteUrl){
-        console.log("currentDeleteUrl need to be delete",this.currentDeleteUrl);
+    deleteCurrentImageUrl() {
+      if (this.currentDeleteUrl) {
+        console.log(
+          "currentDeleteUrl need to be delete",
+          this.currentDeleteUrl
+        );
         axios
-          .delete('/api/v1/user/deleteImage',{
-            params: { delete_url: this.currentDeleteUrl }
-        }).then((response) => {
-          console.log("response of delete:",response);
-           if (response.data.code === 200) {
-            console.log('Image deleted successfully from the image hosting service.');
-            this.$message.success("Image deleted successfully from the image hosting service.")
-          } 
-          else {
-            console.error('Failed to delete image.');
-            this.$message.error('Failed to delete image.');
-          }
-        });
+          .delete("/api/v1/user/deleteImage", {
+            params: { delete_url: this.currentDeleteUrl },
+          })
+          .then((response) => {
+            console.log("response of delete:", response);
+            if (response.data.code === 200) {
+              console.log(
+                "Image deleted successfully from the image hosting service."
+              );
+              this.$message.success(
+                "Image deleted successfully from the image hosting service."
+              );
+            } else {
+              console.error("Failed to delete image.");
+              this.$message.error("Failed to delete image.");
+            }
+          });
         console.log("Deleted previous image");
         this.currentDeleteUrl = ""; // 删除成功后清空 URL
-      }
-      else{
+      } else {
         console.log("currentDeleteUrl don not need to be delete");
         this.$message.error("删除旧头像失败");
       }
     },
     handleAvatarSuccess(response) {
-      console.log("response:",response);
+      console.log("response:", response);
       if (response && response.data && response.data.url) {
         this.deleteCurrentImageUrl();
         this.registerForm.icon = response.data.url;
         this.currentDeleteUrl = response.data.delete_url;
-        console.log("currentDeleteUrl:",this.currentDeleteUrl);
+        console.log("currentDeleteUrl:", this.currentDeleteUrl);
         this.$message.info("头像加载成功！");
       } else {
         this.$message.error("头像上传失败，请重试！");
@@ -199,8 +220,10 @@ export default {
               userPassword: this.registerForm.userPassword,
               userPhone: this.registerForm.userPhone,
               icon: this.registerForm.icon,
+              teamID: this.registerForm.TeamId
             })
             .then(({ data }) => {
+              console.log("data:",data);
               if (data.code == 200) {
                 this.showSuccessMessage(
                   data.user_id,
@@ -212,18 +235,18 @@ export default {
                 );
                 //然后上传用户头像信息
                 axios
-                  .post("/api/v1/user/saveImage",{
+                  .post("/api/v1/user/saveImage", {
                     icon: this.registerForm.icon,
                     delete_icon: this.currentDeleteUrl,
                     user_id: data.user_id,
                   })
-                  .then(({Imagedata}) => {
-                    console.log("saveImage:",Imagedata);
-                    console.log("currentDeleteUrl:",this.currentDeleteUrl);
+                  .then(({ Imagedata }) => {
+                    console.log("saveImage:", Imagedata);
+                    console.log("currentDeleteUrl:", this.currentDeleteUrl);
                     this.$message.success("图片上传成功");
                   })
                   .catch((Imageerror) => {
-                    console.log("Imageerror:",Imageerror);
+                    console.log("Imageerror:", Imageerror);
                     this.$message.error("图片保存失败，请重试");
                   });
               } else if (data.code == 500) {
