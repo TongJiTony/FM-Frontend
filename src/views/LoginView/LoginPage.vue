@@ -148,7 +148,7 @@ export default {
       }
 
       this.generatedCaptcha = captchaText; // 存储生成的验证码
-       this.captchaTimestamp = Date.now(); // 记录验证码生成时间
+      this.captchaTimestamp = Date.now(); // 记录验证码生成时间
 
       // 清空 canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
