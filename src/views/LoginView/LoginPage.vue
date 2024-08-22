@@ -48,11 +48,11 @@
             <!--使用 el-row 和 el-col 布局，使验证码输入框和图片并列显示。-->
             <el-form-item prop="captcha">
               <el-row :gutter="20">
-                <el-col :span="14">
+                <el-col :span="12">
                   <el-input v-model="dataForm.captcha" placeholder="验证码">
                   </el-input>
                 </el-col>
-                <el-col :span="10" class="login-captcha">
+                <el-col :span="12" class="login-captcha">
                   <canvas ref="captchaCanvas" @click="generateCaptcha"></canvas>
                 </el-col>
               </el-row>
@@ -130,12 +130,14 @@ export default {
       const ctx = canvas.getContext("2d");
 
       // 设置 canvas 的尺寸
-      canvas.width = 120; // 调整宽度
-      canvas.height = 40; // 调整高度
+      canvas.width = 150; // 调整宽度
+      canvas.height = 50; // 调整高度
 
-      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // 生成验证码的字符集
+      const chars =
+        "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
       let captchaText = "";
 
+      // 生成验证码字符
       for (let i = 0; i < 4; i++) {
         const randomChar = chars.charAt(
           Math.floor(Math.random() * chars.length)
@@ -148,14 +150,50 @@ export default {
       // 清空 canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      // 设置背景颜色（使用渐变色）
+      const gradient = ctx.createLinearGradient(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+      gradient.addColorStop(0, "#f2f2f2");
+      gradient.addColorStop(1, "#dcdcdc");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 添加干扰线
+      for (let i = 0; i < 5; i++) {
+        ctx.strokeStyle = this.getRandomColor();
+        ctx.lineWidth = Math.random() * 2;
+        ctx.beginPath();
+        ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+        ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+        ctx.stroke();
+      }
+
       // 设置字体大小和样式
-      ctx.font = "28px Arial"; // 调整字体大小
+      ctx.font = "28px Arial";
 
-      // 设置字体颜色
-      ctx.fillStyle = "#000";
-
-      // 将验证码绘制在 canvas 上
-      ctx.fillText(captchaText, 10, 30); // x, y 坐标调整
+      // 绘制验证码字符，并增加旋转和随机颜色
+      for (let i = 0; i < captchaText.length; i++) {
+        ctx.fillStyle = this.getRandomColor();
+        ctx.save();
+        ctx.translate(30 * i + 20, 30);
+        const angle = Math.random() * 0.4 - 0.2; // 随机旋转角度
+        ctx.rotate(angle);
+        ctx.fillText(captchaText[i], 0, 0);
+        ctx.restore();
+      }
+    },
+    //生成随机颜色
+    getRandomColor() {
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
     },
     // 根据权限进行跳转页面
     ShowPageUpToRight() {
