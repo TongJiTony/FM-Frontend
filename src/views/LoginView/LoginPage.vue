@@ -249,7 +249,6 @@ export default {
                 } else {
                   this.$message.error("登陆失败，请检查密码或者网络");
                 }
-                this.getCaptcha();
               });
           } else {
             this.$message.error("验证码错误，请重新输入");
