@@ -118,100 +118,122 @@ export default {
           { required: true, message: "验证码不能为空", trigger: "blur" },
         ],
       },
-      generatedCaptcha: '',
+      generatedCaptcha: "",
     };
   },
-  mounted(){
+  mounted() {
     this.generateCaptcha(); // 页面加载时生成验证码
   },
   methods: {
     generateCaptcha() {
       const canvas = this.$refs.captchaCanvas;
-      const ctx = canvas.getContext('2d');
-      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 生成验证码的字符集
-      let captchaText = '';
+      const ctx = canvas.getContext("2d");
+
+      // 设置 canvas 的尺寸
+      canvas.width = 120; // 调整宽度
+      canvas.height = 40; // 调整高度
+
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // 生成验证码的字符集
+      let captchaText = "";
 
       for (let i = 0; i < 4; i++) {
-        const randomChar = chars.charAt(Math.floor(Math.random() * chars.length));
+        const randomChar = chars.charAt(
+          Math.floor(Math.random() * chars.length)
+        );
         captchaText += randomChar;
       }
 
       this.generatedCaptcha = captchaText; // 存储生成的验证码
+
+      // 清空 canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.font = '24px Arial';
-      ctx.fillStyle = '#000';
-      ctx.fillText(captchaText, 10, 30); // 将验证码绘制在 canvas 上
+
+      // 设置字体大小和样式
+      ctx.font = "28px Arial"; // 调整字体大小
+
+      // 设置字体颜色
+      ctx.fillStyle = "#000";
+
+      // 将验证码绘制在 canvas 上
+      ctx.fillText(captchaText, 10, 30); // x, y 坐标调整
     },
     // 根据权限进行跳转页面
-    ShowPageUpToRight(){
-      const userRight = this.$store.getters['user/getUserRight'];
-      console.log('userRight:',userRight);
-      switch(userRight){
-        case 'coach':
-          this.$router.replace({name:'Home'})
+    ShowPageUpToRight() {
+      const userRight = this.$store.getters["user/getUserRight"];
+      console.log("userRight:", userRight);
+      switch (userRight) {
+        case "coach":
+          this.$router.replace({ name: "Home" });
           break;
-        case 'manager':
-          this.$router.replace({name:'Team'})
+        case "manager":
+          this.$router.replace({ name: "Team" });
           break;
-        case 'admin':
-          this.$router.replace({name:'Admin'})
+        case "admin":
+          this.$router.replace({ name: "Admin" });
           break;
         default:
-          this.$router.replace({name:'Home'})
+          this.$router.replace({ name: "Home" });
           break;
       }
-     
     },
     // 提交表单
     dataFormSubmit() {
       this.$refs["dataForm"].validate((valid) => {
         if (valid) {
-          // 使用 axios 直接发送 POST 请求
-          axios
-            .post("/api/v1/user/login", {
-              user_id: this.dataForm.userID,
-              user_password: this.dataForm.password,
-            })
-            .then(({ data }) => {
-              console.log("data.code=", data.code);
-              console.log("data.msg=", data.msg);
-              if (data.code == 200) {
-                // code == 200 表示成功
-                VueCookies.set("isLoggedIn", "true", "1h"); // 设置 Cookie
-                VueCookies.set("token", data.token);//               
-                this.getUserInfo(this.dataForm.userID)
-                
-              }
-            })
-            .catch((error) => {
-              console.log("error=",error);
-              console.error(error);
-              if(error.response.data.code==500){
-
-                this.$message.error(error.response.data.msg);
-              }
-              else{
-                this.$message.error("登陆失败，请检查密码或者网络");
-              }
-              this.getCaptcha();
-              
-            });
+          if (
+            this.dataForm.captcha.toUpperCase() ===
+            this.generatedCaptcha.toUpperCase()
+          ) {
+            // 验证码匹配，执行登录操作
+            console.log("验证码正确");
+            // 执行登录逻辑
+            // 使用 axios 直接发送 POST 请求
+            axios
+              .post("/api/v1/user/login", {
+                user_id: this.dataForm.userID,
+                user_password: this.dataForm.password,
+              })
+              .then(({ data }) => {
+                console.log("data.code=", data.code);
+                console.log("data.msg=", data.msg);
+                if (data.code == 200) {
+                  // code == 200 表示成功
+                  VueCookies.set("isLoggedIn", "true", "1h"); // 设置 Cookie
+                  VueCookies.set("token", data.token); //
+                  this.getUserInfo(this.dataForm.userID);
+                }
+              })
+              .catch((error) => {
+                console.log("error=", error);
+                console.error(error);
+                if (error.response.data.code == 500) {
+                  this.$message.error(error.response.data.msg);
+                } else {
+                  this.$message.error("登陆失败，请检查密码或者网络");
+                }
+                this.getCaptcha();
+              });
+          } else {
+            this.$message.error("验证码错误，请重新输入");
+            this.generateCaptcha(); // 验证码错误时重新生成
+            this.generatedCaptcha = ""; //清空验证码
+          }
         }
       });
     },
 
-    getUserInfo(userID){//获取用户所有信息
+    getUserInfo(userID) {
+      //获取用户所有信息
       axios
-        .get('/api/v1/user/displayone',{
-          params:{
-            userId: userID,//userId是后端接口期待的参数名
-
-          }
+        .get("/api/v1/user/displayone", {
+          params: {
+            userId: userID, //userId是后端接口期待的参数名
+          },
         })
-        .then(({data}) => {
-          const user = data[0];//当前只返回一个用户的数据
+        .then(({ data }) => {
+          const user = data[0]; //当前只返回一个用户的数据
 
-           console.log("User info:", {
+          console.log("User info:", {
             "\nuser_id: ": user.USER_ID,
             "\nuser_name: ": user.USER_NAME,
             "\nuser_right: ": user.USER_RIGHT,
@@ -219,25 +241,27 @@ export default {
             "\nuser_icon: ": user.ICON,
           });
 
-          this.$store.commit( 'user/setUser',{//保存用户状态
+          this.$store.commit("user/setUser", {
+            //保存用户状态
             user_id: user.USER_ID,
             user_name: user.USER_NAME,
             user_right: user.USER_RIGHT,
             user_phone: user.USER_PHONE,
             user_icon: user.ICON,
           });
-          console.log("USER:",user);
-          return axios.get('/api/v1/user/getDeleteImage', {
-              params:{
-                userId: user.USER_ID,
-              }
-            });
+          console.log("USER:", user);
+          return axios.get("/api/v1/user/getDeleteImage", {
+            params: {
+              userId: user.USER_ID,
+            },
+          });
         })
         .then((response) => {
           console.log(response);
           const deleteIcon = response.data[0].DELETE_ICON;
-          console.log('Delete Icon:', deleteIcon);
-          this.$store.commit( 'user/updateDeleteIcon',{//保存用户删除图标的状态
+          console.log("Delete Icon:", deleteIcon);
+          this.$store.commit("user/updateDeleteIcon", {
+            //保存用户删除图标的状态
             user_delete_icon: deleteIcon,
           });
         })
@@ -247,13 +271,12 @@ export default {
         })
         .finally(() => {
           this.ShowPageUpToRight();
-        })
-        
+        });
     },
 
     //跳转到注册路由
-    gotoRegister(){
-      this.$router.push({name : 'Register'});//跳转到注册界面
+    gotoRegister() {
+      this.$router.push({ name: "Register" }); //跳转到注册界面
     },
   },
 };
@@ -333,6 +356,12 @@ export default {
   .login-btn-submit {
     width: 100%;
     margin-top: 38px;
+  }
+  .login-captcha canvas {
+    width: 100%;
+    height: 40px; // 提高高度
+    border: 1px solid #ccc;
+    cursor: pointer;
   }
 }
 </style>
