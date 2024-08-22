@@ -65,6 +65,11 @@ const router = new Router({
           component: () => import("@/views/TrainingView/TrainingView.vue"),
         },
         {
+          path: "/transfer/:teamId?",
+          name: "transfer",
+          component: () => import("@/views/TransferView/TransferPage.vue"),
+        },
+        {
           path: "changepsw",
           name: "Changepsw",
           component: () => import("@/views/UserSetting/ChangePassword.vue"),
@@ -133,8 +138,6 @@ const router = new Router({
   ],
 });
 
-
-
 // 导航守卫
 /*
 to：即将要进入的目标路由对象。
@@ -158,15 +161,12 @@ router.beforeEach((to, from, next) => {
       next({ name: "Home" });
     } else if (userRole === "manager") {
       next({ name: "Team" });
-    } 
-    else if (userRole === "admin") {
+    } else if (userRole === "admin") {
       next({ name: "Admin" });
-    } 
-    else {
+    } else {
       next({ name: "Home" });
     }
-  }
-  else {
+  } else {
     next();
   }
 });

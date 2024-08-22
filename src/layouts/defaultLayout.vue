@@ -19,6 +19,7 @@
           <el-menu-item index="/player-list">Player List</el-menu-item>
           <el-menu-item index="/lineup">Lineup</el-menu-item>
           <el-menu-item index="/training">Training</el-menu-item>
+          <el-menu-item index="/transfer">Transfer</el-menu-item>
           <div class="menu-right">
             <el-submenu>
               <template slot="title">
@@ -172,7 +173,7 @@ export default {
   color: var(--primary-background) !important; /* 强制文字颜色 */
 }
 
-.el-submenu :hover{
+.el-submenu :hover {
   background-color: var(--active-text-color) !important; /* 强制背景色 */
   color: var(--primary-background) !important; /* 强制文字颜色 */
 }
@@ -211,7 +212,6 @@ export default {
   font-weight: bold;
 }
 
-
 .user-icon {
   width: 40px;
   height: 40px;
@@ -248,9 +248,7 @@ export default {
   margin-left: 100px;
   display: flex;
   align-items: center;
-  
 }
-
 
 .button-change-theme,
 .button-change-BackGroundImages {
