@@ -133,7 +133,7 @@ export default {
       canvas.width = 120; // 调整宽度
       canvas.height = 40; // 调整高度
 
-      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // 生成验证码的字符集
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // 生成验证码的字符集
       let captchaText = "";
 
       for (let i = 0; i < 4; i++) {
