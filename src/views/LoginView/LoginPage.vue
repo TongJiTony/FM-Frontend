@@ -53,8 +53,7 @@
                   </el-input>
                 </el-col>
                 <el-col :span="10" class="login-captcha">
-                  <!--img 标签绑定了验证码图片的路径 captchaPath，并在点击时调用 getCaptcha() 方法刷新验证码。-->
-                  <img :src="captchaPath" @click="getCaptcha()" alt="" />
+                  <canvas ref="captchaCanvas" @click="generateCaptcha"></canvas>
                 </el-col>
               </el-row>
             </el-form-item>
@@ -89,7 +88,6 @@
 <!--组件注册：注册局部组件以供模板中使用。-->
 
 <script>
-import { getUUID } from "@/utils";
 import VueCookies from "vue-cookies";
 import axios from "axios";
 
@@ -120,14 +118,30 @@ export default {
           { required: true, message: "验证码不能为空", trigger: "blur" },
         ],
       },
-      // 验证码图片路径
-      captchaPath: "",
+      generatedCaptcha: '',
     };
   },
-  created() {
-    this.getCaptcha();
+  mounted(){
+    this.generateCaptcha(); // 页面加载时生成验证码
   },
   methods: {
+    generateCaptcha() {
+      const canvas = this.$refs.captchaCanvas;
+      const ctx = canvas.getContext('2d');
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 生成验证码的字符集
+      let captchaText = '';
+
+      for (let i = 0; i < 4; i++) {
+        const randomChar = chars.charAt(Math.floor(Math.random() * chars.length));
+        captchaText += randomChar;
+      }
+
+      this.generatedCaptcha = captchaText; // 存储生成的验证码
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.font = '24px Arial';
+      ctx.fillStyle = '#000';
+      ctx.fillText(captchaText, 10, 30); // 将验证码绘制在 canvas 上
+    },
     // 根据权限进行跳转页面
     ShowPageUpToRight(){
       const userRight = this.$store.getters['user/getUserRight'];
@@ -240,15 +254,6 @@ export default {
     //跳转到注册路由
     gotoRegister(){
       this.$router.push({name : 'Register'});//跳转到注册界面
-    },
-
-    // 获取验证码和图片路径
-    // 调用 API 获取新的验证码路径
-    getCaptcha() {
-      this.dataForm.uuid = getUUID();
-      /*this.captchaPath = this.$http.adornUrl(
-        `/api/captcha.jpg?uuid=${this.dataForm.uuid}`
-      );*/
     },
   },
 };
