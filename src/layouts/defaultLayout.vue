@@ -18,6 +18,7 @@
           <el-menu-item index="/team">Team</el-menu-item>
           <el-menu-item index="/player-list">Player List</el-menu-item>
           <el-menu-item index="/lineup">Lineup</el-menu-item>
+          <el-menu-item index="/medical">Medical</el-menu-item>
           <div class="menu-right">
             <el-submenu>
               <template slot="title">

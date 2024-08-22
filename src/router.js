@@ -50,6 +50,11 @@ const router = new Router({
           component: () => import("@/views/PlayerView/PlayerDisplay.vue"),
         },
         {
+          path: "medical",
+          name: "medical",
+          component: () => import("@/views/MedicalView/MedicalList.vue"),
+        },
+        {
           path: "/lineup/:teamID?",
           name: "lineup",
           component: () => import("@/views/LineupView/LineupView.vue"),
@@ -127,8 +132,6 @@ const router = new Router({
     },
   ],
 });
-
-
 
 // 导航守卫
 /*
