@@ -118,7 +118,9 @@ export default {
           { required: true, message: "验证码不能为空", trigger: "blur" },
         ],
       },
-      generatedCaptcha: "",
+      generatedCaptcha: "",//生成的验证码
+      captchaTimestamp: null, // 验证码生成时间
+      captchaValidityPeriod: 300000, // 验证码有效期设置为5分钟（300,000毫秒）
     };
   },
   mounted() {
@@ -146,6 +148,7 @@ export default {
       }
 
       this.generatedCaptcha = captchaText; // 存储生成的验证码
+       this.captchaTimestamp = Date.now(); // 记录验证码生成时间
 
       // 清空 canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -218,6 +221,14 @@ export default {
     dataFormSubmit() {
       this.$refs["dataForm"].validate((valid) => {
         if (valid) {
+          const now = Date.now();
+          const timeElapsed = now - this.captchaTimestamp;
+          if (timeElapsed > this.captchaValidityPeriod) {
+            this.$message.error("验证码已过期，请重新生成验证码");
+            this.generateCaptcha(); // 验证码过期时重新生成
+            this.generatedCaptcha = ""; // 清空验证码输入框
+            return; // 阻止后续的登录逻辑执行
+          }
           if (
             this.dataForm.captcha.toUpperCase() ===
             this.generatedCaptcha.toUpperCase()
