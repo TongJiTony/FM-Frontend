@@ -207,7 +207,7 @@ export default {
           this.$router.replace({ name: "Home" });
           break;
         case "manager":
-          this.$router.replace({ name: "Team" });
+          this.$router.replace({ name: "TeamPage",params:{} });
           break;
         case "admin":
           this.$router.replace({ name: "Admin" });
@@ -287,6 +287,7 @@ export default {
             "\nuser_right: ": user.USER_RIGHT,
             "\nuser_phone: ": user.USER_PHONE,
             "\nuser_icon: ": user.ICON,
+            "\nuser_teamid: ":user.TEAM_ID,
           });
 
           this.$store.commit("user/setUser", {
@@ -296,6 +297,7 @@ export default {
             user_right: user.USER_RIGHT,
             user_phone: user.USER_PHONE,
             user_icon: user.ICON,
+            user_teamid: user.TEAM_ID,
           });
           console.log("USER:", user);
           return axios.get("/api/v1/user/getDeleteImage", {

@@ -134,6 +134,7 @@ next：一个函数，调用它来决定接下来的行为。
 router.beforeEach((to, from, next) => {
   const isLoggedIn = Vue.$cookies.get("isLoggedIn");
   const userRole = router.app.$store.getters["user/getUserRight"];
+  const userTeamid = router.app.$store.getters["user/getTeamID"];
   console.log("isLoggedIn status:", isLoggedIn);
   if (
     //如果当前未登录并且没有前往登陆界面或者注册界面
@@ -146,8 +147,16 @@ router.beforeEach((to, from, next) => {
     // 用户已经登录并试图访问登录页面
     if (userRole === "coach") {
       next({ name: "Home" });
-    } else if (userRole === "manager") {
-      next({ name: "Team" });
+    } 
+    else if (userRole === "manager") {
+      if (userTeamid) {
+        next({ name: "TeamPage", params: { teamID: userTeamid } });
+      } 
+      else {
+        this.$messager.error("队伍ID为空")
+        // 如果没有teamID，可以选择跳转到其他页面或者抛出一个警告
+        next({ name: "Home" }); // 跳转到一个默认页面
+      }
     } 
     else if (userRole === "admin") {
       next({ name: "Admin" });
