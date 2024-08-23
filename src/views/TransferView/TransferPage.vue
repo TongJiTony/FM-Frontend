@@ -5,10 +5,10 @@
       <el-form label-position="top">
         <el-form-item label="位置筛选">
           <el-select v-model="filters.position" placeholder="选择位置">
-            <el-option label="前锋" value="前锋"></el-option>
-            <el-option label="中场" value="中场"></el-option>
-            <el-option label="后卫" value="后卫"></el-option>
-            <el-option label="门将" value="门将"></el-option>
+            <el-option label="前锋" value="F"></el-option>
+            <el-option label="中场" value="WB"></el-option>
+            <el-option label="后卫" value="B"></el-option>
+            <el-option label="门将" value="GK"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="能力值筛选">
@@ -18,6 +18,19 @@
             :max="100"
             show-input
           ></el-slider>
+        </el-form-item>
+        <el-form-item label="年龄筛选">
+          <el-slider
+            v-model="filters.age"
+            :min="16"
+            :max="40"
+            show-input
+          ></el-slider>
+        </el-form-item>
+        <!-- 确认筛选和重置筛选按钮 -->
+        <el-form-item>
+          <el-button type="primary" @click="applyFilters">确认筛选</el-button>
+          <el-button @click="resetFilters">重置筛选</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -30,10 +43,10 @@
           :key="index"
           class="player-item"
         >
-          <!-- 显示球员的各项信息 -->
+          <!-- 显示球员的各项信息，包括年龄 -->
           球员名: {{ player.PLAYER_NAME }} | 球队: {{ player.TEAM_NAME }} |
-          位置: {{ player.ROLE }} | 惯用脚:
-          {{ player.USED_FOOT === 1 ? "右脚" : "左脚" }} | 健康状态:{{
+          位置: {{ player.ROLE }} | 年龄: {{ calculateAge(player.BIRTHDAY) }} |
+          惯用脚: {{ player.USED_FOOT === 1 ? "右脚" : "左脚" }} | 健康状态:{{
             player.HEALTH_STATE === 0 ? "健康" : "受伤"
           }}
           | 等级:{{ player.RANK }}
@@ -64,9 +77,12 @@ export default {
     return {
       filters: {
         position: "", // 筛选位置
-        ability: "", // 筛选能力值
+        ability: 60, // 筛选能力值，默认为最小值
+        age: 16, // 筛选年龄，默认最小年龄为16岁
       },
       players: [], // 从API获取的球员数据
+      initialFilteredPlayers: [], // 初始筛选后的球员列表（TRANS_STATE 为 true）
+      filteredPlayers: [], // 根据筛选条件得到的球员数据
       loading: true,
       dialogVisible: false,
     };
@@ -76,47 +92,68 @@ export default {
       console.log("dialogVisible changed to:", newVal);
     },
   },
-
-  computed: {
-    // 计算属性：筛选允许转会的球员
-    filteredPlayers() {
-      return this.players.filter((player) => player.TRANS_STATE === 1); // 仅返回允许转会的球员
-    },
-  },
-
   methods: {
+    // 计算球员年龄的函数
+    calculateAge(birthday) {
+      const birthDate = new Date(birthday);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (
+        monthDiff < 0 ||
+        (monthDiff === 0 && today.getDate() < birthDate.getDate())
+      ) {
+        age--; // 如果还没过生日，则年龄减1
+      }
+      // 如果满一年不到，也算作一岁
+      return age < 1 ? 1 : age;
+    },
+
     saveTransfer(transferInfo) {
       console.log("saveTransfer called with:", transferInfo);
     },
 
     fetchPlayers() {
       const teamId = this.$route.params.teamId;
-      if (teamId) {
-        console.log("Fetching data for team ID:", teamId);
-        axios
-          .get(`/api/v1/player/displayall?teamid=${teamId}`)
-          .then((response) => {
-            console.log("Received data:", response.data);
-            this.players = response.data;
-          })
-          .catch((error) => {
-            console.error(
-              "Failed to fetch player transfer list for team:",
-              error
-            );
-          });
-      } else {
-        console.log("Fetching all transfer data");
-        axios
-          .get("/api/v1/player/displayall")
-          .then((response) => {
-            console.log("Received data:", response.data);
-            this.players = response.data;
-          })
-          .catch((error) => {
-            console.error("Failed to fetch player transfer list:", error);
-          });
-      }
+      const fetchUrl = teamId
+        ? `/api/v1/player/displayall?teamid=${teamId}`
+        : "/api/v1/player/displayall";
+
+      axios
+        .get(fetchUrl)
+        .then((response) => {
+          this.players = response.data;
+          // 初始化时，筛选 TRANS_STATE 为 true 的球员
+          this.initialFilteredPlayers = this.players.filter(
+            (player) => player.TRANS_STATE === 1
+          );
+          // 设置初始显示列表和筛选列表为初始筛选结果
+          this.filteredPlayers = [...this.initialFilteredPlayers];
+        })
+        .catch((error) => {
+          console.error("Failed to fetch player transfer list:", error);
+        });
+    },
+
+    applyFilters() {
+      // 根据筛选条件更新 filteredPlayers
+      this.filteredPlayers = this.initialFilteredPlayers.filter((player) => {
+        const matchesPosition =
+          this.filters.position === "" || player.ROLE === this.filters.position;
+        const matchesAbility = player.RANK >= this.filters.ability;
+        const matchesAge =
+          this.calculateAge(player.BIRTHDAY) >= this.filters.age;
+        return matchesPosition && matchesAbility && matchesAge;
+      });
+    },
+
+    resetFilters() {
+      // 重置筛选条件
+      this.filters.position = "";
+      this.filters.ability = 60;
+      this.filters.age = 16;
+      // 重置筛选结果为初始筛选结果
+      this.filteredPlayers = [...this.initialFilteredPlayers];
     },
   },
 
