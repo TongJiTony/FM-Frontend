@@ -6,7 +6,7 @@
         <el-form-item label="位置筛选">
           <el-select v-model="filters.position" placeholder="选择位置">
             <el-option label="前锋" value="F"></el-option>
-            <el-option label="中场" value="WB"></el-option>
+            <el-option label="中场" value="M"></el-option>
             <el-option label="后卫" value="B"></el-option>
             <el-option label="门将" value="GK"></el-option>
           </el-select>
