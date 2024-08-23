@@ -376,7 +376,24 @@ export default {
       expirationTime: 604800, // 7 days in seconds
     };
   },
+  watch: {
+    // 监听当前页数变化
+    currentPage(newPage) {
+      this.saveCurrentPage(newPage);
+    },
+  },
   methods: {
+    saveCurrentPage(page) {
+      // 保存页数到 Vuex 或 localStorage
+      localStorage.setItem("playerListPage", page);
+    },
+    loadSavedPage() {
+      const savedPage = localStorage.getItem("playerListPage");
+      if (savedPage) {
+        this.currentPage = parseInt(savedPage, 10);
+      }
+    },
+
     customUpload(request) {
       if (request.file) {
         // 如果用户上传了图片，则执行上传逻辑
@@ -656,6 +673,7 @@ export default {
 
   created() {
     this.fetchPlayers();
+    this.loadSavedPage();
   },
 };
 </script>
