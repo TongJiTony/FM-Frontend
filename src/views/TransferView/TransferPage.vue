@@ -61,6 +61,7 @@
     <!-- 对话框 -->
     <manager-dialog
       :visible="dialogVisible"
+      :value="transferInfo"
       @close="dialogVisible = false"
       @save="saveTransfer"
     ></manager-dialog>
@@ -85,6 +86,13 @@ export default {
       filteredPlayers: [], // 根据筛选条件得到的球员数据
       loading: true,
       dialogVisible: false,
+      transferInfo: {
+        playerName: "", // 球员姓名
+        transferFee: 0, // 转会费
+        salary: 0, // 工资
+        transferDate: "", // 转会时间
+        contractDuration: 0, // 合同年限
+      }, // 用于存储传递和接收的转会信息
     };
   },
   watch: {
@@ -93,6 +101,20 @@ export default {
     },
   },
   methods: {
+    // 点击"向经纪人询问转会"按钮时触发
+    openDialog(player) {
+      this.transferInfo.playerName = player.PLAYER_NAME; // 设置当前选中的球员姓名
+      this.dialogVisible = true;
+    },
+
+    // 处理对话框返回的数据
+    handleSaveTransfer(transferData) {
+      // 将组件返回的数据保存到 transferInfo 中
+      this.transferInfo = transferData;
+      // 在这里决定是否立即发送数据到其他页面，或者存储在暂时的容器中以便稍后处理
+      console.log("Transfer data received:", this.transferInfo);
+    },
+
     // 计算球员年龄的函数
     calculateAge(birthday) {
       const birthDate = new Date(birthday);
