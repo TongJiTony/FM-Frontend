@@ -51,7 +51,7 @@
           }}
           | 等级:{{ player.RANK }}
           <!-- 添加按钮 -->
-          <el-button @click="dialogVisible = true">
+          <el-button @click="openDialog(player)">
             向经纪人询问转会
           </el-button>
         </li>
@@ -61,7 +61,7 @@
     <!-- 对话框 -->
     <manager-dialog
       :visible="dialogVisible"
-      :value="transferInfo"
+      :value="transferInfo.playerName"
       @close="dialogVisible = false"
       @save="saveTransfer"
     ></manager-dialog>
@@ -104,6 +104,7 @@ export default {
     // 点击"向经纪人询问转会"按钮时触发
     openDialog(player) {
       this.transferInfo.playerName = player.PLAYER_NAME; // 设置当前选中的球员姓名
+      console.log("Selected player:", this.transferInfo.playerName);
       this.dialogVisible = true;
     },
 
@@ -131,6 +132,7 @@ export default {
       return age < 1 ? 1 : age;
     },
 
+    /// 在这里确认
     saveTransfer(transferInfo) {
       console.log("saveTransfer called with:", transferInfo);
     },

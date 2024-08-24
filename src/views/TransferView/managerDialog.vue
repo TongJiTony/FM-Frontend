@@ -6,6 +6,7 @@
           <el-card>
             <el-image :src="this.randomAvatar"></el-image>
             <h4>manager</h4>
+            <h4>转会球员：{{ this.playerName }}</h4>
           </el-card>
 
           <el-card class="prompts">
@@ -51,10 +52,20 @@
           </el-card>
 
           <el-card v-if="inputcard_visible" class="prompts" style="height: 200px">
-            <h3 class="title">在这里补充[XXX]</h3>
-            <el-input v-model="inputdata">
-              
-            </el-input>
+            <h3 class="title">在这里补充数据</h3>
+            <div v-if="this.currentKeywordIndex !== 2">
+              <el-input v-model="inputdata"></el-input>
+            </div>
+            <div v-else>
+              <el-select v-model="inputdata" placeholder="请选择">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </div>
           </el-card>
         </el-col>
       </el-row>
@@ -63,7 +74,7 @@
       
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleCancel">取消</el-button>
-        <el-button type="primary" @click="saveTransfer">确认</el-button>
+        <el-button type="primary" @click="saveTransfer" :disabled="save_disabled">确认</el-button>
       </div>      
 
     </el-dialog>
@@ -71,7 +82,6 @@
 
 
 <script>
-//import { random } from 'core-js/core/number';
 
 export default {
   props: {
@@ -80,8 +90,8 @@ export default {
       default: false,
     },
     value: {
-      type: Object,
-      default: () => ({ transferDate: '', transferFee: 0 })
+      type: String,
+      default: '',
     },
   },
   data() {
@@ -90,9 +100,10 @@ export default {
       inputprompt: [],
       inputdata: null,
       input_disabled: false,
+      save_disabled: true,
       messages: [
-        { user: 'user1', text: '我们球队有一个球员XXX可以考虑转会。' },
-        { user: 'user2', text: '我对这个球员很感兴趣，能聊聊转会费吗？' },
+        { user: 'manager', text: `我们球队有一个球员${this.value}可以考虑转会。` },
+        { user: 'you', text: '我对这个球员很感兴趣，能聊聊转会费吗？' },
         // 你可以在这里添加更多的预设对话
       ],
       transferDetails: {
@@ -123,6 +134,12 @@ export default {
         require('@/assets/img/managerIcon/13.jpg'),
         require('@/assets/img/managerIcon/14.jpg'),
       ],
+
+      // options
+      options: [
+        { value: '夏窗', label: '夏窗' },
+        { value: '冬窗', label: '冬窗' }
+      ],
     };
   },
   methods: {
@@ -138,7 +155,7 @@ export default {
         '转会窗口': this.transferDetails.transferWindow,
         };
 
-        this.checkKeywordSequence(this.input);
+        
 
         console.log('currentKeyword:', currentKeyword);
         console.log('fee:', this.transferDetails.fee);
@@ -155,6 +172,7 @@ export default {
 
         this.messages.push({ user, text });
 
+        this.checkKeywordSequence(this.input);
         //reset
         this.input = '';
         this.inputdata = null;
@@ -170,7 +188,7 @@ export default {
         this.currentKeywordIndex++;
         if (this.currentKeywordIndex < this.requiredKeywords.length) {
            // 提示下一个关键词
-          this.messages.push({ user: 'user1', text: '好的，我明白了。' });
+          this.messages.push({ user: 'manager', text: '好的，我明白了。' });
           this.sendPrompt(this.requiredKeywords[this.currentKeywordIndex], true);
         }
       } else {
@@ -182,21 +200,6 @@ export default {
     },
     handleKeywordInput(keyword, inputText) {
       inputText;
-      // 根据关键词更新转会细节
-      // if (keyword === '转会费') {
-      //   const fee = this.extractNumber(inputText);
-      //   if (fee !== null) this.transferDetails.fee = fee;
-      // } else if (keyword === '工资') {
-      //   const salary = this.extractNumber(inputText);
-      //   if (salary !== null) this.transferDetails.salary = salary;
-      // } else if (keyword === '转会窗口') {
-      //   if (inputText.includes('冬窗')) this.transferDetails.transferWindow = '冬窗';
-      //   else if (inputText.includes('夏窗')) this.transferDetails.transferWindow = '夏窗';
-      // } else if (keyword === '合同时长') {
-      //   const duration = this.extractNumber(inputText);
-      //   if (duration !== null) this.transferDetails.contractDuration = duration;
-      // }
-
       if (keyword === '转会费') {
         if (this.inputdata !== null) this.transferDetails.fee = this.inputdata;
       } else if (keyword === '工资') {
@@ -216,9 +219,7 @@ export default {
       return matches ? parseInt(matches[0], 10) : null;
     },
     sendPrompt(keyword, status) {
-      //console.log(status);
-
-      this.messages.push({ user: 'user1', text: (status ? '' : '抱歉我没有太明白你的意思，') + `请问${keyword}是多少？` });
+      this.messages.push({ user: 'manager', text: (status ? '' : '抱歉我没有太明白你的意思，') + `请问${keyword}是多少？` });
     },
     checkAllDetailsConfirmed() {
       if (this.transferDetails.fee !== null && this.transferDetails.salary !== null &&
@@ -227,9 +228,9 @@ export default {
       }
     },
     saveTransferDetails() {
-      console.log('转会细节已保存：', this.transferDetails);
-      
-      alert('转会已成功！');
+      alert('转会数据已保存, 请点击保存按钮！');
+      this.save_disabled = false;
+      console.log(this.save_disabled);
     },
 
     //search input prompts
@@ -239,6 +240,10 @@ export default {
 
       // 添加筛选条件
       results = results.filter(prompt => this.additionalFilter(prompt));
+
+      if (results.length > 0) {
+        results = [results[0]];
+      }
 
       cb(results);
     },
@@ -267,6 +272,7 @@ export default {
     handleSelect(item) {
       this.inputcard_visible = true;
       this.input_disabled = true;
+      console.log(this.currentKeywordIndex);
 
       const value = item.value;
       if (value === '转会费') {
@@ -292,35 +298,61 @@ export default {
     randomizeAvatar() {
       const randomIndex = Math.floor(Math.random() * this.avatars.length);
       this.randomAvatar = this.avatars[randomIndex];
-      console.log(this.randomAvatar);
+    },
+    resetDialog() {
+      this.input = '';
+      //this.inputprompt = [];
+      this.inputdata = null;
+      this.input_disabled = false;
+      this.messages = [
+        { user: 'manager', text: `我们球队有一个球员${this.value}可以考虑转会。` },
+        { user: 'you', text: '我对这个球员很感兴趣，能聊聊转会费吗？' },
+        // 你可以在这里添加更多的预设对话
+      ],
+      this.randomizeAvatar();
+      this.transferDetails = {
+        fee: null,
+        salary: null,
+        transferWindow: '',
+        contractDuration: null,
+      };
+      this.currentKeywordIndex = 0;
+      this.inputcard_visible = false;
     },
     closeDialog() {
       this.$emit('close');
     },
     saveTransfer() {
-      this.$emit('save', this.transferInfo);
+      this.$emit('save', this.transferDetails);
+      //console.log("保存 ", this.transferDetails);
       this.$emit('close');
     },
     handleCancel() {
       this.$emit('close');
     },
   },
+  watch: {
+    visible(val) {
+      if (val) {
+        this.resetDialog();
+      }
+    }
+  },
   computed: {
     isDialogVisible() {
       return this.visible;
     },
-    transferInfo: {
+    playerName: {
       get() {
         return this.value;
       },
-      set(newVal) {
-        this.$emit('input', newVal);
+      set(newValue) {
+        this.$emit('update:value', newValue);
       }
-    },
+    }
   },
   mounted() {
     this.inputprompt = this.loadAllprompts();
-    console.log("this is a tsest", this.randomAvatar);
     this.randomizeAvatar();
   },
 };
