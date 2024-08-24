@@ -107,13 +107,13 @@ export default {
       this.dialogVisible = true;
     },
 
-    // 处理对话框返回的数据
+    /* 处理对话框返回的数据
     handleSaveTransfer(transferData) {
       // 将组件返回的数据保存到 transferInfo 中
       this.transferInfo = transferData;
       // 在这里决定是否立即发送数据到其他页面，或者存储在暂时的容器中以便稍后处理
       console.log("Transfer data received:", this.transferInfo);
-    },
+    },*/
 
     // 计算球员年龄的函数
     calculateAge(birthday) {
@@ -133,6 +133,7 @@ export default {
 
     saveTransfer(transferInfo) {
       console.log("saveTransfer called with:", transferInfo);
+      this.transferInfo = transferInfo;
     },
 
     fetchPlayers() {
