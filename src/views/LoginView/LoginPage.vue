@@ -201,13 +201,15 @@ export default {
     // 根据权限进行跳转页面
     ShowPageUpToRight() {
       const userRight = this.$store.getters["user/getUserRight"];
+      const userTeamID = this.$store.getters["user/getTeamID"];
       console.log("userRight:", userRight);
+      console.log("userTeamID:", userTeamID);
       switch (userRight) {
         case "coach":
           this.$router.replace({ name: "Home" });
           break;
         case "manager":
-          this.$router.replace({ name: "TeamPage",params:{} });
+          this.$router.replace({ name: "TeamPage",params:{teamID: userTeamID} });
           break;
         case "admin":
           this.$router.replace({ name: "Admin" });
@@ -263,8 +265,8 @@ export default {
               });
           } else {
             this.$message.error("验证码错误，请重新输入");
-            this.generateCaptcha(); // 验证码错误时重新生成
             this.generatedCaptcha = ""; //清空验证码
+            this.generateCaptcha(); // 验证码错误时重新生成
           }
         }
       });

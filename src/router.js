@@ -136,6 +136,7 @@ router.beforeEach((to, from, next) => {
   const userRole = router.app.$store.getters["user/getUserRight"];
   const userTeamid = router.app.$store.getters["user/getTeamID"];
   console.log("isLoggedIn status:", isLoggedIn);
+  console.log("userTeamid:", userTeamid);
   if (
     //如果当前未登录并且没有前往登陆界面或者注册界面
     to.name !== "Login" &&

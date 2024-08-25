@@ -48,12 +48,18 @@
             class="input-field"
           ></el-input>
         </el-form-item>
-        <el-form-item label="Team ID：" prop="teamID">
-          <el-input
-            v-model="registerForm.TeamId"
-            placeholder="请输入 Team ID"
-            class="input-field"
-          ></el-input>
+        <el-form-item label="所属队伍：" prop="TeamID">
+          <el-select
+            v-model="registerForm.TeamID"
+            placeholder="请选择所属队伍"
+            class="select-field">
+            <el-option
+               v-for="team in teams"
+              :key="team.id"
+              :label="team.name"
+              :value="team.id">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="头像图像：" prop="icon">
           <el-upload
@@ -95,11 +101,11 @@ export default {
     return {
       registerForm: {
         userName: "",
-        userRight: "",
+        userRight: "manager",
         userPassword: "",
         userPhone: "",
         icon: "",
-        TeamId: "",
+        TeamID: "",
       },
       registerRule: {
         userName: [
@@ -114,18 +120,27 @@ export default {
         userPhone: [
           { required: true, message: "电话号码不可以为空", trigger: "blur" },
         ],
-        TeamId: [
-          { required: true, message: "Team ID 不能为空", trigger: "blur" },
+        TeamID: [
+          { required: true, message: "队伍ID 不能为空", trigger: "blur" },
         ],
         icon: [
           { required: true, message: "头像信息不可以为空", trigger: "blur" },
         ],
        
       },
+      teams: [
+        { id: "1000000001", name: "阿森纳" },
+        { id: "1000000002", name: "皇家马德里" },
+        { id: "1000000003", name: "国际米兰" },
+        { id: "1000000004", name: "曼彻斯特城" },
+        { id: "1000000005", name: "利物浦" },
+        { id: "1000000006", name: "巴塞罗那" },
+        { id: "1000000007", name: "切尔西" },
+        // 可以添加更多队伍
+      ],
       userRights: [
-        { value: "player", label: "球员" },
-        { value: "coach", label: "教练" },
-        { value: "manager", label: "经理" },
+        { value: "admin", label: "管理员" },
+        { value: "manager", label: "球队经理" },
       ],
       uploadAction: "https://api.imgbb.com/1/upload",
       currentDeleteUrl: "",
@@ -213,6 +228,7 @@ export default {
     registerFormSubmit() {
       this.$refs["registerForm"].validate((valid) => {
         if (valid) {
+          console.log("提交的数据：", this.registerForm);
           axios
             .post("/api/v1/user/add", {
               userName: this.registerForm.userName,
@@ -220,7 +236,7 @@ export default {
               userPassword: this.registerForm.userPassword,
               userPhone: this.registerForm.userPhone,
               icon: this.registerForm.icon,
-              teamID: this.registerForm.TeamId
+              TeamID: this.registerForm.TeamID
             })
             .then(({ data }) => {
               console.log("data:",data);
@@ -231,7 +247,8 @@ export default {
                   data.user_right,
                   data.user_password,
                   data.user_phone,
-                  data.icon
+                  data.icon,
+                  data.team_id,
                 );
                 //然后上传用户头像信息
                 axios
@@ -266,7 +283,8 @@ export default {
       user_right,
       user_password,
       user_phone,
-      icon
+      icon,
+      team_id
     ) {
       MessageBox.alert(
         `注册成功！\n
@@ -275,7 +293,8 @@ export default {
                       用户权限: ${user_right}\n
                       用户密码: ${user_password}\n
                       手机号码: ${user_phone}\n
-                      头像: ${icon}`,
+                      头像: ${icon}\n
+                      队伍ID: ${team_id}\n`,
         "注册成功",
         {
           confirmButtonText: "确定",
