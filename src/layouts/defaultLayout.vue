@@ -20,35 +20,30 @@
           <el-menu-item index="/lineup">排兵布阵</el-menu-item>
           <el-menu-item index="/medical">健康情况</el-menu-item>
           <el-menu-item index="/training">训练计划</el-menu-item>
-          <div class="menu-right">
-            <el-submenu>
-              <template slot="title">
-                <i class="el-icon-setting"></i>
-                <span class="username-title">{{
-                  this.$store.getters["user/getUserName"]
-                }}</span>
-                <img
-                  :src="this.$store.getters['user/getUserIcon']"
-                  class="user-icon"
-                  @error="handleImageError"
-                />
-              </template>
-              <el-menu-item class="user-action-item" index="/changepsw"
-                >Change Password</el-menu-item
-              >
-              <el-menu-item class="user-action-item" index="/userinfo"
-                >{{ this.$store.getters["user/getUserName"] }}'s
-                info</el-menu-item
-              >
-            </el-submenu>
-          </div>
+          <el-submenu class="menu-right">
+            <template slot="title">
+              <i class="el-icon-setting"></i>
+              <span class="username-title">{{
+                this.$store.getters["user/getUserName"]
+              }}</span>
+              <img
+                :src="this.$store.getters['user/getUserIcon']"
+                class="user-icon"
+                @error="handleImageError"
+              />
+            </template>
+            <el-menu-item class="user-action-item" index="/changepsw"
+              >Change Password</el-menu-item
+            >
+            <el-menu-item class="user-action-item" index="/userinfo"
+              >{{ this.$store.getters["user/getUserName"] }}'s
+              info</el-menu-item
+            >
+          </el-submenu>
           <button class="button-change-theme" @click="toggleTheme">
             切换主题
           </button>
-          <button
-            class="button-change-BackGroundImages"
-            @click="toggleBackgroundImage"
-          >
+          <button class="button-change-BackGroundImages" @click="toggleBackgroundImage">
             切换背景
           </button>
         </el-menu>
