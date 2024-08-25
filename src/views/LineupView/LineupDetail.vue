@@ -47,8 +47,8 @@
         prop="GAME_STATE"
         label="比赛状态">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.GAME_STATE === 1 ? 'success' : 'danger'">
-            {{ scope.row.GAME_STATE === 1 ? '允许出场' : '禁赛' }}
+          <el-tag :type="scope.row.GAME_STATE === 0 ? 'success' : 'danger'">
+            {{ scope.row.GAME_STATE === 0 ? '允许出场' : '禁赛' }}
           </el-tag>
         </template>
       </el-table-column>
