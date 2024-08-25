@@ -148,7 +148,7 @@ export default {
       }
 
       this.generatedCaptcha = captchaText; // 存储生成的验证码
-       this.captchaTimestamp = Date.now(); // 记录验证码生成时间
+      this.captchaTimestamp = Date.now(); // 记录验证码生成时间
 
       // 清空 canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -201,13 +201,15 @@ export default {
     // 根据权限进行跳转页面
     ShowPageUpToRight() {
       const userRight = this.$store.getters["user/getUserRight"];
+      const userTeamID = this.$store.getters["user/getTeamID"];
       console.log("userRight:", userRight);
+      console.log("userTeamID:", userTeamID);
       switch (userRight) {
         case "coach":
           this.$router.replace({ name: "Home" });
           break;
         case "manager":
-          this.$router.replace({ name: "Team" });
+          this.$router.replace({ name: "TeamPage",params:{teamID: userTeamID} });
           break;
         case "admin":
           this.$router.replace({ name: "Admin" });
@@ -263,8 +265,8 @@ export default {
               });
           } else {
             this.$message.error("验证码错误，请重新输入");
-            this.generateCaptcha(); // 验证码错误时重新生成
             this.generatedCaptcha = ""; //清空验证码
+            this.generateCaptcha(); // 验证码错误时重新生成
           }
         }
       });
@@ -287,6 +289,7 @@ export default {
             "\nuser_right: ": user.USER_RIGHT,
             "\nuser_phone: ": user.USER_PHONE,
             "\nuser_icon: ": user.ICON,
+            "\nuser_teamid: ":user.TEAM_ID,
           });
 
           this.$store.commit("user/setUser", {
@@ -296,6 +299,7 @@ export default {
             user_right: user.USER_RIGHT,
             user_phone: user.USER_PHONE,
             user_icon: user.ICON,
+            user_teamid: user.TEAM_ID,
           });
           console.log("USER:", user);
           return axios.get("/api/v1/user/getDeleteImage", {
