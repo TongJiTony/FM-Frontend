@@ -146,17 +146,16 @@ router.beforeEach((to, from, next) => {
     next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
   } else if (to.name === "Login" && isLoggedIn === "true") {
     // 用户已经登录并试图访问登录页面
-    if (userRole === "coach") {
-      next({ name: "Home" });
-    } 
-    else if (userRole === "manager") {
+   if (userRole === "manager") {
       if (userTeamid) {
         next({ name: "TeamPage", params: { teamID: userTeamid } });
       } 
       else {
-        this.$messager.error("队伍ID为空")
-        // 如果没有teamID，可以选择跳转到其他页面或者抛出一个警告
-        next({ name: "Home" }); // 跳转到一个默认页面
+        this.$messager.error("队伍ID为空，请检查账号重新登录")
+        router.app.$store.commit("user/resetUser");
+        Vue.$cookies.remove("isLoggedIn");
+        Vue.$cookies.remove("token");
+        next({ name: "Login" }); // 跳回去重新登录
       }
     } 
     else if (userRole === "admin") {
