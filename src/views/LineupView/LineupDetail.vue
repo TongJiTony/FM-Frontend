@@ -1,7 +1,8 @@
 <template>
   <p v-if="loading">Loading...</p>
   <div v-else>
-    <el-header>阵容 ID: {{ this.lineupId }}
+    <el-header style="font-size: 20px; display: flex; justify-content: space-between; align-items: center;"
+    >阵容 ID: {{ this.lineupId }}
       <div class="button-contanier">
         <el-button
           type="info"
@@ -14,32 +15,28 @@
     <el-table
       :data="filteredLineupData"
       stripe
-      style="width: 100%">
+      style="width: 100%"
+      fit>
       <el-table-column
-        type="index"
-        :width="100"/>
+        type="index"/>
       <el-table-column
         prop="PLAYER_ID"
-        label="编号"
-        width="200">
+        label="编号">
       </el-table-column>
       <el-table-column
         prop="PLAYER_NAME"
-        label="姓名"
-        width="250">
+        label="姓名">
       </el-table-column>
       <el-table-column
         prop="ROLE"
-        label="位置"
-        width="200">
+        label="位置">
         <template slot-scope="scope">
           <el-tag round="true"> {{ scope.row.ROLE }} </el-tag>
         </template>
       </el-table-column>
       <el-table-column
         prop="HEALTH_STATE"
-        label="健康状态"
-        width="230">
+        label="健康状态">
         <template slot-scope="scope">
           <el-tag :type="scope.row.HEALTH_STATE === 0 ? 'success' : 'danger'">
             {{ scope.row.HEALTH_STATE === 0 ? '健康' : '受伤' }}
@@ -48,11 +45,10 @@
       </el-table-column>
       <el-table-column
         prop="GAME_STATE"
-        label="比赛状态"
-        width="150">
+        label="比赛状态">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.GAME_STATE === 1 ? 'success' : 'danger'">
-            {{ scope.row.GAME_STATE === 1 ? '允许出场' : '禁赛' }}
+          <el-tag :type="scope.row.GAME_STATE === 0 ? 'success' : 'danger'">
+            {{ scope.row.GAME_STATE === 0 ? '允许出场' : '禁赛' }}
           </el-tag>
         </template>
       </el-table-column>
@@ -226,7 +222,6 @@ export default {
       console.log("index: ", index);
 
       if (index === -1) {
-        //code here
         this.lineupDetail.splice(this.editindex, 1, player);
         this.saveEditlinup(player);
       }
@@ -272,27 +267,18 @@ export default {
       }
     },
 
-    ///////////////////////////////////////////
-    // testRoute() {
-    //   this.$router.push(`/lineup/111111111`);
-    // },
+    /////////////////////////////////////////
+    testRoute() {
+      //this.$router.push(`/lineup/111111111`);
+      this.$router.push(`/training/1000000002`);
+    },
   },
 };
 </script>
   
 <style scoped>
-  .el-header {
-    background-color: #373d41;
-    display: flex;
-    justify-content: space-between;
-    padding-left: 20px;
-    align-items: center;
-    color: #fff;
-    font-size: 20px;
-  }
   .button-contanier {
-    display: flex;
-    justify-content: flex-end;
+    margin-left: auto;
   }
   .el-input-group {
     display: flex;

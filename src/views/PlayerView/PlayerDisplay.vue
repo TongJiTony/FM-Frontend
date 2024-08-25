@@ -341,7 +341,7 @@ export default {
           case "F":
             this.positionStyle.left = "30%"; // Example value for forward
             break;
-          case "WB":
+          case "M":
             this.positionStyle.left = "21%"; // Example value for midfielder
             break;
           case "B":

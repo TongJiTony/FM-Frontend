@@ -4,7 +4,7 @@
     <div v-else>
       <el-container class="home-container">
         <!--头部  -->
-        <el-header>阵容表
+        <el-header style="font-size: 20px; display: flex; justify-content: space-between; align-items: center;">阵容表
           <div class="button-contanier">
             <el-button
               type="primary"
@@ -27,31 +27,27 @@
               :data="filteredLineupData"
               stripe
               style="width: 100%"
+              fit
             >
               <el-table-column
                 type="index"
-                width="100"
               />
               <el-table-column
                 prop="TEAM_NAME"
                 label="球队"
-                :width="300"
               >
               </el-table-column>
               <el-table-column
                 prop="LINEUP_ID"
                 label="阵容ID"
-                :width="350"
               >
               </el-table-column>
               <el-table-column
                 prop="NOTE"
                 label="备注"
-                :width="320"
               >
               </el-table-column>
               <el-table-column
-                :width="300"
                 align="right"
               >
                 <template #header>
@@ -221,7 +217,7 @@ export default {
       loading: true,
       lineupData: [],
       teamID: this.$route.params.teamID, //路由参数
-      // search
+      // 搜索框
       searchQuery: '',
       selectedColumn: '',
       columns: [
@@ -299,7 +295,6 @@ export default {
       }
     },
     fetchTeams () {
-      // 这里使用了伪代码来表示API调用，实际应根据API具体情况进行调整
       axios.get('/api/v1/team/displayall')
         .then(response => {
           this.teams = response.data;
@@ -309,7 +304,7 @@ export default {
         });
     },
     selectTeam (team) {
-      console.log("selected team: ", team);
+      //console.log("selected team: ", team);
       this.addForm.TEAM_ID = team.TEAM_ID;
       this.addDrawerVisible_teamID = false;
     },
@@ -486,18 +481,9 @@ export default {
   left: 10px;
   cursor: pointer;
 }
-.el-header {
-  background-color: #373d41;
-  display: flex;
-  justify-content: space-between;
-  padding-left: 20px;
-  align-items: center;
-  color: #fff;
-  font-size: 20px;
-}
+
 .button-contanier {
-  display: flex;
-  justify-content: flex-end;
+  margin-left: auto;
 }
 .el-input-group {
   display: flex;

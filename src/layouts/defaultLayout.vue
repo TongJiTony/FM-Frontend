@@ -19,6 +19,7 @@
           <el-menu-item index="/player-list">球员总览</el-menu-item>
           <el-menu-item index="/lineup">排兵布阵</el-menu-item>
           <el-menu-item index="/medical">健康情况</el-menu-item>
+          <el-menu-item index="/training">训练计划</el-menu-item>
           <div class="menu-right">
             <el-submenu>
               <template slot="title">
