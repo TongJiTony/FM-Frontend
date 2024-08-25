@@ -7,6 +7,7 @@ export default {
     user_phone: "", // 用户电话
     user_icon: "", // 用户头像
     user_delete_icon: "", //删除头像
+    user_teamid: ""
   },
   mutations: {
     setUser(state, user) {
@@ -16,6 +17,7 @@ export default {
       state.user_phone = user.user_phone;
       state.user_icon = user.user_icon;
       state.user_delete_icon = user.user_delete_icon;
+      state.user_teamid = user.user_teamid;
     },
     resetUser(state) {
       state.user_id = 0; // 用户ID
@@ -24,6 +26,7 @@ export default {
       state.user_phone = "";
       state.user_icon = "";
       state.user_delete_icon = "";
+      state.user_teamid= "";
     },
     updateUserId(state, id) {
       state.user_id = id;
@@ -43,6 +46,9 @@ export default {
     updateDeleteIcon(state, delete_icon) {
       state.user_delete_icon = delete_icon;
     },
+    updateTeamID(state, team_id){
+      state.user_teamid = team_id;
+    }
   },
   getters: {
     //获取用户信息
@@ -75,5 +81,8 @@ export default {
     getDeleteIcon: (state) => {
       return state.user_delete_icon;
     },
+    getTeamID: (state) => {
+      return state.user_teamid;
+    }
   },
 };

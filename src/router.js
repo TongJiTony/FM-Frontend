@@ -154,7 +154,9 @@ router.beforeEach((to, from, next) => {
 
   const isLoggedIn = Vue.$cookies.get("isLoggedIn");
   const userRole = router.app.$store.getters["user/getUserRight"];
+  const userTeamid = router.app.$store.getters["user/getTeamID"];
   console.log("isLoggedIn status:", isLoggedIn);
+  console.log("userTeamid:", userTeamid);
   if (
     //如果当前未登录并且没有前往登陆界面或者注册界面
     to.name !== "Login" &&
@@ -164,11 +166,18 @@ router.beforeEach((to, from, next) => {
     next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
   } else if (to.name === "Login" && isLoggedIn === "true") {
     // 用户已经登录并试图访问登录页面
-    if (userRole === "coach") {
-      next({ name: "Home" });
-    } else if (userRole === "manager") {
-      next({ name: "Team" });
-    }
+   if (userRole === "manager") {
+      if (userTeamid) {
+        next({ name: "TeamPage", params: { teamID: userTeamid } });
+      } 
+      else {
+        this.$messager.error("队伍ID为空，请检查账号重新登录")
+        router.app.$store.commit("user/resetUser");
+        Vue.$cookies.remove("isLoggedIn");
+        Vue.$cookies.remove("token");
+        next({ name: "Login" }); // 跳回去重新登录
+      }
+    } 
     else if (userRole === "admin") {
       next({ name: "Admin" });
     }
