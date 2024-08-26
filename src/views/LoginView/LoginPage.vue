@@ -48,13 +48,12 @@
             <!--使用 el-row 和 el-col 布局，使验证码输入框和图片并列显示。-->
             <el-form-item prop="captcha">
               <el-row :gutter="20">
-                <el-col :span="14">
+                <el-col :span="12">
                   <el-input v-model="dataForm.captcha" placeholder="验证码">
                   </el-input>
                 </el-col>
-                <el-col :span="10" class="login-captcha">
-                  <!--img 标签绑定了验证码图片的路径 captchaPath，并在点击时调用 getCaptcha() 方法刷新验证码。-->
-                  <img :src="captchaPath" @click="getCaptcha()" alt="" />
+                <el-col :span="12" class="login-captcha">
+                  <canvas ref="captchaCanvas" @click="generateCaptcha"></canvas>
                 </el-col>
               </el-row>
             </el-form-item>
@@ -89,7 +88,6 @@
 <!--组件注册：注册局部组件以供模板中使用。-->
 
 <script>
-import { getUUID } from "@/utils";
 import VueCookies from "vue-cookies";
 import axios from "axios";
 
@@ -120,110 +118,202 @@ export default {
           { required: true, message: "验证码不能为空", trigger: "blur" },
         ],
       },
-      // 验证码图片路径
-      captchaPath: "",
+      generatedCaptcha: "",//生成的验证码
+      captchaTimestamp: null, // 验证码生成时间
+      captchaValidityPeriod: 300000, // 验证码有效期设置为5分钟（300,000毫秒）
     };
   },
-  created() {
-    this.getCaptcha();
+  mounted() {
+    this.generateCaptcha(); // 页面加载时生成验证码
   },
   methods: {
+    generateCaptcha() {
+      const canvas = this.$refs.captchaCanvas;
+      const ctx = canvas.getContext("2d");
+
+      // 设置 canvas 的尺寸
+      canvas.width = 150; // 调整宽度
+      canvas.height = 50; // 调整高度
+
+      const chars =
+        "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      let captchaText = "";
+
+      // 生成验证码字符
+      for (let i = 0; i < 4; i++) {
+        const randomChar = chars.charAt(
+          Math.floor(Math.random() * chars.length)
+        );
+        captchaText += randomChar;
+      }
+
+      this.generatedCaptcha = captchaText; // 存储生成的验证码
+      this.captchaTimestamp = Date.now(); // 记录验证码生成时间
+
+      // 清空 canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 设置背景颜色（使用渐变色）
+      const gradient = ctx.createLinearGradient(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+      gradient.addColorStop(0, "#f2f2f2");
+      gradient.addColorStop(1, "#dcdcdc");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 添加干扰线
+      for (let i = 0; i < 5; i++) {
+        ctx.strokeStyle = this.getRandomColor();
+        ctx.lineWidth = Math.random() * 2;
+        ctx.beginPath();
+        ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+        ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+        ctx.stroke();
+      }
+
+      // 设置字体大小和样式
+      ctx.font = "28px Arial";
+
+      // 绘制验证码字符，并增加旋转和随机颜色
+      for (let i = 0; i < captchaText.length; i++) {
+        ctx.fillStyle = this.getRandomColor();
+        ctx.save();
+        ctx.translate(30 * i + 20, 30);
+        const angle = Math.random() * 0.4 - 0.2; // 随机旋转角度
+        ctx.rotate(angle);
+        ctx.fillText(captchaText[i], 0, 0);
+        ctx.restore();
+      }
+    },
+    //生成随机颜色
+    getRandomColor() {
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    },
     // 根据权限进行跳转页面
-    ShowPageUpToRight(){
-      const userRight = this.$store.getters['user/getUserRight'];
-      console.log('userRight:',userRight);
-      switch(userRight){
-        case 'coach':
-          this.$router.replace({name:'Home'})
+    ShowPageUpToRight() {
+      const userRight = this.$store.getters["user/getUserRight"];
+      const userTeamID = this.$store.getters["user/getTeamID"];
+      console.log("userRight:", userRight);
+      console.log("userTeamID:", userTeamID);
+      switch (userRight) {
+        case "coach":
+          this.$router.replace({ name: "Home" });
           break;
-        case 'manager':
-          this.$router.replace({name:'Team'})
+        case "manager":
+          this.$router.replace({ name: "TeamPage",params:{teamID: userTeamID} });
           break;
-        case 'admin':
-          this.$router.replace({name:'Admin'})
+        case "admin":
+          this.$router.replace({ name: "Admin" });
           break;
         default:
-          this.$router.replace({name:'Home'})
+          this.$router.replace({ name: "Home" });
           break;
       }
-     
     },
     // 提交表单
     dataFormSubmit() {
       this.$refs["dataForm"].validate((valid) => {
         if (valid) {
-          // 使用 axios 直接发送 POST 请求
-          axios
-            .post("/api/v1/user/login", {
-              user_id: this.dataForm.userID,
-              user_password: this.dataForm.password,
-            })
-            .then(({ data }) => {
-              console.log("data.code=", data.code);
-              console.log("data.msg=", data.msg);
-              if (data.code == 200) {
-                // code == 200 表示成功
-                VueCookies.set("isLoggedIn", "true", "1h"); // 设置 Cookie
-                VueCookies.set("token", data.token);//               
-                this.getUserInfo(this.dataForm.userID)
-                
-              }
-            })
-            .catch((error) => {
-              console.log("error=",error);
-              console.error(error);
-              if(error.response.data.code==500){
-
-                this.$message.error(error.response.data.msg);
-              }
-              else{
-                this.$message.error("登陆失败，请检查密码或者网络");
-              }
-              this.getCaptcha();
-              
-            });
+          const now = Date.now();
+          const timeElapsed = now - this.captchaTimestamp;
+          if (timeElapsed > this.captchaValidityPeriod) {
+            this.$message.error("验证码已过期，请重新生成验证码");
+            this.generateCaptcha(); // 验证码过期时重新生成
+            this.generatedCaptcha = ""; // 清空验证码输入框
+            return; // 阻止后续的登录逻辑执行
+          }
+          if (
+            this.dataForm.captcha.toUpperCase() ===
+            this.generatedCaptcha.toUpperCase()
+          ) {
+            // 验证码匹配，执行登录操作
+            console.log("验证码正确");
+            // 执行登录逻辑
+            // 使用 axios 直接发送 POST 请求
+            axios
+              .post("/api/v1/user/login", {
+                user_id: this.dataForm.userID,
+                user_password: this.dataForm.password,
+              })
+              .then(({ data }) => {
+                console.log("data.code=", data.code);
+                console.log("data.msg=", data.msg);
+                if (data.code == 200) {
+                  // code == 200 表示成功
+                  VueCookies.set("isLoggedIn", "true", "1h"); // 设置 Cookie
+                  VueCookies.set("token", data.token); //
+                  this.getUserInfo(this.dataForm.userID);
+                }
+              })
+              .catch((error) => {
+                console.log("error=", error);
+                console.error(error);
+                if (error.response.data.code == 500) {
+                  this.$message.error(error.response.data.msg);
+                } else {
+                  this.$message.error("登陆失败，请检查密码或者网络");
+                }
+              });
+          } else {
+            this.$message.error("验证码错误，请重新输入");
+            this.generatedCaptcha = ""; //清空验证码
+            this.generateCaptcha(); // 验证码错误时重新生成
+          }
         }
       });
     },
 
-    getUserInfo(userID){//获取用户所有信息
+    getUserInfo(userID) {
+      //获取用户所有信息
       axios
-        .get('/api/v1/user/displayone',{
-          params:{
-            userId: userID,//userId是后端接口期待的参数名
-
-          }
+        .get("/api/v1/user/displayone", {
+          params: {
+            userId: userID, //userId是后端接口期待的参数名
+          },
         })
-        .then(({data}) => {
-          const user = data[0];//当前只返回一个用户的数据
+        .then(({ data }) => {
+          const user = data[0]; //当前只返回一个用户的数据
 
-           console.log("User info:", {
+          console.log("User info:", {
             "\nuser_id: ": user.USER_ID,
             "\nuser_name: ": user.USER_NAME,
             "\nuser_right: ": user.USER_RIGHT,
             "\nuser_phone: ": user.USER_PHONE,
             "\nuser_icon: ": user.ICON,
+            "\nuser_teamid: ":user.TEAM_ID,
           });
 
-          this.$store.commit( 'user/setUser',{//保存用户状态
+          this.$store.commit("user/setUser", {
+            //保存用户状态
             user_id: user.USER_ID,
             user_name: user.USER_NAME,
             user_right: user.USER_RIGHT,
             user_phone: user.USER_PHONE,
             user_icon: user.ICON,
+            user_teamid: user.TEAM_ID,
           });
-          console.log("USER:",user);
-          return axios.get('/api/v1/user/getDeleteImage', {
-              params:{
-                userId: user.USER_ID,
-              }
-            });
+          console.log("USER:", user);
+          return axios.get("/api/v1/user/getDeleteImage", {
+            params: {
+              userId: user.USER_ID,
+            },
+          });
         })
         .then((response) => {
           console.log(response);
           const deleteIcon = response.data[0].DELETE_ICON;
-          console.log('Delete Icon:', deleteIcon);
-          this.$store.commit( 'user/updateDeleteIcon',{//保存用户删除图标的状态
+          console.log("Delete Icon:", deleteIcon);
+          this.$store.commit("user/updateDeleteIcon", {
+            //保存用户删除图标的状态
             user_delete_icon: deleteIcon,
           });
         })
@@ -233,22 +323,12 @@ export default {
         })
         .finally(() => {
           this.ShowPageUpToRight();
-        })
-        
+        });
     },
 
     //跳转到注册路由
-    gotoRegister(){
-      this.$router.push({name : 'Register'});//跳转到注册界面
-    },
-
-    // 获取验证码和图片路径
-    // 调用 API 获取新的验证码路径
-    getCaptcha() {
-      this.dataForm.uuid = getUUID();
-      /*this.captchaPath = this.$http.adornUrl(
-        `/api/captcha.jpg?uuid=${this.dataForm.uuid}`
-      );*/
+    gotoRegister() {
+      this.$router.push({ name: "Register" }); //跳转到注册界面
     },
   },
 };
@@ -328,6 +408,12 @@ export default {
   .login-btn-submit {
     width: 100%;
     margin-top: 38px;
+  }
+  .login-captcha canvas {
+    width: 100%;
+    height: 40px; // 提高高度
+    border: 1px solid #ccc;
+    cursor: pointer;
   }
 }
 </style>
