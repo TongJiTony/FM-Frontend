@@ -139,6 +139,18 @@ export default {
         this.$router.push( { name: "PlayerList", params: { teamId: userTeamid }});
       return;
     }
+
+    if (key === '/lineup' && userright === 'manager') {
+      if (this.$route.path!==`/lineup/${userTeamid}`)
+        this.$router.push( { name: "lineup", params: { teamID: userTeamid }});
+      return;
+    }
+    if (key === '/training' && userright === 'manager') {
+      if (this.$route.path!==`/training/${userTeamid}`)
+        this.$router.push( { name: "training", params: { teamId: userTeamid }});
+      return;
+    }
+
     if (this.$route.path !== key) {
         this.$router.push(key);
       }
