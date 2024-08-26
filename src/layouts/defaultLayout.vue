@@ -130,6 +130,13 @@ export default {
       this.applyBackView(this.currentBackground);
     },
     handleSelect(key) {
+      const userright = this.$store.getters["user/getUserRight"]; // 获取用户角色
+
+    if (key === '/team' && userright === 'manager') {
+      // 如果用户角色是 manager 且点击了 team，则不跳转
+      this.$message.info('你无权访问Team页面，保持原页面');
+      return; // 直接返回，不执行后续的跳转操作
+    }
       if (this.$route.path !== key) {
         this.$router.push(key);
       }

@@ -78,7 +78,7 @@ export default {
       Input_user_psw:'',
       uploadAction: "https://api.imgbb.com/1/upload",
       imgbbApiKey: "a18b4cdd1ea4b32881a598e7f32b854a",
-      expirationTime: 604800, // 7 days in seconds
+      expirationTime: 2592000, // 30 days in seconds
       name:"FoodballManager",
       currentDeleteUrl:"",
     };
