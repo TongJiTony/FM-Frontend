@@ -10,8 +10,8 @@
               <el-button type="primary" size='small' icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
             </div>
             <el-col :span="6">
-              <div class="team-image">
-                <img v-if="teamURL" :src="teamURL" alt="Team Image" />
+              <div >
+                <img v-if="teamURL" :src="teamURL" alt="Team Image" class="team-image"/>
               </div>
             </el-col>                 
             <h2 style="font-size: 24px;">{{ team[0].TEAM_NAME }}</h2>                                          
@@ -216,9 +216,9 @@
             console.log('Received data:', response.data);
             this.player = response.data;
             this.topPlayers = this.player
-      .sort((a, b) => b.RANK - a.RANK) // 按 RANK 降序排序
-      .slice(0, 3); // 取前三个元素
-      console.log('TOPPLAYER',this.topPlayers)
+            .sort((a, b) => b.RANK - a.RANK) // 按 RANK 降序排序
+            .slice(0, 3); // 取前三个元素
+            console.log('TOPPLAYER',this.topPlayers)
             this.loading = false;
         })
         .catch(error => {

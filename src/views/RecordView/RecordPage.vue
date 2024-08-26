@@ -141,14 +141,15 @@
 
     <el-tab-pane label="工资" name="fourth">
       <el-card shadow="never" class="box-card4">
+        
               <el-table :data="contract" style="width: 100%">
-              <el-table-column prop="player_id" label="球员编号" width="800">
+              <el-table-column prop="PLAYER_NAME" label="球员" width="800">
               </el-table-column>
-              <el-table-column prop="salary" label="薪水">
+              <el-table-column prop="SALARY" label="薪水">
               </el-table-column>
-              <el-table-column prop="start date" label="开始日期">
+              <el-table-column prop="START_DATE" label="开始日期">
               </el-table-column>
-              <el-table-column prop="end date" label="结束日期">
+              <el-table-column prop="END_DATE" label="结束日期">
               </el-table-column>
               </el-table>
             </el-card>
@@ -178,7 +179,7 @@
   }
  .box-card4 {
     width: 100%;
-    height: 600px;
+   
   }
 .echart-box {
   width: 600px;
@@ -248,7 +249,7 @@ export default {
     this.fetchTeamRecords();
     this.currentMonth();
     this.previousMonth();
-
+    this.fetchTeamContracts();
   },
   computed: {
     filteredPosRecords() {
@@ -297,7 +298,7 @@ export default {
     formatAmount(row, column, cellValue) {
       return Math.abs(cellValue);
     },
-    fetchTeamConotracts() {
+    fetchTeamContracts() {
        const teamID = this.$route.params.teamID;
         axios.get(`/api/v1/contract/displayall?teamid=${teamID}`)
           .then(response => {
