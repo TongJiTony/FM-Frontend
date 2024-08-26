@@ -145,6 +145,13 @@ from：当前导航正要离开的路由对象。
 next：一个函数，调用它来决定接下来的行为。
 */
 router.beforeEach((to, from, next) => {
+  // 设置页面标签为路由的名称
+  if (to.name) {
+    document.title = to.name;
+  } else {
+    document.title = 'Football Manager'; // 你可以在这里设置默认的页面标签
+  }
+
   const isLoggedIn = Vue.$cookies.get("isLoggedIn");
   const userRole = router.app.$store.getters["user/getUserRight"];
   const userTeamid = router.app.$store.getters["user/getTeamID"];
@@ -173,7 +180,7 @@ router.beforeEach((to, from, next) => {
     } 
     else if (userRole === "admin") {
       next({ name: "Admin" });
-    } 
+    }
     else {
       next({ name: "Home" });
     }
