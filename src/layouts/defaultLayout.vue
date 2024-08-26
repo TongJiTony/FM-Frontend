@@ -13,40 +13,37 @@
           text-color="var(--text-color)"
           active-text-color="var(--active-text-color)"
         >
-          <el-menu-item class="test" index="/">Home</el-menu-item>
-          <el-menu-item index="/test">Test</el-menu-item>
-          <el-menu-item index="/team">Team</el-menu-item>
-          <el-menu-item index="/player-list">Player List</el-menu-item>
-          <el-menu-item index="/lineup">Lineup</el-menu-item>
-          <div class="menu-right">
-            <el-submenu>
-              <template slot="title">
-                <i class="el-icon-setting"></i>
-                <span class="username-title">{{
-                  this.$store.getters["user/getUserName"]
-                }}</span>
-                <img
-                  :src="this.$store.getters['user/getUserIcon']"
-                  class="user-icon"
-                  @error="handleImageError"
-                />
-              </template>
-              <el-menu-item class="user-action-item" index="/changepsw"
-                >Change Password</el-menu-item
-              >
-              <el-menu-item class="user-action-item" index="/userinfo"
-                >{{ this.$store.getters["user/getUserName"] }}'s
-                info</el-menu-item
-              >
-            </el-submenu>
-          </div>
+          <!-- <el-menu-item class="test" index="/">Home</el-menu-item>
+          <el-menu-item index="/test">Test</el-menu-item> -->
+          <el-menu-item index="/team">队伍主页</el-menu-item>
+          <el-menu-item index="/player-list">球员总览</el-menu-item>
+          <el-menu-item index="/lineup">排兵布阵</el-menu-item>
+          <el-menu-item index="/medical">健康情况</el-menu-item>
+          <el-menu-item index="/training">训练计划</el-menu-item>
+          <el-submenu class="menu-right">
+            <template slot="title">
+              <i class="el-icon-setting"></i>
+              <span class="username-title">{{
+                this.$store.getters["user/getUserName"]
+              }}</span>
+              <img
+                :src="this.$store.getters['user/getUserIcon']"
+                class="user-icon"
+                @error="handleImageError"
+              />
+            </template>
+            <el-menu-item class="user-action-item" index="/changepsw"
+              >Change Password</el-menu-item
+            >
+            <el-menu-item class="user-action-item" index="/userinfo"
+              >{{ this.$store.getters["user/getUserName"] }}'s
+              info</el-menu-item
+            >
+          </el-submenu>
           <button class="button-change-theme" @click="toggleTheme">
             切换主题
           </button>
-          <button
-            class="button-change-BackGroundImages"
-            @click="toggleBackgroundImage"
-          >
+          <button class="button-change-BackGroundImages" @click="toggleBackgroundImage">
             切换背景
           </button>
         </el-menu>
@@ -60,7 +57,7 @@
     <el-footer style="height: auto">
       <h4>关于我们</h4>
       <p>
-        我们来自同济大学软件学院，这是我们的数据库课程设计项目，也是我们第一次接触软件项目开发，学习前后端开发的相关知识后的成果。
+        Hi there!我们来自同济大学软件学院，正在学习软件项目开发，并在实践中锻炼前后端开发能力。这是我们的数据库课程设计项目，如果有任何疑问，请联系我们！
       </p>
       <p class="copyright">
         Copyright © 2024 TJ Football Manager. All rights reserved.

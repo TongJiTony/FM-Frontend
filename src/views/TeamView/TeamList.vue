@@ -4,9 +4,20 @@
       <div v-else>
         <el-container>
           <el-main>
-           <el-input v-model="search" placeholder="输入球队名称搜索" clearable>
+           
+      <el-col :span="18">
+        <el-button type="primary"  @click="formTeam" >组建球队</el-button>
+        
+
+      </el-col>
+      <el-col :span="6">
+        <el-input v-model="search" placeholder="输入球队名称搜索" clearable>
            <i slot="prefix" class="el-input__icon el-icon-search"></i>
            </el-input>
+      </el-col>
+
+      <el-col :span="24" style="height: 12px;"></el-col> 
+          
             <el-table :data="team.filter(data => !search || data.TEAM_NAME.includes(search))" style="width: 100%">
               <el-table-column prop="TEAM_ID" label="ID" width="200">
               </el-table-column>
@@ -18,7 +29,7 @@
               </el-table-column>
               <el-table-column prop="CITY" label="城市"  >
               </el-table-column>
-
+             
               <el-table-column fixed="right" width="250">
                 <!-- eslint-disable-next-line -->
             
@@ -43,8 +54,7 @@
       return {
         search: '',
         loading: true,
-          team: []
-        
+        team: [],
       };
     },
     created() {
@@ -95,10 +105,12 @@
           message: Message,
         });
       },
+
+
     },
   };
   </script>
 
-<style>
+<style scoped>
 
 </style>

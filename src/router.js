@@ -35,6 +35,11 @@ const router = new Router({
           component: () => import("@/views/TeamView/TeamDetail.vue"),
         },
         {
+          path: "/record/:teamID",
+          name: "RecordPage",
+          component: () => import("@/views/RecordView/RecordPage.vue"),
+        },
+        {
           path: "/player-list/:teamId?",
           name: "PlayerList",
           component: () => import("@/views/PlayerView/PlayerList.vue"),
@@ -45,6 +50,11 @@ const router = new Router({
           component: () => import("@/views/PlayerView/PlayerDisplay.vue"),
         },
         {
+          path: "medical",
+          name: "medical",
+          component: () => import("@/views/MedicalView/MedicalList.vue"),
+        },
+        {
           path: "/lineup/:teamID?",
           name: "lineup",
           component: () => import("@/views/LineupView/LineupView.vue"),
@@ -53,6 +63,11 @@ const router = new Router({
           path: "/lineupDetail/:lineupId",
           name: "lineupDetail",
           component: () => import("@/views/LineupView/LineupDetail.vue"),
+        },
+        {
+          path: "/training/:teamId?",
+          name: "training",
+          component: () => import("@/views/TrainingView/TrainingView.vue"),
         },
         {
           path: "changepsw",
@@ -123,8 +138,6 @@ const router = new Router({
   ],
 });
 
-
-
 // 导航守卫
 /*
 to：即将要进入的目标路由对象。
@@ -132,6 +145,13 @@ from：当前导航正要离开的路由对象。
 next：一个函数，调用它来决定接下来的行为。
 */
 router.beforeEach((to, from, next) => {
+  // 设置页面标签为路由的名称
+  if (to.name) {
+    document.title = to.name;
+  } else {
+    document.title = 'Football Manager'; // 你可以在这里设置默认的页面标签
+  }
+
   const isLoggedIn = Vue.$cookies.get("isLoggedIn");
   const userRole = router.app.$store.getters["user/getUserRight"];
   const userTeamid = router.app.$store.getters["user/getTeamID"];

@@ -1,151 +1,469 @@
 <template>
   <div class="player-display">
     <el-card shadow="always">
-      <!-- Back Button -->
-      <el-button
-        type="primary"
-        icon="el-icon-arrow-left"
-        @click="goBack"
-        class="back-button"
-      >
-        返回
-      </el-button>
-      
-      <el-row :gutter="20">
+      <!-- 第一层：球员图片，ID/名字/生日，球队，惯用脚 -->
+      <el-row :gutter="20" class="top-layer">
+        <!-- 球员图片 -->
         <el-col :span="6">
-          <div class="player-image">
-            <img src="path/to/placeholder-image.png" alt="Player Image" />
-          </div>
+          <el-card class="module-card" shadow="hover">
+            <img :src="player[0].ICON" alt="Player Image" class="card-image" />
+          </el-card>
         </el-col>
-        <el-col :span="18" class="player-info">
-          <h2>{{ player[0].PLAYER_NAME }}</h2>
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <p>
-                <strong>球员编号:</strong>
-                <el-tag>{{ player[0].PLAYER_ID }}</el-tag>
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>生日:</strong>
-                <el-tag>{{ player[0].BIRTHDAY }}</el-tag>
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>队伍:</strong>
-                <el-tag>{{ player[0].TEAM_NAME }}</el-tag>
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>位置:</strong>
-                <el-tag>{{ player[0].ROLE }}</el-tag>
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>惯用脚:</strong>
-                <el-tag>{{ player[0].USED_FOOT === 1 ? '右脚' : '左脚' }}</el-tag>
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>健康状态:</strong>
-                <el-tag :type="player[0].HEALTH_STATE === 1 ? 'danger' : 'success'">{{ player[0].HEALTH_STATE === 1 ? '受伤' : '健康' }}</el-tag>
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>比赛状态:</strong>
-                <el-tag :type="player[0].GAME_STATE === 1 ? 'danger' : 'success'">{{ player[0].GAME_STATE === 1 ? '禁赛' : '允许出场' }}</el-tag>
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>转会状态:</strong>
-                <el-tag :type="player[0].TRANS_STATE === 1 ? 'success' : 'danger'">{{ player[0].TRANS_STATE === 1 ? '允许转会' : '禁止转会' }}</el-tag>
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>评分:</strong>
-                <el-tag>{{ player[0].RANK }}</el-tag>
-              </p>
-            </el-col>
-            <el-col :span="12">
-              <p>
-                <strong>显示状态:</strong>
-                <el-tag>{{ player[0].IS_SHOW }}</el-tag>
-              </p>
-            </el-col>
-          </el-row>
+
+        <!-- ID，名字，生日 -->
+        <el-col :span="6">
+          <el-card class="module-card" shadow="hover">
+            <div slot="header" class="clearfix">
+              <span>基本信息</span>
+            </div>
+            <el-row class="info-row">
+              <el-col :span="12">
+                <el-tag type="info">{{ player[0].PLAYER_ID }}</el-tag>
+              </el-col>
+              <el-col :span="12">
+                <el-tag type="info">{{ player[0].PLAYER_NAME }}</el-tag>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="24">
+                <el-tag type="info"
+                  >{{ player[0].BIRTHDAY }} ({{
+                    calculateAge(player[0].BIRTHDAY)
+                  }}
+                  岁)</el-tag
+                >
+              </el-col>
+            </el-row>
+          </el-card>
+        </el-col>
+
+        <!-- 球队 -->
+        <el-col :span="6">
+          <el-card class="module-card" shadow="hover">
+            <div slot="header" class="clearfix">
+              <span>球队</span>
+            </div>
+            <el-row>
+              <el-col :span="24">
+                <el-tag type="info">{{ player[0].TEAM_NAME }}</el-tag>
+              </el-col>
+              <el-col>
+                <img
+                  src="https://img.51miz.com/Element/00/91/85/34/422e1064_E918534_f98a4621.png"
+                  alt="Team Image"
+                  class="team-logo"
+                />
+              </el-col>
+            </el-row>
+          </el-card>
+        </el-col>
+
+        <!-- 惯用脚 -->
+        <el-col :span="6">
+          <el-card class="module-card" shadow="hover">
+            <div slot="header" class="clearfix">
+              <span>惯用脚</span>
+            </div>
+            <el-tag type="info">{{
+              player[0].USED_FOOT === 1 ? "Right Foot" : "Left Foot"
+            }}</el-tag>
+          </el-card>
+        </el-col>
+      </el-row>
+
+      <!-- 分隔线 -->
+      <el-divider></el-divider>
+
+      <!-- 第二层：球场和评分 -->
+      <el-row :gutter="20" class="middle-layer">
+        <!-- 球场 -->
+        <el-col :span="12">
+          <el-card class="module-card2" shadow="hover">
+            <div slot="header" class="clearfix">
+              <span>{{ player[0].ROLE }}</span>
+            </div>
+            <img
+              src="https://i.ibb.co/2jL5H73/playground.jpg"
+              alt="Football Field"
+              class="field-image"
+            />
+            <div class="player-position" :style="positionStyle"></div>
+          </el-card>
+        </el-col>
+
+        <!-- 评分 -->
+        <el-col :span="12">
+          <el-card class="module-card2" shadow="hover">
+            <div slot="header" class="clearfix">
+              <span>评分</span>
+            </div>
+            <el-progress
+              type="circle"
+              :percentage="player[0].RANK"
+            ></el-progress>
+          </el-card>
+        </el-col>
+      </el-row>
+
+      <!-- 分隔线 -->
+      <el-divider></el-divider>
+
+      <!-- 第三层：医疗，阵容，比赛，转会 -->
+      <el-row :gutter="20" class="bottom-layer">
+        <el-col :span="6">
+          <el-card class="module-card3" shadow="hover">
+            <p>Medical</p>
+            <el-table
+              :data="tableData"
+              style="width: 100%"
+              v-if="tableData.length"
+              height="120"
+            >
+              <el-table-column
+                prop="MEDICAL_ID"
+                label="ID"
+                width="80"
+              ></el-table-column>
+              <el-table-column
+                prop="HURT_PART"
+                label="受伤部位"
+              ></el-table-column>
+              <el-table-column
+                prop="MEDICAL_CARE"
+                label="医疗建议"
+              ></el-table-column>
+              <el-table-column label="受伤天数" width="120">
+                <template slot-scope="scope">
+                  <span
+                    >{{
+                      calculateDaysDifference(
+                        scope.row.HURT_TIME,
+                        scope.row.PRED_REC_DATE
+                      )
+                    }}
+                    days</span
+                  >
+                </template>
+              </el-table-column>
+            </el-table>
+            <p v-else>No medical records found for this player.</p>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="module-card3" shadow="hover">
+            <p>Line-up</p>
+            <el-table
+              :data="lineupData"
+              style="width: 100%"
+              v-if="lineupData.length"
+              height="120"
+            >
+              <el-table-column
+                prop="LINEUP_ID"
+                label="ID"
+                width="80"
+              ></el-table-column>
+              <el-table-column prop="TEAM_NAME" label="球队"></el-table-column>
+              <el-table-column
+                prop="NOTE"
+                label="备注"
+                width="100"
+              ></el-table-column>
+            </el-table>
+            <p v-else>No lineup records found for this player.</p>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="module-card3" shadow="hover">
+            <p>Match</p>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="module-card3" shadow="hover">
+            <p>Transfer</p>
+            <el-table
+              :data="transferData"
+              style="width: 100%"
+              v-if="transferData.length"
+              height="120"
+            >
+              <el-table-column
+                prop="transfer_id"
+                label="ID"
+                width="60"
+              ></el-table-column>
+              <el-table-column
+                prop="team_id_from"
+                label="From"
+              ></el-table-column>
+              <el-table-column prop="team_id_to" label="To"></el-table-column>
+              <el-table-column
+                prop="transfer_fees"
+                label="Fees"
+              ></el-table-column>
+              <el-table-column
+                prop="transfer_date"
+                label="Date"
+              ></el-table-column>
+            </el-table>
+            <p v-else>No transfer records found for this player.</p>
+          </el-card>
         </el-col>
       </el-row>
     </el-card>
-    <p v-if="loading" class="loading-text">Loading player data...</p>
-    <div v-else>
-      <div v-if="!player">
-        <p>No player data available.</p>
-      </div>
-    </div>
   </div>
 </template>
 
-
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
     return {
+      transferData: [],
+      lineupData: [],
+      tableData: [],
+      allData: [],
+      positionStyle: {
+        position: "absolute",
+        top: "50%", // Adjust based on player role/position
+        left: "20%", // Adjust based on player role/position
+        transform: "translate(-50%, -50%)",
+        width: "20px",
+        height: "20px",
+        backgroundColor: "red",
+        borderRadius: "50%",
+      },
       loading: true,
-      player: null
+      player: null,
     };
   },
   created() {
+    this.fetchTransferRecords();
+    this.fetchLineupRecords();
     this.fetchPlayerData();
+    this.fetchMedicalRecords();
   },
   methods: {
+    calculateAge(birthday) {
+      const birthDate = new Date(birthday);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+
+      if (
+        monthDiff < 0 ||
+        (monthDiff === 0 && today.getDate() < birthDate.getDate())
+      ) {
+        age--;
+      }
+
+      return age;
+    },
+
+    calculateDaysDifference(hurtTime, recoveryDate) {
+      const hurtDate = new Date(hurtTime).setHours(0, 0, 0, 0);
+      const recovery = new Date(recoveryDate).setHours(0, 0, 0, 0);
+      const difference = (recovery - hurtDate) / (1000 * 60 * 60 * 24); // 转换为天数
+      return difference;
+    },
+
+    fetchTransferRecords() {
+      const playerId = this.$route.params.playerId;
+      if (playerId) {
+        axios
+          .get(`/api/v1/transfer/displayall?playerid=${playerId}`)
+          .then((response) => {
+            console.log("Received transfer data:", response.data);
+            this.transferData = response.data.sort(
+              (a, b) => a.transfer_id - b.transfer_id
+            );
+          })
+          .catch((error) => {
+            console.error("Failed to fetch transfer list:", error);
+          });
+      }
+    },
+    fetchLineupRecords() {
+      const playerId = this.$route.params.playerId;
+      if (playerId) {
+        axios
+          .get(`/api/v1/lineup/displayall?playerid=${playerId}`)
+          .then((response) => {
+            console.log("Received lineup data:", response.data);
+            this.lineupData = response.data.sort(
+              (a, b) => a.LINEUP_ID - b.LINEUP_ID
+            );
+          })
+          .catch((error) => {
+            console.error("Failed to fetch lineup list:", error);
+          });
+      }
+    },
+
+    fetchMedicalRecords() {
+      const playerId = this.$route.params.playerId;
+      if (playerId) {
+        axios
+          .get(`/api/v1/medical/displayall?playerid=${playerId}`)
+          .then((response) => {
+            console.log("Received data:", response.data);
+            this.tableData = response.data.sort(
+              (a, b) => a.MEDICAL_ID - b.MEDICAL_ID
+            );
+            this.allData = [...this.tableData];
+          })
+          .catch((error) => {
+            console.error("Failed to fetch medical list for team:", error);
+          });
+      }
+    },
+
     fetchPlayerData() {
       const playerId = this.$route.params.playerId;
-      console.log('Fetching data for player ID:', playerId);
-      axios.get(`/api/v1/player/displayone?playerid=${playerId}`)
-        .then(response => {
-          console.log('Received data:', response.data);
+      console.log("Fetching data for player ID:", playerId);
+      axios
+        .get(`/api/v1/player/displayone?playerid=${playerId}`)
+        .then((response) => {
+          console.log("Received data:", response.data);
           this.player = response.data;
+          this.updatePositionStyle(); // 调用方法更新positionStyle
           this.loading = false;
         })
-        .catch(error => {
-          console.error('Failed to fetch player data:', error);
+        .catch((error) => {
+          console.error("Failed to fetch player data:", error);
           this.loading = false;
         });
     },
-    goBack() {
-      this.$router.go(-1); // Navigate to the previous page
-    }
-  }
+    updatePositionStyle() {
+      if (this.player && this.player[0].ROLE) {
+        switch (this.player[0].ROLE) {
+          case "F":
+            this.positionStyle.left = "30%"; // Example value for forward
+            break;
+          case "M":
+            this.positionStyle.left = "21%"; // Example value for midfielder
+            break;
+          case "B":
+            this.positionStyle.left = "10%"; // Example value for defender
+            break;
+          case "GK":
+            this.positionStyle.left = "7%"; // Example value for goalkeeper
+            break;
+          default:
+            this.positionStyle.left = "20%"; // Default or unknown role
+        }
+      }
+    },
+  },
 };
 </script>
-
 
 <style scoped>
 .player-display {
   padding: 1rem;
 }
 
-.back-button {
-  margin-bottom: 1rem;
-  background-color: #409eff;
-  border-color: #409eff;
-  color: #fff;
-  margin-left: 10px;
+.module-card {
+  width: 300px;
+  height: 300px;
+  padding: 10px;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.player-image {
-  width: 100%;
+.module-card2 {
+  width: 600px;
   height: 300px;
+  padding: 10px;
+  margin: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.module-card3 {
+  width: 400px;
+  height: 300px;
+  padding: 10px;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.medical-card {
+  height: auto;
+  overflow-y: auto;
+}
+
+.medical-records-container {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px; /* 字体更小 */
+}
+
+.medical-record {
+  margin-bottom: 10px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  background-color: #f9f9f9;
+}
+
+.medical-record p {
+  margin: 2px 0;
+  font-size: 10px; /* 更小的字体 */
+}
+
+.el-divider {
+  margin: 10px 0;
+}
+
+.field-image {
+  width: 100%;
+  height: auto;
+}
+
+.player-position {
+  position: absolute;
+  background-color: red;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+}
+
+.el-row {
+  margin-bottom: 20px;
+}
+
+.card-image {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 5px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.team-image {
+  width: 100px; /* 容器宽度 */
+  height: 100px; /* 容器高度 */
   background-color: #f2f2f2;
   display: flex;
   align-items: center;
@@ -154,41 +472,9 @@ export default {
   overflow: hidden;
 }
 
-.player-image img {
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.player-info {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.player-info p {
-  margin-bottom: 1rem;
-}
-
-.player-info p strong {
-  margin-right: 1rem;
-}
-
-.el-tag {
-  margin-left: 1rem;
-}
-
-.el-tag.success {
-  background-color: #dff0d8;
-  color: #3c763d;
-}
-
-.el-tag.danger {
-  background-color: #f2dede;
-  color: #a94442;
-}
-
-.loading-text {
-  text-align: center;
-  font-size: 1.5rem;
-  color: #666666;
+.team-logo {
+  width: 50%; /* 图像宽度 */
+  height: 50%; /* 图像高度 */
+  object-fit: cover; /* 保持图像比例，剪裁多余部分 */
 }
 </style>
