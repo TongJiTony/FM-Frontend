@@ -128,13 +128,18 @@ export default {
     },
     handleSelect(key) {
       const userright = this.$store.getters["user/getUserRight"]; // 获取用户角色
-
+      const userTeamid = this.$store.getters["user/getTeamID"]; 
     if (key === '/team' && userright === 'manager') {
-      // 如果用户角色是 manager 且点击了 team，则不跳转
-      this.$message.info('你无权访问Team页面，保持原页面');
-      return; // 直接返回，不执行后续的跳转操作
+      if (this.$route.path!==`/teamdetail/${userTeamid}`)
+        this.$router.push( { name: "TeamPage", params: { teamID: userTeamid }});
+      return;
     }
-      if (this.$route.path !== key) {
+    if (key === '/player-list' && userright === 'manager') {
+      if (this.$route.path!==`/player-list/${userTeamid}`)
+        this.$router.push( { name: "PlayerList", params: { teamId: userTeamid }});
+      return;
+    }
+    if (this.$route.path !== key) {
         this.$router.push(key);
       }
     },
