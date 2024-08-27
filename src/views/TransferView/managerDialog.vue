@@ -1,5 +1,8 @@
 <template>
-    <el-dialog :visible="visible" @close="closeDialog" width="1200px">
+    <el-dialog :visible="visible" @close="closeDialog"
+    :before-close="handleClose"
+    width="1200px"
+    >
       <el-row style="margin-left: 40px;" divider>
         <!-- 左侧：用户1信息 -->
         <el-col :span="4" class="user-info">
@@ -24,7 +27,7 @@
 
         <!-- 中间：对话内容 -->
         <el-col :span="14" class="chat-content" :offset="1">
-          <el-card class="chat-box">
+          <el-card class="chat-box" ref="chatBox">
             <div v-for="(message, index) in messages" :key="index" class="message">
               <p><strong>{{ message.user }}:</strong> {{ message.text }}</p>
             </div>
@@ -147,21 +150,6 @@ export default {
   methods: {
     sendMessage() {
       if (this.input.trim()) {
-        // 引导输入下一个关键词
-        const currentKeyword = this.requiredKeywords[this.currentKeywordIndex];
-        const user = 'you';
-        const filterMap = {
-        '转会费': this.transferDetails.fee,
-        '工资': this.transferDetails.salary,
-        '合同时长': this.transferDetails.contractDuration,
-        '转会窗口': this.transferDetails.transferWindow,
-        };
-
-        console.log('currentKeyword:', currentKeyword);
-        console.log("input data:", this.inputdata)
-        console.log('fee:', this.transferDetails.fee);
-        console.log("current key :", filterMap);
-
         // 检测并修改 [] 中的内容
         let text = this.input;
         if (text.includes('[') && text.includes(']')) {
@@ -170,7 +158,8 @@ export default {
           const keyword = text.substring(start + 1, end);
           text = text.replace(`[${keyword}]`, this.inputdata);
         }
-
+        // 引导输入下一个关键词
+        const user = 'you';
         this.messages.push({ user, text });
 
         this.checkKeywordSequence(this.input);
@@ -226,15 +215,25 @@ export default {
       if (this.transferDetails.fee !== null && this.transferDetails.salary !== null &&
           this.transferDetails.transferWindow && this.transferDetails.contractDuration !== null) {
         this.messages.push({ user: 'manager', text: `好的，基本情况已经确定，${this.playerName}对于加盟贵队非常感兴趣，您给出的条件看起来非常合理。我们已经与${this.playerName}和他的经纪人讨论了这份提议，他们没有异议，我们将接受这个方案` });
-        // sleep here
+
+        // 使用 Loading 服务
+        const loadingInstance = this.$loading({
+          lock: true,
+          text: '保存中...',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
         setTimeout(() => {
           this.saveTransferDetails();
+          loadingInstance.close(); // 关闭加载动画
         }, 1000);
       }
     },
     saveTransferDetails() {
       alert('协商成功！转会数据已保存, 请点击保存按钮完成转会！');
       this.save_disabled = false;
+      this.input_disabled = true;
       console.log(this.save_disabled);
     },
 
@@ -304,6 +303,10 @@ export default {
       const randomIndex = Math.floor(Math.random() * this.avatars.length);
       this.randomAvatar = this.avatars[randomIndex];
     },
+    scrollToBottom() {
+      const chatBox = this.$refs.chatBox.$el;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    },
     resetDialog() {
       this.input = '';
       //this.inputprompt = [];
@@ -332,15 +335,36 @@ export default {
       //console.log("保存 ", this.transferDetails);
       this.$emit('close');
     },
-    handleCancel() {
-      this.$emit('close');
-    },
+    handleClose() {
+      this.$confirm('确认退出？这将会终止这次协商。')
+        .then(() => {
+          // 用户点击了确认按钮
+          this.$message({
+            type: 'success',
+            message: '退出成功'
+          });
+          this.$emit('close');
+        })
+        .catch(() => {
+          // 用户点击了取消按钮
+          this.$message({
+            type: 'info',
+            message: '已取消退出'
+          });
+        });
+    }
   },
   watch: {
     visible(val) {
       if (val) {
         this.resetDialog();
       }
+    },
+    messages() {
+      this.$nextTick(() => {
+        this.scrollToBottom();
+        console.log("滚动到底部"); 
+      });
     }
   },
   computed: {
@@ -365,8 +389,6 @@ export default {
 
 <style scoped>
 .prompts {
-  height: 280px;
-  margin-top: 30%;
   display: flex;
   flex-direction: column;
   justify-content: center;
