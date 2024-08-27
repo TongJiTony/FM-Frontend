@@ -75,6 +75,11 @@ const router = new Router({
           component: () => import("@/views/TransferView/TransferPage.vue"),
         },
         {
+          path: "/transfer/history",
+          name: "TransferHistory",
+          component: () => import("@/views/TransferView/TransferHistory.vue"),
+        },
+        {
           path: "changepsw",
           name: "Changepsw",
           component: () => import("@/views/UserSetting/ChangePassword.vue"),

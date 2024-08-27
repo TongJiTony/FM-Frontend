@@ -32,6 +32,11 @@
           <el-button type="primary" @click="applyFilters">确认筛选</el-button>
           <el-button @click="resetFilters">重置筛选</el-button>
         </el-form-item>
+        <el-form-item>
+          <el-button type="success" @click="goToTransferHistory"
+            >查看历史转会信息</el-button
+          >
+        </el-form-item>
       </el-form>
     </div>
 
@@ -51,9 +56,7 @@
           }}
           | 等级:{{ player.RANK }}
           <!-- 添加按钮 -->
-          <el-button @click="openDialog(player)">
-            向经纪人询问转会
-          </el-button>
+          <el-button @click="openDialog(player)"> 向经纪人询问转会 </el-button>
         </li>
       </ul>
     </div>
@@ -95,26 +98,30 @@ export default {
       }, // 用于存储传递和接收的转会信息
     };
   },
+  computed: {
+    // 获取当前用户的球队 ID
+    currentTeamId() {
+      return this.$store.getters["user/getTeamID"];
+    },
+  },
+
   watch: {
     dialogVisible(newVal) {
       console.log("dialogVisible changed to:", newVal);
     },
   },
   methods: {
+    // 新增的跳转到转会历史页面的方法
+    goToTransferHistory() {
+      this.$router.push({ name: "TransferHistory" });
+    },
+
     // 点击"向经纪人询问转会"按钮时触发
     openDialog(player) {
       this.transferInfo.playerName = player.PLAYER_NAME; // 设置当前选中的球员姓名
       console.log("Selected player:", this.transferInfo.playerName);
       this.dialogVisible = true;
     },
-
-    /* 处理对话框返回的数据
-    handleSaveTransfer(transferData) {
-      // 将组件返回的数据保存到 transferInfo 中
-      this.transferInfo = transferData;
-      // 在这里决定是否立即发送数据到其他页面，或者存储在暂时的容器中以便稍后处理
-      console.log("Transfer data received:", this.transferInfo);
-    },*/
 
     // 计算球员年龄的函数
     calculateAge(birthday) {
@@ -132,25 +139,22 @@ export default {
       return age < 1 ? 1 : age;
     },
 
-    /// 在这里确认
     saveTransfer(transferInfo) {
       console.log("saveTransfer called with:", transferInfo);
       this.transferInfo = transferInfo;
     },
 
     fetchPlayers() {
-      const teamId = this.$route.params.teamId;
-      const fetchUrl = teamId
-        ? `/api/v1/player/displayall?teamid=${teamId}`
-        : "/api/v1/player/displayall";
+      const fetchUrl = "/api/v1/player/displayall";
 
       axios
         .get(fetchUrl)
         .then((response) => {
           this.players = response.data;
-          // 初始化时，筛选 TRANS_STATE 为 true 的球员
+          // 初始化时，筛选 TRANS_STATE 为 true 且不属于当前球队的球员
           this.initialFilteredPlayers = this.players.filter(
-            (player) => player.TRANS_STATE === 1
+            (player) =>
+              player.TRANS_STATE === 1 && player.TEAM_ID !== this.currentTeamId
           );
           // 设置初始显示列表和筛选列表为初始筛选结果
           this.filteredPlayers = [...this.initialFilteredPlayers];
