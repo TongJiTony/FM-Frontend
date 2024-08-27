@@ -52,7 +52,9 @@
           </el-card>
 
           <el-card v-if="inputcard_visible" class="prompts" style="height: 200px">
-            <h3 class="title">在这里补充数据</h3>
+            <h3 v-if="this.currentKeywordIndex === 0" class="title">补充转会费(万元)</h3>
+            <h3 v-else-if="this.currentKeywordIndex === 1" class="title">补充工资(万元)</h3>
+            <h3 v-else-if="this.currentKeywordIndex === 3" class="title">补充合同时长(年)</h3>
             <div v-if="this.currentKeywordIndex !== 2">
               <el-input v-model="inputdata"></el-input>
             </div>
@@ -147,7 +149,7 @@ export default {
       if (this.input.trim()) {
         // 引导输入下一个关键词
         const currentKeyword = this.requiredKeywords[this.currentKeywordIndex];
-        const user = 'user2';
+        const user = 'you';
         const filterMap = {
         '转会费': this.transferDetails.fee,
         '工资': this.transferDetails.salary,
@@ -155,9 +157,8 @@ export default {
         '转会窗口': this.transferDetails.transferWindow,
         };
 
-        
-
         console.log('currentKeyword:', currentKeyword);
+        console.log("input data:", this.inputdata)
         console.log('fee:', this.transferDetails.fee);
         console.log("current key :", filterMap);
 
@@ -167,7 +168,7 @@ export default {
           const start = text.indexOf('[');
           const end = text.indexOf(']');
           const keyword = text.substring(start + 1, end);
-          text = text.replace(`[${keyword}]`, filterMap[currentKeyword]);
+          text = text.replace(`[${keyword}]`, this.inputdata);
         }
 
         this.messages.push({ user, text });
@@ -224,11 +225,15 @@ export default {
     checkAllDetailsConfirmed() {
       if (this.transferDetails.fee !== null && this.transferDetails.salary !== null &&
           this.transferDetails.transferWindow && this.transferDetails.contractDuration !== null) {
-        this.saveTransferDetails();
+        this.messages.push({ user: 'manager', text: `好的，基本情况已经确定，${this.playerName}对于加盟贵队非常感兴趣，您给出的条件看起来非常合理。我们已经与${this.playerName}和他的经纪人讨论了这份提议，他们没有异议，我们将接受这个方案` });
+        // sleep here
+        setTimeout(() => {
+          this.saveTransferDetails();
+        }, 1000);
       }
     },
     saveTransferDetails() {
-      alert('转会数据已保存, 请点击保存按钮！');
+      alert('协商成功！转会数据已保存, 请点击保存按钮完成转会！');
       this.save_disabled = false;
       console.log(this.save_disabled);
     },
@@ -276,9 +281,9 @@ export default {
 
       const value = item.value;
       if (value === '转会费') {
-        this.input = `我们愿意提供${this.transferDetails.fee === null ? '[XXX]' : this.transferDetails.fee}欧元作为基础转会费，并可以考虑加入一些附加条款来满足您的要求。`
+        this.input = `我们愿意提供${this.transferDetails.fee === null ? '[XXX]' : this.transferDetails.fee}万元作为基础转会费，并可以考虑加入一些附加条款来满足您的要求。`
       } else if (value === '工资') {
-        this.input = `我们愿意提供${this.transferDetails.salary === null ? '[XXX]' : this.transferDetails.salary}作为工资，我们相信这样的条件能够体现他对球队的价值，并且符合我们俱乐部的财务规划。`
+        this.input = `我们愿意提供${this.transferDetails.salary === null ? '[XXX]' : this.transferDetails.salary}万元作为工资，我们相信这样的条件能够体现他对球队的价值，并且符合我们俱乐部的财务规划。`
         } else if (value === '转会窗口') {
           this.input = `我们倾向于在今年${this.transferDetails.transferWindow === '' ? '[XXX]' : this.transferDetails.transferWindow}的转会窗口完成这笔交易`
         } else if (value === '合同时长') {
