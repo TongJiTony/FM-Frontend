@@ -4,6 +4,7 @@
       <div v-for="(message, index) in messages" :key="index" :class="message.role">
         <p>{{ message.content }}</p>
       </div>
+      <div v-if="isAssistantTyping" class="typing-indicator">对方正在输入...</div>
     </div>
     <div class="input-area">
       <input
@@ -12,7 +13,7 @@
         type="text"
         placeholder="输入消息..."
       />
-      <button @click="sendMessage">发送</button>
+      <button :disabled="userInput.trim() === ''" @click="sendMessage">发送</button>
     </div>
   </div>
 </template>
@@ -24,65 +25,74 @@ export default {
   data() {
     return {
       userInput: "",
-      messages: [],
+      messages: [], 
       openai: new OpenAI({
-        apiKey: "GNGr67p13L9KhK9Z7vM2Rsp2XYaFwg5MpNhu4ucZfLXCELNpy7j0wzpLjs6xjms8",
+        apiKey: process.env.VUE_APP_API_KEY,
         baseURL: "https://api.stepfun.com/v1",
+        dangerouslyAllowBrowser: true,
       }),
+      isAssistantTyping: false
     };
   },
   methods: {
-  async sendMessage() {
-    if (this.userInput.trim() === "") return;
+    async sendMessage() {
+      if (this.userInput.trim() === "") return;
 
-    // 用户的消息添加到对话框中
-    this.messages.push({ role: "user", content: this.userInput });
+      // 用户的消息添加到对话框中
+      this.messages.push({ role: "user", content: this.userInput });
 
-    const completion = await this.openai.chat.completions.create({
-      model: "step-1-8k",
-      stream: true,
-      messages: [
-        {
-          role: "system",
-          content: "你是由阶跃星辰提供的AI聊天助手...",
-        },
-        {
-          role: "user",
-          content: this.userInput,
-        },
-      ],
-    });
+      this.isAssistantTyping = true;
 
-    this.userInput = ""; // 清空输入框
+      const userMessage = this.userInput;
+      this.userInput = ""; // 清空输入框
 
-    let assistantMessage = ""; // 初始化空字符串以收集助手的回复
+      let assistantMessage = ""; // 初始化空字符串以收集助手的回复
 
-    for await (const chunk of completion) {
-      const content = chunk.choices[0].delta?.content || "";
-      assistantMessage += content; // 累积内容
+      try {
+        const completion = await this.openai.chat.completions.create({
+            model: "step-1-8k",
+            stream: true,
+            messages: [
+                {
+                    role: "system",
+                    content: "你是由阶跃星辰提供的AI聊天助手...",
+                },
+                {
+                    role: "user",
+                    content: userMessage,
+                },
+            ],
+        });
 
-      // 实时更新对话内容
-      this.updateAssistantMessage(assistantMessage);
-    }
+        for await (const chunk of completion) {
+          const content = chunk.choices[0].delta?.content || "";
+          assistantMessage += content; // 累积内容
+          this.updateAssistantMessage(assistantMessage);
+        }
 
-    // 最后更新完整的消息
-    this.updateAssistantMessage(assistantMessage, true);
-  },
-
-  updateAssistantMessage(content, isFinal = false) {
-    if (isFinal) {
-      // 完成接收时，更新最后一条助手消息
-      this.messages[this.messages.length - 1].content = content;
-    } else {
-      // 在流式接收过程中，实时更新助手消息
-      if (this.messages[this.messages.length - 1].role !== "assistant") {
-        this.messages.push({ role: "assistant", content: "" });
+        this.updateAssistantMessage(assistantMessage, true);
+      } catch (error) {
+        console.error("Error fetching AI response:", error);
+        this.messages.push({ role: "assistant", content: "对不起，无法处理请求。" });
+      } finally {
+        this.isAssistantTyping = false;
       }
-      this.messages[this.messages.length - 1].content = content;
+    },
+
+    updateAssistantMessage(content, isFinal = false) {
+      if (isFinal) {
+        // 完成接收时，更新最后一条助手消息
+        this.messages[this.messages.length - 1].content = content;
+      } else {
+        // 在流式接收过程中，实时更新助手消息
+        const lastMessage = this.messages[this.messages.length - 1];
+        if (!lastMessage || lastMessage.role !== "assistant") {
+          this.messages.push({ role: "assistant", content: "" });
+        }
+        this.messages[this.messages.length - 1].content = content;
+      }
     }
   }
-}
-
 };
 </script>
 
@@ -109,6 +119,13 @@ export default {
   text-align: left;
 }
 
+.typing-indicator {
+  font-style: italic;
+  color: #aaa;
+  text-align: left;
+  margin-top: 10px;
+}
+
 .input-area {
   display: flex;
 }
@@ -127,7 +144,12 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
   background-color: #0056b3;
 }
 </style>

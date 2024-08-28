@@ -21,7 +21,7 @@
           <el-menu-item index="/medical">健康情况</el-menu-item>
           <el-menu-item index="/training">训练计划</el-menu-item>
           <el-menu-item index="/AIChat">智能助手</el-menu-item>
-          <el-submenu class="menu-right">
+          <el-submenu index="sub" class="menu-right">
             <template slot="title">
               <i class="el-icon-setting"></i>
               <span class="username-title">{{

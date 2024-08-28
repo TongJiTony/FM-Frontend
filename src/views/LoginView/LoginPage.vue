@@ -25,7 +25,7 @@
             :rules="dataRule"
             ref="dataForm"
             @keyup.enter.native="dataFormSubmit()"
-            status-icon="true"
+            :status-icon=true
           >
             <!-- 帐号ID输入框 -->
             <!--使用 el-form-item 创建表单项，并通过 prop 属性指定对应的表单数据字段。-->
