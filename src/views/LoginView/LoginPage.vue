@@ -247,6 +247,7 @@ export default {
               .then(({ data }) => {
                 console.log("data.code=", data.code);
                 console.log("data.msg=", data.msg);
+                console.log("data.token=", data.token);
                 if (data.code == 200) {
                   // code == 200 表示成功
                   VueCookies.set("isLoggedIn", "true", "1h"); // 设置 Cookie

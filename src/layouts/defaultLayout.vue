@@ -127,7 +127,31 @@ export default {
       this.applyBackView(this.currentBackground);
     },
     handleSelect(key) {
-      if (this.$route.path !== key) {
+      const userright = this.$store.getters["user/getUserRight"]; // 获取用户角色
+      const userTeamid = this.$store.getters["user/getTeamID"]; 
+    if (key === '/team' && userright === 'manager') {
+      if (this.$route.path!==`/teamdetail/${userTeamid}`)
+        this.$router.push( { name: "TeamPage", params: { teamID: userTeamid }});
+      return;
+    }
+    if (key === '/player-list' && userright === 'manager') {
+      if (this.$route.path!==`/player-list/${userTeamid}`)
+        this.$router.push( { name: "PlayerList", params: { teamId: userTeamid }});
+      return;
+    }
+
+    if (key === '/lineup' && userright === 'manager') {
+      if (this.$route.path!==`/lineup/${userTeamid}`)
+        this.$router.push( { name: "lineup", params: { teamID: userTeamid }});
+      return;
+    }
+    if (key === '/training' && userright === 'manager') {
+      if (this.$route.path!==`/training/${userTeamid}`)
+        this.$router.push( { name: "training", params: { teamId: userTeamid }});
+      return;
+    }
+
+    if (this.$route.path !== key) {
         this.$router.push(key);
       }
     },
