@@ -2,22 +2,20 @@
     <div>
       <p v-if="loading">Loading...</p>
       <div v-else>
-        <el-container>
-          <el-main>
-           
-      <el-col :span="18">
-        <el-button type="primary"  @click="formTeam" >组建球队</el-button>
-        
-
+        <el-card>
+          <el-row>
+            <el-col :span="18">
+        <el-button type="primary"  @click="formTeam" >组建球队</el-button>      
       </el-col>
       <el-col :span="6">
         <el-input v-model="search" placeholder="输入球队名称搜索" clearable>
            <i slot="prefix" class="el-input__icon el-icon-search"></i>
            </el-input>
       </el-col>
-
+          </el-row>
+      
       <el-col :span="24" style="height: 12px;"></el-col> 
-          
+          <el-row>
             <el-table :data="team.filter(data => !search || data.TEAM_NAME.includes(search))" style="width: 100%">
               <el-table-column prop="TEAM_ID" label="ID" width="200">
               </el-table-column>
@@ -40,8 +38,12 @@
                 </template>
               </el-table-column>
             </el-table>
-          </el-main>    
-        </el-container>
+          </el-row>
+            
+            
+       
+        </el-card>
+       
       </div>
     </div>
   </template>

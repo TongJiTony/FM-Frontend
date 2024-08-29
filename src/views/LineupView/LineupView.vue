@@ -1,58 +1,15 @@
 <template>
   <div>
     <p v-if="loading">Loading...</p>
-    <div v-else>
-      <el-container class="home-container">
-        <!--头部  -->
-        <el-header style="font-size: 20px; display: flex; justify-content: space-between; align-items: center;">阵容表
-          <div class="button-contanier">
-            <el-button
-              type="primary"
-              @click="handleAdd"
-              class="add_button"
-            >添加阵容</el-button>
-
-            <el-button
-              type="info"
-              @click="goback"
-              class="goback_button"
-            >返回上级页面</el-button>
-          </div>
-        </el-header>
-
-        <!-- 页面主体 -->
-        <el-container>
-          <el-main>
-            <el-table
-              :data="filteredLineupData"
-              stripe
-              style="width: 100%"
-              fit
-            >
-              <el-table-column
-                type="index"
-              />
-              <el-table-column
-                prop="TEAM_NAME"
-                label="球队"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="LINEUP_ID"
-                label="阵容ID"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="NOTE"
-                label="备注"
-              >
-              </el-table-column>
-              <el-table-column
-                align="right"
-              >
-                <template #header>
-                  <div class='el-input-group'>
-                    <el-select
+    <div v-else class="lineup-list">
+      <el-card>
+        <el-row>
+          <el-col span="16">
+            <el-button  type="primary"  @click="handleAdd"  class="add_button" size="small">添加阵容</el-button>
+          </el-col>
+          <el-col span="8">
+            <el-input-group class="el-input-group">
+              <el-select
                       v-model="selectedColumn"
                       placeholder="选择列"
                       style="width:45%"
@@ -65,33 +22,68 @@
                         :value="column.prop"
                       >
                       </el-option>
-                    </el-select>
-                    <el-input
-                      placeholder="输入关键字搜索"
-                      v-model="searchQuery"
-                    />
-                  </div>
-                </template>
+              </el-select>
+              <el-input  placeholder="输入关键字搜索"  v-model="searchQuery"/>
+              <el-button @click="handleSearch" type="primary" size="small">搜索</el-button>
+              <el-button @click="resetSearch" type="text" size="small">重置</el-button>
+            </el-input-group>
+            
+          </el-col>
+        </el-row>
+        <el-col :span="24" style="height: 12px;"></el-col> 
+        <el-row>
+          <el-card shadow="never">
+            <el-table :data="filteredData"  style="width: 100%" >
+             
+              <el-table-column
+                prop="TEAM_NAME"
+                label="球队"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="LINEUP_ID"
+                label="阵容编号"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="NOTE"
+                label="阵容名称"
+              >
+              </el-table-column>
+              <el-table-column label="操作"  >
+            
                 <template slot-scope="scope">
                   <el-button
+                   type="text"
                     size="small"
                     @click="handleDetails(scope.row)"
                   >详情</el-button>
                   <el-button
-                    size="small"
-                    type="primary"
+                  type="text"
+                size="small"
+                style="color: blue"
                     @click="handleEdit(scope.$index, scope.row)"
-                  >编辑备注</el-button>
+                  >编辑</el-button>
                   <el-button
-                    size="small"
-                    type="danger"
+                  type="text"
+                size="small"
+                style="color: red"
                     @click="handleDelete(scope.$index, scope.row)"
                   >删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
-          </el-main>
-        </el-container>
+          </el-card>
+          <el-pagination
+          background
+                    @current-change="handlePageChange"
+                    :current-page="currentPage"
+                    :page-size="pageSize"
+                    :total="filteredLineupData.length"
+                    layout="total, prev, pager, next"
+                  ></el-pagination>
+        </el-row>
+     
 
         <!-- edit note dialog -->
         <el-dialog
@@ -201,7 +193,9 @@
           </el-row>
         </el-drawer>
 
-      </el-container>
+      
+      </el-card>
+   
     </div>
   </div>
 </template>
@@ -241,6 +235,10 @@ export default {
       teams: [],
       players: [],
       selectedPlayers: [],
+      total: 0,
+      currentPage: 1,
+      pageSize: 6,
+    
     };
   },
   created () {
@@ -263,9 +261,42 @@ export default {
       return this.lineupData.filter(item => {
         return String(item[this.selectedColumn]).toLowerCase().includes(this.searchQuery.toLowerCase());
       });
-    }
+    },
+    filteredData(){
+      const start = (this.currentPage - 1) * this.pageSize;
+        const end = start + this.pageSize;
+        return this.filteredLineupData.slice(start, end);
+    },
   },
   methods: {
+    handleSearch() {
+      console.log(
+        "Performing search with type:",
+        this.selectedColumn,
+        "and query:",
+        this.searchQuery
+      );
+      const searchType = this.selectedColumn;
+      const searchQuery = this.searchQuery.toLowerCase();
+      this.tableData = this.allData.filter((medical) =>
+        medical[searchType].toString().toLowerCase().includes(searchQuery)
+      );
+      this.total = this.tableData.length;
+      this.currentPage = 1;
+      this.updatePagedData();
+    },
+
+    resetSearch() {
+      this.searchType = "";
+      this.searchQuery = "";
+      this.currentPage = 1;
+      this.tableData = this.allData;
+      this.total = this.allData.length;
+      this.updatePagedData();
+    },
+    handlePageChange(page) {
+      this.currentPage = page;
+    },
     fetchLineups () {
       this.loading = true;
       //console.log("teamID: ", this.teamID);
@@ -471,9 +502,7 @@ export default {
 
 
 <style scoped>
-.home-container {
-  height: 100%;
-}
+
 .add-teamID-card {
   width: 300px;
   position: absolute;
@@ -488,6 +517,7 @@ export default {
 .el-input-group {
   display: flex;
   align-items: center;
+  gap: 8px;
 }
 
 .player-cards {
@@ -515,5 +545,8 @@ export default {
   height: 100%;
   background-color: #ccc;
   margin: 0 10px;
+}
+.lineup-list{
+  padding: 20px;
 }
 </style>

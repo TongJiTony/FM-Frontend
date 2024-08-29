@@ -1,7 +1,9 @@
 <template>
   <div class="medical-list">
-    <el-row :gutter="20" class="header-row" justify="end">
-      <el-col :span="18">
+    <el-card shadow="never">
+      <el-row :gutter="20" class="header-row" justify="end">
+      
+          <el-col :span="18">
         <el-button
           @click="openAddMedicalDialog"
           type="primary"
@@ -25,73 +27,69 @@
             placeholder="输入搜索内容"
             size="small"
           ></el-input>
-          <el-button @click="handleSearch" type="primary" size="small"
-            >搜索</el-button
-          >
-          <el-button @click="resetSearch" type="text" size="small"
-            >重置</el-button
-          >
+          <el-button @click="handleSearch" type="primary" size="small">搜索</el-button>
+          <el-button @click="resetSearch" type="text" size="small">重置</el-button>
         </el-input-group>
       </el-col>
+       
+     
     </el-row>
     <el-row :gutter="20">
-      <el-col v-for="(medical, index) in pagedData" :key="index" :span="24">
-        <el-card shadow="always" class="medical-card">
-          <div class="medical-card-content">
-            <div class="medical-item">
-              <strong>球员姓名:</strong> {{ medical.PLAYER_NAME }}
-            </div>
-            <div class="medical-item">
-              <strong>医疗编号:</strong> {{ medical.MEDICAL_ID }}
-            </div>
-            <div class="medical-item">
-              <strong>球员编号:</strong> {{ medical.PLAYER_ID }}
-            </div>
-            <div class="medical-item">
-              <strong>受伤部位:</strong> {{ medical.HURT_PART }}
-            </div>
-            <div class="medical-item">
-              <strong>受伤时间:</strong> {{ medical.HURT_TIME }}
-            </div>
-            <div class="medical-item">
-              <strong>医疗护理:</strong> {{ medical.MEDICAL_CARE }}
-            </div>
-            <div class="medical-item">
-              <strong>预计康复时间:</strong> {{ medical.PRED_REC_DATE }}
-            </div>
-            <div class="medical-item">
-              <strong>健康状态:</strong>
-              {{ medical.STATE === 0 ? "健康" : "受伤" }}
-            </div>
-            <div class="medical-actions">
-              <el-button
-                @click="confirmEdit(medical)"
+      <el-card shadow="never">
+        <el-table :data="pagedData" style="width: 100%">
+        <el-table-column prop="PLAYER_NAME" label="球员姓名" >
+        </el-table-column>
+        <el-table-column prop="HURT_PART" label="受伤部位">
+        </el-table-column>
+        <el-table-column prop="MEDICAL_CARE" label="医疗护理" >
+        </el-table-column>
+        <el-table-column prop="HURT_TIME" label="受伤时间" :formatter="formatData">
+        </el-table-column>     
+        <el-table-column prop="PRED_REC_DATE" label="预计康复时间" :formatter="formatData">
+        </el-table-column>
+        <el-table-column  label="是否痊愈">
+          <template slot-scope="scope">
+          <el-tag :type="scope.row.STATE === 1 ? 'success' : 'danger'">
+            {{ scope.row.STATE === 1 ? '已痊愈' : '未痊愈' }}
+          </el-tag>
+        </template>
+        </el-table-column>
+        <el-table-column label="操作" fixed="right" >
+                <!-- eslint-disable-next-line -->
+            
+                <template slot-scope="scope">
+                  <el-button
+                @click="confirmEdit(scope.row)"
                 type="text"
                 size="small"
                 style="color: blue"
                 >编辑</el-button
               >
               <el-button
-                @click="confirmDelete(medical)"
+                @click="confirmDelete(scope.row)"
                 type="text"
                 size="small"
                 style="color: red"
                 >删除</el-button
               >
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
-    <el-pagination
+                </template>
+              </el-table-column>
+            </el-table>
+      </el-card>
+      <el-pagination
       background
-      layout="prev, pager, next"
+      layout="total,prev, pager, next"
       :total="total"
       :page-size="pageSize"
       :current-page.sync="currentPage"
       @current-change="handleCurrentChange"
     >
     </el-pagination>
+    </el-row>
+  </el-card>
+  
+
+  
 
     <!-- Confirm Delete Dialog -->
     <el-dialog
@@ -275,6 +273,13 @@ export default {
     };
   },
   methods: {
+    formatData(row, column, cellValue){
+      const date = new Date(cellValue);
+      return date.toLocaleDateString();
+    },
+    formatHealth(row, column, cellValue){
+      return cellValue === 0 ? "已痊愈" : "未痊愈";
+    },
     fetchMedicalRecords() {
       const teamId = this.$route.params.teamId;
       if (teamId) {

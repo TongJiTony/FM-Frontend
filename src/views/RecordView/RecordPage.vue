@@ -12,15 +12,15 @@
               <el-card class="box-card3">
                 <el-col :span="12">
                   <p style="font-size: 15px;line-height: 0;">总盈亏</p>
-                  <p style="font-size: 20px;font-weight:bold;line-height: 1;">¥{{ sum_amount }}</p>
+                  <p style="font-size: 20px;font-weight:bold;line-height: 1;">{{ formattedSumAmount }}</p>
                 </el-col> 
                 <el-col :span="6">
                   <p style="font-size: 15px;line-height: 0;">总收入</p>
-                  <p style="font-size: 20px;font-weight:bold;line-height: 1;">¥{{ positiveSum }}</p>
+                  <p style="font-size: 20px;font-weight:bold;line-height: 1;">{{ formattedPositiveSum }}</p>
                 </el-col>      
                 <el-col :span="6">
                   <p style="font-size: 15px;line-height: 0">总支出</p>
-                  <p style="font-size: 20px;font-weight:bold;line-height: 1;">¥{{ Math.abs(negativeSum) }}</p>
+                  <p style="font-size: 20px;font-weight:bold;line-height: 1;">{{formattedNegativeSum }}</p>
                 </el-col>                
               </el-card>
             </el-col>
@@ -46,7 +46,7 @@
           <el-row :gutter="12">
             <el-col :span="12">
               <el-card class="box-card2">
-                <h1 style="font-size: 20px;line-height: 0;">总收入：¥{{ positiveSum }}</h1>
+                <h1 style="font-size: 20px;line-height: 0;">总收入：{{ formattedPositiveSum }}</h1>
                 <div class="echart-box2" ref="lineChart2"></div>
               </el-card> 
             </el-col>
@@ -95,7 +95,7 @@
           <el-row :gutter="12">
             <el-col :span="12">
               <el-card class="box-card2">
-              <h1 style="font-size: 20px;line-height: 0;">总支出：¥{{ Math.abs(negativeSum) }}</h1>
+              <h1 style="font-size: 20px;line-height: 0;">总支出：{{formattedNegativeSum }}</h1>
               <div class="echart-box2" ref="lineChart3"></div>      
             </el-card>  
             </el-col>
@@ -145,11 +145,11 @@
               <el-table :data="contract" style="width: 100%">
               <el-table-column prop="PLAYER_NAME" label="球员" width="800">
               </el-table-column>
-              <el-table-column prop="SALARY" label="薪水">
+              <el-table-column prop="SALARY" label="薪水" :formatter="formatSalary">
               </el-table-column>
-              <el-table-column prop="START_DATE" label="开始日期">
+              <el-table-column prop="START_DATE" label="开始日期" :formatter="formatDate">
               </el-table-column>
-              <el-table-column prop="END_DATE" label="结束日期">
+              <el-table-column prop="END_DATE" label="结束日期" :formatter="formatDate">
               </el-table-column>
               </el-table>
             </el-card>
@@ -258,10 +258,31 @@ export default {
     filteredNegRecords() {
       return this.records.filter(record => record.AMOUNT < 0 && record.TRANSACTION_DATE === this.selectedDate);
     },
-    
+    formattedSumAmount() {    
+      const sumAmountInTenThousand = this.sum_amount / 10000;   
+      return `¥${sumAmountInTenThousand.toFixed(2)}万`;
+    },
+    formattedPositiveSum(){
+      const sumAmountInTenThousand = this.positiveSum / 10000;
+      return `¥${sumAmountInTenThousand.toFixed(2)}万`;
+    },
+    formattedNegativeSum(){
+      const sumAmountInTenThousand = this.negativeSum / 10000;
+      return `¥${sumAmountInTenThousand.toFixed(2)}万`;
+    },
   },
 
   methods: {
+    formatSalary(row, column, cellValue) {
+    // 将薪水的值除以 10000，得到以万为单位的值
+    const salaryInTenThousand = cellValue / 10000;
+    // 使用 toFixed 方法将小数点后保留一位数字，并添加 "万/年" 后缀
+    return `¥${salaryInTenThousand.toFixed(1)}万/年`;
+  },
+    formatDate(row, column, cellValue) {
+    const date = new Date(cellValue);
+    return date.toLocaleDateString();
+  },
     handlePosDateChange(selectedDate2) {
     this.selectedDate2 = selectedDate2;
     
