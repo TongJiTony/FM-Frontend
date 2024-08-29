@@ -42,7 +42,7 @@ src
     └─TestView  
 
 ## Project Rules
-**Create feature branch every time! (fullname/featureName)**
-**Commit Regularly!(Write appropriate message)**
-**Ask leader for code review and merge pull request after approval(pass the CI test as well)**
-**Communication comes first!**
+**Create feature branch every time! (fullname/featureName)**  
+**Commit Regularly!(Write appropriate message)**  
+**Ask leader for code review and merge pull request after approval(pass the CI test as well)**  
+**Communication comes first!**  
