@@ -45,7 +45,8 @@
           <p><strong>球员编号:</strong> {{ player.PLAYER_ID }}</p>
           <p><strong>队伍:</strong> {{ player.TEAM_NAME }}</p>
           <p><strong>位置:</strong> {{ player.ROLE }}</p>
-          <el-button @click="handleClick(player)" type="text" size="small"
+       
+            <el-button @click="handleClick(player)" type="text" size="small"
             >详情</el-button
           >
           <el-button
@@ -53,6 +54,7 @@
             type="text"
             size="small"
             style="color: blue"
+          
             >编辑</el-button
           >
           <el-button
@@ -62,6 +64,8 @@
             style="color: red"
             >删除</el-button
           >
+        
+          
           </el-col>             
         </el-card>
       </el-col>

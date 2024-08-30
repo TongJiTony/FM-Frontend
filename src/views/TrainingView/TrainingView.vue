@@ -1,5 +1,5 @@
 <template>
-  <el-container style="height: 500px; border: 1px solid #eee">
+  <el-container style="height: 488px; border: 1px solid #eee">
     <el-aside
       round
       width="160px"
@@ -53,7 +53,10 @@
         </el-row>
       </el-header>
 
-      <el-main>
+     
+        <el-card>
+
+       
         <div
           v-if="trainingData.length === 0"
           class="empty-message"
@@ -158,7 +161,8 @@
             </el-row>
           </div>
         </div>
-      </el-main>
+      </el-card>
+    
     </el-container>
 
     <!-- Add dialog -->

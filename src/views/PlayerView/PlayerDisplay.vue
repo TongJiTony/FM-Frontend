@@ -20,7 +20,7 @@
                   <div style="height: 60px; line-height: 60px;">
                     <strong>球员编号:</strong>
                     <span style="margin-right: 10px;"></span>
-                    <el-tag type="info">{{ player[0].PLAYER_ID }}</el-tag>
+                    <el-tag type="info" style="font-size: 14px;">{{ player[0].PLAYER_ID }}</el-tag>
                   </div>
                 </el-col>
                 <el-col :span="12">
@@ -28,7 +28,7 @@
                     <strong>所在球队:</strong>
                     <span style="margin-right: 10px;"></span>
                     <span style="margin-right: 10px; vertical-align: middle;">
-                    <el-tag type="info">{{ player[0].TEAM_NAME }}</el-tag>
+                    <el-tag type="info" style="font-size: 14px;">{{ player[0].TEAM_NAME }}</el-tag>
                     <img :src="teamURL" alt="球员头像" style="width: 60px; height: 60px; border-radius: 50%; vertical-align: middle;">
                     </span>
                   </div>
@@ -37,14 +37,14 @@
                   <div style="height: 60px; line-height: 60px;">
                     <strong>生日:</strong>
                     <span style="margin-right: 10px;"></span>
-                    <el-tag type="info">{{ player[0].BIRTHDAY }} ({{calculateAge(player[0].BIRTHDAY)}}岁)</el-tag>
+                    <el-tag type="info" style="font-size: 14px;">{{ player[0].BIRTHDAY }} ({{calculateAge(player[0].BIRTHDAY)}}岁)</el-tag>
                   </div>
                 </el-col>
                 <el-col :span="12">
                   <div style="height: 60px; line-height: 60px;">
                     <strong>惯用脚:</strong>
                     <span style="margin-right: 10px;"></span>
-                    <el-tag type="info">{{ player[0].USED_FOOT === 1 ? "Right Foot" : "Left Foot" }}</el-tag>
+                    <el-tag type="info" style="font-size: 14px;">{{ player[0].USED_FOOT === 1 ? "Right Foot" : "Left Foot" }}</el-tag>
                   </div>
                 </el-col>
               </el-row>            
