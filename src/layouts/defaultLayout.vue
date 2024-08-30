@@ -36,8 +36,7 @@
               >修改密码</el-menu-item
             >
             <el-menu-item class="user-action-item" index="/userinfo"
-              >{{ this.$store.getters["user/getUserName"] }}的
-              个人信息</el-menu-item
+              >{{ this.$store.getters["user/getUserName"] }}的个人信息</el-menu-item
             >
           </el-submenu>
           <button class="button-change-theme" @click="toggleTheme">

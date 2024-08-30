@@ -1,14 +1,14 @@
 <template>
   <div class="change-password-container">
     <h3>修改密码</h3>
-    <el-form :model="passwordForm" ref="passwordForm" :rules="rules" label-width="120px" @submit.native.prevent="savePassword">
-      <el-form-item  label="当前密码" prop="currentPassword">
+    <el-form :model="passwordForm" ref="passwordForm" :rules="rules" label-width="100px" @submit.native.prevent="savePassword">
+      <el-form-item  label="当前密码" prop="currentPassword" placeholder="请输入当前密码">
         <el-input type="password" v-model="passwordForm.currentPassword" />
       </el-form-item>
-      <el-form-item label="新密码" prop="newPassword">
+      <el-form-item label="新密码" prop="newPassword" placeholder="请输入新密码">
         <el-input type="password" v-model="passwordForm.newPassword" />
       </el-form-item>
-      <el-form-item label="确认新密码" prop="confirmPassword">
+      <el-form-item label="确认新密码" prop="confirmPassword" placeholder="再次输入新密码">
         <el-input type="password" v-model="passwordForm.confirmPassword" />
       </el-form-item>
       <el-form-item>
@@ -118,6 +118,10 @@ export default {
 <style scoped>
 .change-password-container {
   padding: 20px;
+}
+
+:deep(.el-form-item__label) {
+  color: rgb(11, 11, 26) !important;
 }
 
 </style>
