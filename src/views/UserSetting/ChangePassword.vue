@@ -1,21 +1,34 @@
 <template>
-  <div class="change-password-container">
-    <h3>修改密码</h3>
-    <el-form :model="passwordForm" ref="passwordForm" :rules="rules" label-width="100px" @submit.native.prevent="savePassword">
-      <el-form-item  label="当前密码" prop="currentPassword" placeholder="请输入当前密码">
-        <el-input type="password" v-model="passwordForm.currentPassword" />
-      </el-form-item>
-      <el-form-item label="新密码" prop="newPassword" placeholder="请输入新密码">
-        <el-input type="password" v-model="passwordForm.newPassword" />
-      </el-form-item>
-      <el-form-item label="确认新密码" prop="confirmPassword" placeholder="再次输入新密码">
-        <el-input type="password" v-model="passwordForm.confirmPassword" />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="savePassword">保存修改</el-button>
-        <el-button @click="cancel">取消</el-button>
-      </el-form-item>
-    </el-form>
+  <div class="change-password-page">
+    <div class="change-password-container">
+      <h3>修改密码</h3>
+      <el-form :model="passwordForm" ref="passwordForm" :rules="rules" label-width="120px" @submit.native.prevent="savePassword">
+        <el-form-item label="当前密码" prop="currentPassword">
+          <el-input type="password" v-model="passwordForm.currentPassword" placeholder="请输入当前密码" />
+        </el-form-item>
+        <el-form-item label="新密码" prop="newPassword">
+          <el-input type="password" v-model="passwordForm.newPassword" placeholder="请输入新密码" />
+        </el-form-item>
+        <el-form-item label="确认新密码" prop="confirmPassword">
+          <el-input type="password" v-model="passwordForm.confirmPassword" placeholder="再次输入新密码" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="savePassword">保存修改</el-button>
+          <el-button @click="cancel">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="additional-content">
+      <img src="@/assets/img/FM-Logo-2.png" alt="Inspirational Content" class="inspirational-image"/>
+      <div class="password-tips">
+        <h4>创建强密码的技巧</h4>
+        <ul>
+          <li>使用至少8个字符</li>
+          <li>包含大小写字母、数字和特殊字符</li>
+          <li>避免使用常见的词汇和信息</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -116,12 +129,40 @@ export default {
 </script>
 
 <style scoped>
-.change-password-container {
+.change-password-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 20px;
 }
 
+.change-password-container {
+  width: 800px; 
+  margin-right: 20px;
+}
+
+.additional-content {
+  flex: 1;
+  padding: 20px;
+  max-width: 400px;
+}
+
+.inspirational-image {
+  width: 100%;
+  height: auto;
+  max-width: 250px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.password-tips {
+  font-size: 14px;
+  color: #000000;
+}
+
 :deep(.el-form-item__label) {
-  color: rgb(11, 11, 26) !important;
+    color: #131313 !important;
+    font-size: large;
 }
 
 </style>
