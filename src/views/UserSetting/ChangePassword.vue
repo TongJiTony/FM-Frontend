@@ -1,13 +1,18 @@
 <template>
   <div class="change-password-page">
     <div class="change-password-container">
-      <h3>修改密码</h3>
+      <h2>修改密码</h2>
       <el-form :model="passwordForm" ref="passwordForm" :rules="rules" label-width="120px" @submit.native.prevent="savePassword">
         <el-form-item label="当前密码" prop="currentPassword">
           <el-input type="password" v-model="passwordForm.currentPassword" placeholder="请输入当前密码" />
         </el-form-item>
         <el-form-item label="新密码" prop="newPassword">
-          <el-input type="password" v-model="passwordForm.newPassword" placeholder="请输入新密码" />
+          <el-input 
+            type="password" 
+            v-model="passwordForm.newPassword" 
+            placeholder="请输入新密码"
+            @input="checkPasswordStrength" 
+          />
         </el-form-item>
         <el-form-item label="确认新密码" prop="confirmPassword">
           <el-input type="password" v-model="passwordForm.confirmPassword" placeholder="再次输入新密码" />
@@ -20,6 +25,7 @@
     </div>
     <div class="additional-content">
       <img src="@/assets/img/FM-Logo-2.png" alt="Inspirational Content" class="inspirational-image"/>
+
       <div class="password-tips">
         <h4>创建强密码的技巧</h4>
         <ul>
@@ -27,6 +33,13 @@
           <li>包含大小写字母、数字和特殊字符</li>
           <li>避免使用常见的词汇和信息</li>
         </ul>
+      </div>
+      <div class="password-strength">
+        <h4>密码强度</h4>
+        <div class="strength-bar">
+          <div :style="strengthBarStyle" class="strength-bar-fill"></div>
+        </div>
+        <p>{{ passwordStrengthMessage }}</p>
       </div>
     </div>
   </div>
@@ -44,6 +57,11 @@ export default {
         currentPassword: '',
         newPassword: '',
         confirmPassword: ''
+      },
+      passwordStrengthMessage: '',
+      strengthBarStyle: {
+        width: '0%',
+        backgroundColor: '#ccc'
       },
       rules: {
         newPassword: [
@@ -70,7 +88,6 @@ export default {
           new_password: this.passwordForm.newPassword
         });
 
-        // 校验表单
         this.$refs.passwordForm.validate(async (valid) => {
           if (valid) {
             const response = await axios.post('/api/v1/user/changePassword', {
@@ -87,12 +104,10 @@ export default {
                 confirmPassword: ''
               };
               this.$router.replace({ name: 'Home' });
-            } 
-            else {
+            } else {
               this.$message.error(response.data.msg);
             }
-          } 
-          else {
+          } else {
             this.$message.error("校验失败");
           }
         });
@@ -100,11 +115,9 @@ export default {
       } catch (error) {
         if (error.response && error.response.status === 400) {
           this.$message.error('请求错误：' + error.response.data.msg);
-        } 
-        else if (error.response && error.response.status === 500) {
+        } else if (error.response && error.response.status === 500) {
           this.$message.error('服务器错误：' + error.response.data.msg);
-        } 
-        else {
+        } else {
           this.$message.error('修改失败，请稍后再试');
         }
         console.error("错误详情:", error);
@@ -122,6 +135,45 @@ export default {
         callback(new Error('确认密码与新密码不匹配'));
       } else {
         callback();
+      }
+    },
+    checkPasswordStrength() {
+      const password = this.passwordForm.newPassword;
+      let strength = 0;
+
+      if (password.length >= 8) strength += 1;
+      if (/[A-Z]/.test(password)) strength += 1;
+      if (/[a-z]/.test(password)) strength += 1;
+      if (/\d/.test(password)) strength += 1;
+      if (/[@$!%*?&#]/.test(password)) strength += 1;
+
+      this.setPasswordStrength(strength);
+    },
+    setPasswordStrength(strength) {
+      switch (strength) {
+        case 1:
+          this.passwordStrengthMessage = '非常弱';
+          this.strengthBarStyle = { width: '20%', backgroundColor: 'red' };
+          break;
+        case 2:
+          this.passwordStrengthMessage = '弱';
+          this.strengthBarStyle = { width: '40%', backgroundColor: 'orange' };
+          break;
+        case 3:
+          this.passwordStrengthMessage = '中等';
+          this.strengthBarStyle = { width: '60%', backgroundColor: 'yellow' };
+          break;
+        case 4:
+          this.passwordStrengthMessage = '强';
+          this.strengthBarStyle = { width: '80%', backgroundColor: 'lightgreen' };
+          break;
+        case 5:
+          this.passwordStrengthMessage = '非常强';
+          this.strengthBarStyle = { width: '100%', backgroundColor: 'green' };
+          break;
+        default:
+          this.passwordStrengthMessage = '';
+          this.strengthBarStyle = { width: '0%', backgroundColor: '#ccc' };
       }
     }
   }
@@ -150,9 +202,11 @@ export default {
 .inspirational-image {
   width: 100%;
   height: auto;
-  max-width: 250px;
+  margin-left: 50px;
+  max-width: 300px;
   border-radius: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  margin-top:0px
 }
 
 .password-tips {
@@ -160,9 +214,27 @@ export default {
   color: #000000;
 }
 
-:deep(.el-form-item__label) {
-    color: #131313 !important;
-    font-size: large;
+.password-strength {
+  margin-top: 20px;
 }
 
+.strength-bar {
+  width: 100%;
+  height: 10px;
+  background-color: #ccc;
+  border-radius: 5px;
+  margin: 10px 0;
+}
+
+.strength-bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+:deep(.el-form-item__label) {
+  color: #000000 !important;
+  font-size: large;
+  font-weight: bold;
+}
 </style>
