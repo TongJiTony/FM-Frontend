@@ -1,5 +1,6 @@
 <template>
-  <el-container style="height: 488px; border: 1px solid #eee">
+  <el-card class="display-card1">
+ <el-container style="height: 550px; border: 1px solid #eee">
     <el-aside
       round
       width="160px"
@@ -44,19 +45,12 @@
                   @click.native="handleDelete" style="font-size: 20px;">删除</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-            <el-button
-              type="info"
-              @click="goback"
-              class="goback_button"
-            >返回上级页面</el-button>
+            <el-button type="primary" icon="el-icon-arrow-left" @click="goback" class="goback_button">返回</el-button>
           </el-col>
         </el-row>
       </el-header>
 
-     
-        <el-card>
 
-       
         <div
           v-if="trainingData.length === 0"
           class="empty-message"
@@ -161,8 +155,6 @@
             </el-row>
           </div>
         </div>
-      </el-card>
-    
     </el-container>
 
     <!-- Add dialog -->
@@ -251,6 +243,9 @@
      </el-drawer>
 
   </el-container>
+  </el-card>
+
+ 
 </template>
 
 <script>
@@ -574,13 +569,16 @@ export default {
   background-color: #f9f9f9; /* 背景颜色 */
 }
 .display-card {
-  height: 150px;
+  height: 200px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   margin-top: 20px;
   position: relative;
+}
+.display-card1 {
+    height: 600px;
 }
 .title {
   position: absolute;

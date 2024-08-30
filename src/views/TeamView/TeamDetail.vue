@@ -377,8 +377,8 @@
 
   <style scoped>
 .team-image {
-  width: 60%;
-  height: 190px;
+  width:55%;
+  height: 55%;
   background-color: #f2f2f2;
   display: flex;
   align-items: center;
@@ -405,7 +405,6 @@
   margin-left: 1rem;
 }
 .box-card3 {
-    width: 100%;
     height: 350px;
    
   }
