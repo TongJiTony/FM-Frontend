@@ -75,7 +75,7 @@ export default {
     return {
       themes,
       currentThemeName: "purpleBlack", // 初始主题
-      currentThemeIndex: 0,
+      currentThemeIndex: 1,
       backgroundViews: {
         greenGradient: "linear-gradient(to right, #43cea2, #185a9d)",
         purpleGradient: "linear-gradient(to right, #8e2de2, #4a00e0)",
@@ -84,7 +84,7 @@ export default {
         image2: `url(${require("@/assets/img/main-bg-2.png")})`,
       },
       currentBackgroundName: "purpleGradient", // 初始背景
-      currentBackgroundIndex: 0,
+      currentBackgroundIndex: 1,
     };
   },
   computed: {
@@ -112,7 +112,6 @@ export default {
     },
     toggleTheme() {
       const themeNames = Object.keys(this.themes);
-      console.log("themeNames:", themeNames);
       this.currentThemeIndex = (this.currentThemeIndex + 1) % themeNames.length;
       this.currentThemeName = themeNames[this.currentThemeIndex];
       this.$message.info(`主题切换至 ${this.currentThemeName}`);
