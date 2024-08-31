@@ -78,7 +78,7 @@
 
       
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleCancel">取消</el-button>
+        <el-button @click="handleClose">取消</el-button>
         <el-button type="primary" @click="saveTransfer" :disabled="save_disabled">确认</el-button>
       </div>      
 
@@ -87,7 +87,7 @@
 
 
 <script>
-
+import axios from "axios";
 export default {
   props: {
     visible: {
@@ -214,6 +214,9 @@ export default {
     checkAllDetailsConfirmed() {
       if (this.transferDetails.fee !== null && this.transferDetails.salary !== null &&
           this.transferDetails.transferWindow && this.transferDetails.contractDuration !== null) {
+        
+        ///////////////// 检测是否同时转会
+
         this.messages.push({ user: 'manager', text: `好的，基本情况已经确定，${this.playerName}对于加盟贵队非常感兴趣，您给出的条件看起来非常合理。我们已经与${this.playerName}和他的经纪人讨论了这份提议，他们没有异议，我们将接受这个方案` });
 
         // 使用 Loading 服务
@@ -229,6 +232,9 @@ export default {
           loadingInstance.close(); // 关闭加载动画
         }, 1000);
       }
+    },
+    checkTransfer() {
+      
     },
     saveTransferDetails() {
       alert('协商成功！转会数据已保存, 请点击保存按钮完成转会！');
@@ -328,12 +334,13 @@ export default {
       this.inputcard_visible = false;
     },
     closeDialog() {
+      axios.options(`/api/v1/agent/disconnect?userid=${this.$store.getters["user/getUserId"]}`);
       this.$emit('close');
     },
     saveTransfer() {
       this.$emit('save', this.transferDetails);
       //console.log("保存 ", this.transferDetails);
-      this.$emit('close');
+      this.closeDialog();
     },
     handleClose() {
       this.$confirm('确认退出？这将会终止这次协商。')
@@ -343,7 +350,7 @@ export default {
             type: 'success',
             message: '退出成功'
           });
-          this.$emit('close');
+          this.closeDialog();
         })
         .catch(() => {
           // 用户点击了取消按钮
@@ -363,7 +370,6 @@ export default {
     messages() {
       this.$nextTick(() => {
         this.scrollToBottom();
-        console.log("滚动到底部"); 
       });
     }
   },

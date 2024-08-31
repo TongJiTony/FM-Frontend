@@ -117,10 +117,26 @@ export default {
     },
 
     // 点击"向经纪人询问转会"按钮时触发
-    openDialog(player) {
+    async openDialog(player) {
+      //console.log("test the user id", this.$store.getters["user/getUserId"]);
       this.transferInfo.playerName = player.PLAYER_NAME; // 设置当前选中的球员姓名
-      console.log("Selected player:", this.transferInfo.playerName);
-      this.dialogVisible = true;
+      // console.log("Selected player:", this.transferInfo.playerName);
+
+      try {
+        const response = await axios.options(`/api/v1/agent/connect?userid=${this.$store.getters["user/getUserId"]}`);
+          
+        console.log("API response 2 :", response);
+        if (response.data === "已创建新会话，您可以提出转会申请了!") {
+          this.$message.success('已创建新会话，您可以提出转会申请了!');
+          this.dialogVisible = true;
+        } else {
+          this.$message.error(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching agent status:", error);
+        this.$message.error('无法与服务器通信');
+      }
+
     },
 
     // 计算球员年龄的函数
@@ -189,6 +205,7 @@ export default {
   created() {
     // 页面加载时获取转会数据
     this.fetchPlayers();
+    axios.options(`/api/v1/agent/disconnect?userid=${this.$store.getters["user/getUserId"]}`);
   },
 };
 </script>
