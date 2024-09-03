@@ -32,9 +32,9 @@
                 <!-- eslint-disable-next-line -->
             
                 <template slot-scope="scope">
-                  <el-button @click="handleDetails(scope.row)" type="text" size="small">Details</el-button>
-                  <el-button @click="handleEdit( scope.row)" type="text" size="small">Edit</el-button>
-                  <el-button @click="handleDelete(scope.row)" type="text" size="small">Delete</el-button>
+                  <el-button @click="handleDetails(scope.row)" type="text" size="small" >详情</el-button>
+                  <el-button @click="handleEdit( scope.row)" type="text" size="small"  style="color: blue">编辑</el-button>
+                  <el-button @click="handleDelete(scope.row)" type="text" size="small"  style="color: red">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>

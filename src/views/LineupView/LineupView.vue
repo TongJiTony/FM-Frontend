@@ -299,8 +299,6 @@ export default {
     },
     fetchLineups () {
       this.loading = true;
-      //console.log("teamID: ", this.teamID);
-
       let apiUrl = '/api/v1/lineup/displayall';
       if (this.teamID) {
         apiUrl = `/api/v1/lineup/displayall?teamid=${this.teamID}`;

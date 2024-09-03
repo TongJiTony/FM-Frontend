@@ -224,8 +224,6 @@ export default {
       negativeSum:0,
       currentDate: new Date(),
       activeName:'first',
-      cur_month:'',
-      pre_month:'',
       selectedDate: '2024-08', // 选择的日期
       dateOptions: [
         { label: '2024年8月', value: '2024-08' },
@@ -234,21 +232,21 @@ export default {
         { label: '2024年5月', value: '2024-05' }
         // 可以添加更多日期选项
       ],
-      selectedDate2: '2024-08', // 初始化为空字符串
+      selectedDate2: '2024-08', 
       dateOptions2: [
         { label: '2024年8月', value: '2024-08' },
         { label: '2024年7月', value: '2024-07' },
         { label: '2024年6月', value: '2024-06' },
         { label: '2024年5月', value: '2024-05' }
-      ], // 初始化为空数组
+      ], 
+      teamID:this.$route.params.teamID,
     };
+    
   },
 
   created() {
    
     this.fetchTeamRecords();
-    this.currentMonth();
-    this.previousMonth();
     this.fetchTeamContracts();
   },
   computed: {
@@ -297,22 +295,7 @@ export default {
     this.renderNegBar(filteredRecords)
     
   },
-    currentMonth() {
-      const date = this.currentDate;
-      const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      this.cur_month=`${year}-${month}`;
-      console.log('current month:',this.cur_month)
-      //return `${year}-${month}`;
-    },
-    previousMonth() {
-      const date = new Date(this.currentDate);
-      date.setMonth(date.getMonth() - 1); // 获取上个月的日期
-      const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      this.pre_month=`${year}-${month}`;
-     // return `${year}-${month}`;
-    },
+
     goBack() {
       this.$router.go(-1); // Navigate to the previous page
     },
@@ -320,8 +303,9 @@ export default {
       return Math.abs(cellValue);
     },
     fetchTeamContracts() {
-       const teamID = this.$route.params.teamID;
-        axios.get(`/api/v1/contract/displayall?teamid=${teamID}`)
+       
+       //const teamID = this.$route.params.teamID;
+        axios.get(`/api/v1/contract/displayall?teamid=${this.teamID}`)
           .then(response => {
             console.log('Received contract data:', response.data);
             this.contract = response.data;
@@ -332,9 +316,11 @@ export default {
           this.loading = false;
         });
     },
-    fetchTeamRecords() {
-      const teamID = this.$route.params.teamID;
-        axios.get(`/api/v1/record/search?team_id=${teamID}`)
+     fetchTeamRecords() {
+
+
+      //const teamID = this.$route.params.teamID;
+        axios.get(`/api/v1/record/search?team_id=${this.teamID}`)
         .then(response => {
           console.log('Received record data:', response.data);
           this.records = response.data;
