@@ -144,7 +144,11 @@ export default {
         this.$router.push( { name: "training", params: { teamId: userTeamid }});
       return;
     }
-
+    if (key === '/record' && userright === 'manager') {
+      if (this.$route.path!==`/record/${userTeamid}`)
+        this.$router.push( { name: "RecordPage", params: { teamID: userTeamid }});
+      return;
+    }
     if (this.$route.path !== key) {
         this.$router.push(key);
       }

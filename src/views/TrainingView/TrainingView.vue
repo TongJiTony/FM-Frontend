@@ -20,8 +20,8 @@
       </el-menu>
     </el-aside>
 
-    <el-container>
-      <el-card>
+    <el-container >
+      <el-card style="width:100%;">
 
       
      
