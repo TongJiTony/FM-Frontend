@@ -50,8 +50,8 @@
         <!-- 右侧：用户2信息 -->
         <el-col :span="4" class="user-info" :offset="1">
           <el-card>
-            <el-image :src="require('@/assets/img/managerIcon/managerIcon.png')"></el-image>
-            <h4>you</h4>
+            <img :src="userInfo.user_icon" :alt="`${userInfo.user_name}-Icon`" class="user-icon" @error="handleImageError"/>
+            <h4>{{ userInfo.user_name }}</h4>
           </el-card>
 
           <el-card v-if="inputcard_visible" class="prompts" style="height: 200px">
@@ -87,7 +87,10 @@
 
 
 <script>
+import { mapGetters } from 'vuex';
 import axios from "axios";
+import defaultAvatar from '@/assets/img/defaultIcon.jpg';
+
 export default {
   props: {
     visible: {
@@ -216,22 +219,21 @@ export default {
           this.transferDetails.transferWindow && this.transferDetails.contractDuration !== null) {
         
         ///////////////// 检测是否同意转会
-        this.checkTransfer();
-        
-        //
-        this.messages.push({ user: 'manager', text: `好的，基本情况已经确定，${this.playerName}对于加盟贵队非常感兴趣，您给出的条件看起来非常合理。我们已经与${this.playerName}和他的经纪人讨论了这份提议，他们没有异议，我们将接受这个方案` });
-        // 使用 Loading 服务
-        const loadingInstance = this.$loading({
-          lock: true,
-          text: '保存中...',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
+        if (this.checkTransfer()) {
+          this.messages.push({ user: 'manager', text: `好的，基本情况已经确定，${this.playerName}对于加盟贵队非常感兴趣，您给出的条件看起来非常合理。我们已经与${this.playerName}和他的经纪人讨论了这份提议，他们没有异议，我们将接受这个方案` });
+          // 使用 Loading 服务
+          const loadingInstance = this.$loading({
+            lock: true,
+            text: '保存中...',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+          });
 
-        setTimeout(() => {
+          setTimeout(() => {
           loadingInstance.close(); // 关闭加载动画
-          this.saveTransferDetails();
+          this.confirmTransfer();
         }, 1000);
+        }
       }
     },
     checkTransfer() {
@@ -259,7 +261,7 @@ export default {
       plan.end_date = `${endYear}-${month}-${day}`;  // 确定合同到期时间
 
       console.log("plan is ", plan);
-      axios({
+      const res = axios({
         method: 'OPTIONS',
         url: `/api/v1/agent/newplan?userid=${this.$store.getters["user/getUserId"]}`,
         data: plan, // 上传计划的JSON BODY
@@ -269,33 +271,73 @@ export default {
       }).then(res => {
         if (res.status === 200) {
           this.$message.success('转会成功！经纪人同意转会。');
-          this.$emit('closeDialog');
+          return true;
         } else if (res.status === 400) {
           this.$message.error(`转会失败：${res.data.reason}`);
+          return false;
         } else if (res.status === 403) {
           this.$message.error('新建计划失败，无权限操作。');
+          return false;
         }
       }).catch(err => {
         this.$message.error(`请求失败：${err.message}`);
+        return false;
       });
+
+      
+      console.log("res is ", res);
     },
-    saveTransferDetails() {
-      this.$confirm('协商成功！请最终确定是否完成转会', '这里是提示', {
+    confirmTransfer() {
+      this.$confirm('协商成功！请最终确定是否完成转会', '最终确认', {
         confirmButtonText: '确定转会',
         cancelButtonText: '需要再考虑一下',
         type: 'success'
       }).then(() => {
-        this.save_disabled = false;
-        this.input_disabled = true;
-        this.$emit('save', this.transferDetails);
-        this.closeDialog();
-      }).catch(() => {
-        this.$message({
-            type: 'warning',
-            message: '已经取消转会申请，再次转会需要重新协商！'
-          });
+        // 确认转会，发送OPTIONS请求
+        axios({
+          method: 'OPTIONS',
+          url: `/api/v1/agent/confirm?userid=${this.$store.getters["user/getUserId"]}&confirm=1`, // confirm=1表示确认转会
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(res => {
+          if (res.status === 200) {
+            this.$message.success('转会成功，状态已更新！');
+            this.save_disabled = false;
+            this.input_disabled = true;
+            this.closeDialog();
+          } else if (res.status === 403) {
+            this.$message.error('转会确认失败，您没有权限操作。');
+            this.closeDialog();
+          }
+        }).catch(err => {
+          this.$message.error(`请求失败：${err.message}`);
           this.closeDialog();
-      });      
+        });
+      }).catch(() => {
+        // 取消转会，发送OPTIONS请求
+        axios({
+          method: 'OPTIONS',
+          url: `/api/v1/agent/confirm?userid=${this.$store.getters["user/getUserId"]}&confirm=0`, // confirm=0表示取消转会
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(res => {
+          if (res.status === 200) {
+            this.$message({
+              type: 'warning',
+              message: '已经取消转会申请，再次转会需要重新协商！'
+            });
+            this.closeDialog();
+          } else if (res.status === 403) {
+            this.$message.error('取消转会失败，您没有权限操作。');
+            this.closeDialog();
+          }
+        }).catch(err => {
+          this.$message.error(`请求失败：${err.message}`);
+          this.closeDialog();
+        });
+      });
     },
 
     //search input prompts
@@ -359,6 +401,9 @@ export default {
     },
 
     ////////////////////
+    handleImageError(event) {
+      event.target.src = defaultAvatar;
+    },
     randomizeAvatar() {
       const randomIndex = Math.floor(Math.random() * this.avatars.length);
       this.randomAvatar = this.avatars[randomIndex];
@@ -439,10 +484,15 @@ export default {
         this.$emit('update:value', newValue);
       }
     },
+    ...mapGetters('user', ['getUserInfo']),
+    userInfo() {
+      return this.getUserInfo;
+    }
   },
   mounted() {
     this.inputprompt = this.loadAllprompts();
     this.randomizeAvatar();
+    console.log(this.userInfo);
   },
 };
 </script>
@@ -476,5 +526,10 @@ export default {
   position: absolute;
   top: 0;
   left: 10px;
+}
+.user-icon {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
 }
 </style>
