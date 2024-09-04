@@ -1,9 +1,11 @@
 <template>
   <div class="medical-list">
+
+
     <el-card shadow="never">
       <el-row :gutter="20" class="header-row" justify="end">
       
-          <el-col :span="18">
+          <el-col :span="12">
         <el-button
           @click="openAddMedicalDialog"
           type="primary"
@@ -11,6 +13,19 @@
           style="margin-bottom: 1rem"
           >添加医疗信息</el-button
         >
+      </el-col>
+      <el-col :span="3">
+        <el-statistic
+            :value="hurtCount"
+            :title="title1"
+          ></el-statistic>
+        
+      </el-col>
+      <el-col :span="3">
+        <el-statistic
+            :value="retiredCount"
+            :title="title2"
+          ></el-statistic>
       </el-col>
       <el-col :span="6">
         <el-input-group class="el-input-group">
@@ -30,9 +45,7 @@
           <el-button @click="handleSearch" type="primary" size="small">搜索</el-button>
           <el-button @click="resetSearch" type="text" size="small">重置</el-button>
         </el-input-group>
-      </el-col>
-       
-     
+      </el-col>      
     </el-row>
     <el-row :gutter="20">
       <el-card shadow="never">
@@ -212,6 +225,10 @@ import axios from "axios";
 export default {
   data() {
     return {
+      title1: "本月受伤人数",
+      title2:'已痊愈',
+      hurtCount:0,
+      retiredCount:0,
       allData: [],
       pagedData: [],
       tableData: [],
@@ -273,6 +290,20 @@ export default {
     };
   },
   methods: {
+    countHurtTime(tableData) {
+ 
+      const targetDate = '2024-08';
+
+      for (const data of tableData) {
+        const hurtTime = data.HURT_TIME;
+        const date = hurtTime.substring(0, 7); // 提取日期部分
+        if (date == targetDate) {
+         this.hurtCount++;
+         if(data.STATE==1)
+          this.retiredCount++;
+        }
+     }
+    },
     formatData(row, column, cellValue){
       const date = new Date(cellValue);
       return date.toLocaleDateString();
@@ -291,6 +322,8 @@ export default {
             this.tableData = response.data.sort(
               (a, b) => a.MEDICAL_ID - b.MEDICAL_ID
             );
+            console.log('医疗信息：',this.tableData )
+            this.countHurtTime(this.tableData );
             this.allData = [...this.tableData];
             this.total = this.tableData.length;
             this.updatePagedData();
@@ -305,6 +338,8 @@ export default {
             this.tableData = response.data.sort(
               (a, b) => a.MEDICAL_ID - b.MEDICAL_ID
             );
+            console.log('医疗信息：',this.tableData )
+            this.countHurtTime(this.tableData );
             this.allData = [...this.tableData];
             this.total = this.tableData.length;
             this.updatePagedData();

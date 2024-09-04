@@ -74,6 +74,7 @@ export default {
         greenGradient: "linear-gradient(to right, #43cea2, #185a9d)",
         purpleGradient: "linear-gradient(to right, #8e2de2, #4a00e0)",
         orangeGradient: "linear-gradient(to right, #ff7e5f, #feb47b)",
+        blueGrey:"#607D8B",
         image1: `url(${require("@/assets/img/main-bg-1.png")})`,
         image2: `url(${require("@/assets/img/main-bg-2.png")})`,
       },

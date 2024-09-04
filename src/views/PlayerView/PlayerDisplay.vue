@@ -44,7 +44,7 @@
                   <div style="height: 60px; line-height: 60px;">
                     <strong>惯用脚:</strong>
                     <span style="margin-right: 10px;"></span>
-                    <el-tag type="info" style="font-size: 14px;">{{ player[0].USED_FOOT === 1 ? "Right Foot" : "Left Foot" }}</el-tag>
+                    <el-tag type="info" style="font-size: 14px;">{{ player[0].USED_FOOT === 1 ? "右脚" : "左脚" }}</el-tag>
                   </div>
                 </el-col>
               </el-row>            
@@ -134,29 +134,25 @@
             <el-table
               :data="transferData"
               style="width: 100%"
-              v-if="transferData.length"
+             
               height="120"
             >
+     
               <el-table-column
-                prop="transfer_id"
-                label="ID"
-                width="60"
+                prop="TEAM_ID_FROM"
+                label="转出球队"
+              ></el-table-column>
+              <el-table-column prop="TEAM_ID_TO" label="转入球队"></el-table-column>
+              <el-table-column
+                prop="TRANSFER_FEES"
+                label="转会费"
               ></el-table-column>
               <el-table-column
-                prop="team_id_from"
-                label="From"
-              ></el-table-column>
-              <el-table-column prop="team_id_to" label="To"></el-table-column>
-              <el-table-column
-                prop="transfer_fees"
-                label="Fees"
-              ></el-table-column>
-              <el-table-column
-                prop="transfer_date"
-                label="Date"
+                prop="TRANSFER_DATE"
+                label="转会日期"
               ></el-table-column>
             </el-table>
-            <p v-else>No transfer records found for this player.</p>
+          
           </el-card>
         </el-tab-pane>
       </el-tabs>
