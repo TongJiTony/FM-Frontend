@@ -20,18 +20,15 @@
 </template>
 
 <script>
-// import axios from 'axios';
+import axios from 'axios';
 
-// const api = axios.create({
-//   baseURL: '/chatAPI/v1', // The proxy path
-// //   headers: {
-// //     'Authorization': `Bearer ${process.env.VUE_APP_API_KEY}`,
-// //     'Content-Type': 'application/json',
-// //   },
-// });
-
-import OpenAI from "openai";
-const openai = new OpenAI({apiKey:process.env.VUE_APP_API_KEY, baseURL:'/chatAPI/v1',dangerouslyAllowBrowser: true });
+const api = axios.create({
+  baseURL: '/chatAPI/v1', // The proxy path
+  headers: {
+    'Authorization': `Bearer ${process.env.VUE_APP_API_KEY}`,
+    'Content-Type': 'application/json',
+  },
+});
 
 export default {
   data() {
@@ -54,8 +51,7 @@ export default {
       this.userInput = ''; // Clear input field
 
       try {
-        const response = await openai.chat.completions.create({
-          stream: true,
+        const response = await api.post('/chat/completions', {
           model: 'step-1-8k',
           messages: [
             {
@@ -69,26 +65,31 @@ export default {
           ],
         });
 
-        let assistantMessage = ''; // Initialize empty string to collect assistant's response
-
-        // Handle the streamed response
-        response.data.on('data', chunk => {
-          const content = chunk.toString(); // Convert chunk to string
-          assistantMessage += content; // Accumulate content
-
-          // Update assistant message in real-time
-          this.updateAssistantMessage(assistantMessage);
-        });
-
-        response.data.on('end', () => {
-          this.updateAssistantMessage(assistantMessage, true);
-          this.isAssistantTyping = false; // Set typing status to false when done
-        });
+        // Simulate streaming effect by updating message content in chunks
+        const assistantMessage = response.data.choices[0].message.content;
+        this.simulateStreamingEffect(assistantMessage);
 
       } catch (error) {
         console.error('Error fetching AI response:', error);
         this.isAssistantTyping = false; // Set typing status to false on error
       }
+    },
+
+    simulateStreamingEffect(content) {
+      const chunks = content.split(''); // Split content into chunks for simulation
+      let currentChunk = '';
+      this.updateAssistantMessage('', false); // Initialize empty assistant message
+
+      const interval = setInterval(() => {
+        if (chunks.length === 0) {
+          clearInterval(interval);
+          this.updateAssistantMessage(currentChunk, true); // Finalize message
+          this.isAssistantTyping = false; // Set typing status to false
+          return;
+        }
+        currentChunk += chunks.shift();
+        this.updateAssistantMessage(currentChunk, false); // Update with current chunk
+      }, 50); // Adjust the interval as needed for the desired typing effect
     },
 
     updateAssistantMessage(content, isFinal = false) {
