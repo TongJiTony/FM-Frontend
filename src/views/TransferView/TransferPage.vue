@@ -92,14 +92,14 @@ export default {
       transferInfo: {
         playerID: "",
         playerName: "", // 球员姓名
-        teamId_from: "",
-        teamName_from: "",
-        teamId_to: "",
-        teamName_to: "",
+        teamIdFrom: "",
+        teamNameFrom: "",
+        teamIdTo: "",
+        teamNameTo: "",
         teamId: "",
         teamName: "",
-        start_date: "",
-        end_date: "",
+        startDate: "",
+        endDate: "",
         transferFee: 0, // 转会费
         salary: 0, // 工资
         transferDate: "", // 转会时间
