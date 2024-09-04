@@ -64,7 +64,7 @@
     <!-- 对话框 -->
     <manager-dialog
       :visible="dialogVisible"
-      :value="transferInfo.playerName"
+      :value="transferInfo"
       @close="dialogVisible = false"
       @save="saveTransfer"
     ></manager-dialog>
