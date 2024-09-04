@@ -51,7 +51,8 @@
     <el-footer style="height: auto">
       <h4>关于我们</h4>
       <p>
-        Hi there!我们来自同济大学软件学院，正在学习软件项目开发，并在实践中锻炼前后端开发能力。这是我们的数据库课程设计项目，如果有任何疑问，请联系我们！
+        Hi
+        there!我们来自同济大学软件学院，正在学习软件项目开发，并在实践中锻炼前后端开发能力。这是我们的数据库课程设计项目，如果有任何疑问，请联系我们！
       </p>
       <p class="copyright">
         Copyright © 2024 TJ Football Manager. All rights reserved.
@@ -69,7 +70,7 @@ export default {
     return {
       themes,
       currentThemeName: "purpleBlack", // 初始主题
-      currentThemeIndex: 0,
+      currentThemeIndex: 1,
       backgroundViews: {
         greenGradient: "linear-gradient(to right, #43cea2, #185a9d)",
         purpleGradient: "linear-gradient(to right, #8e2de2, #4a00e0)",
@@ -79,7 +80,7 @@ export default {
         image2: `url(${require("@/assets/img/main-bg-2.png")})`,
       },
       currentBackgroundName: "purpleGradient", // 初始背景
-      currentBackgroundIndex: 0,
+      currentBackgroundIndex: 1,
     };
   },
   computed: {
@@ -107,7 +108,6 @@ export default {
     },
     toggleTheme() {
       const themeNames = Object.keys(this.themes);
-      console.log("themeNames:", themeNames);
       this.currentThemeIndex = (this.currentThemeIndex + 1) % themeNames.length;
       this.currentThemeName = themeNames[this.currentThemeIndex];
       this.$message.info(`主题切换至 ${this.currentThemeName}`);
@@ -123,17 +123,23 @@ export default {
     },
     handleSelect(key) {
       const userright = this.$store.getters["user/getUserRight"]; // 获取用户角色
-      const userTeamid = this.$store.getters["user/getTeamID"]; 
-    if (key === '/team' && userright === 'manager') {
-      if (this.$route.path!==`/teamdetail/${userTeamid}`)
-        this.$router.push( { name: "TeamPage", params: { teamID: userTeamid }});
-      return;
-    }
-    if (key === '/player-list' && userright === 'manager') {
-      if (this.$route.path!==`/player-list/${userTeamid}`)
-        this.$router.push( { name: "PlayerList", params: { teamId: userTeamid }});
-      return;
-    }
+      const userTeamid = this.$store.getters["user/getTeamID"];
+      if (key === "/team" && userright === "manager") {
+        if (this.$route.path !== `/teamdetail/${userTeamid}`)
+          this.$router.push({
+            name: "TeamPage",
+            params: { teamID: userTeamid },
+          });
+        return;
+      }
+      if (key === "/player-list" && userright === "manager") {
+        if (this.$route.path !== `/player-list/${userTeamid}`)
+          this.$router.push({
+            name: "PlayerList",
+            params: { teamId: userTeamid },
+          });
+        return;
+      }
 
     if (key === '/lineup' && userright === 'manager') {
       if (this.$route.path!==`/lineup/${userTeamid}`)
@@ -191,7 +197,7 @@ export default {
   color: var(--primary-background) !important; /* 强制文字颜色 */
 }
 
-.el-submenu :hover{
+.el-submenu :hover {
   background-color: var(--active-text-color) !important; /* 强制背景色 */
   color: var(--primary-background) !important; /* 强制文字颜色 */
 }
@@ -230,7 +236,6 @@ export default {
   font-weight: bold;
 }
 
-
 .user-icon {
   width: 40px;
   height: 40px;
@@ -267,9 +272,7 @@ export default {
   margin-left: 100px;
   display: flex;
   align-items: center;
-  
 }
-
 
 .button-change-theme,
 .button-change-BackGroundImages {
