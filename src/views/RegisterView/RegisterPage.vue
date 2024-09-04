@@ -96,6 +96,11 @@
             class="register-button"
             >注册</el-button
           >
+           <el-button
+            type="text"
+            @click="resetFormAndGoBack"
+            >返回登陆页面</el-button
+          >
         </el-form-item>
       </el-form>
       <div class="password-strength">
@@ -187,6 +192,14 @@ export default {
     };
   },
   methods: {
+    resetFormAndGoBack() {
+      this.$refs["registerForm"].resetFields();
+      this.passwordStrengthMessage = "";
+      this.strengthBarStyle = { width: "0%", backgroundColor: "#ccc" };
+      this.$router.replace({ name: "Login" });
+    },
+
+
     validateConfirmPassword(rule, value, callback) {
       if (value !== this.registerForm.userPassword) {
         callback(new Error("确认密码与密码不匹配"));
