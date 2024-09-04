@@ -78,7 +78,7 @@
 
       
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取消</el-button>
+        <el-button @click="handleClose">取消转会</el-button>
         <el-button type="primary" @click="saveTransfer" :disabled="save_disabled">确认</el-button>
       </div>      
 
@@ -95,8 +95,8 @@ export default {
       default: false,
     },
     value: {
-      type: String,
-      default: '',
+      type: Object,
+      default: null,
     },
   },
   data() {
@@ -107,7 +107,7 @@ export default {
       input_disabled: false,
       save_disabled: true,
       messages: [
-        { user: 'manager', text: `我们球队有一个球员${this.value}可以考虑转会。` },
+        { user: 'manager', text: `我们球队有一个球员${this.value.playerName}可以考虑转会。` },
         { user: 'you', text: '我对这个球员很感兴趣，能聊聊转会费吗？' },
         // 你可以在这里添加更多的预设对话
       ],
@@ -166,7 +166,7 @@ export default {
         //reset
         this.input = '';
         this.inputdata = null;
-        this.isDialogVisible = false;
+        // this.isDialogVisible = false;
         this.input_disabled = false;
       }
     },
@@ -215,10 +215,11 @@ export default {
       if (this.transferDetails.fee !== null && this.transferDetails.salary !== null &&
           this.transferDetails.transferWindow && this.transferDetails.contractDuration !== null) {
         
-        ///////////////// 检测是否同时转会
-
+        ///////////////// 检测是否同意转会
+        this.checkTransfer();
+        
+        //
         this.messages.push({ user: 'manager', text: `好的，基本情况已经确定，${this.playerName}对于加盟贵队非常感兴趣，您给出的条件看起来非常合理。我们已经与${this.playerName}和他的经纪人讨论了这份提议，他们没有异议，我们将接受这个方案` });
-
         // 使用 Loading 服务
         const loadingInstance = this.$loading({
           lock: true,
@@ -228,19 +229,73 @@ export default {
         });
 
         setTimeout(() => {
-          this.saveTransferDetails();
           loadingInstance.close(); // 关闭加载动画
+          this.saveTransferDetails();
         }, 1000);
       }
     },
     checkTransfer() {
+      const plan = {};
+      plan.transfer_fees = 10000 * Number(this.transferDetails.fee);
+      plan.salary = 10000 * Number(this.transferDetails.salary);
+
+      plan.player_id = Number(this.value.playerID);
+      // plan.player_name = this.value.playerName;
+      plan.team_id_from = Number(this.value.teamIdFrom);
+      plan.team_id_to = Number(this.value.teamIdTo);
+      // plan.team_name_to = this.value.teamNameTo;
+      // plan.team_name_from = this.value.teamNameFrom;
+
+      // 使用 Date 对象获取当前日期
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0'); // 月份从0开始，所以需要加1
+      const day = String(today.getDate()).padStart(2, '0');
       
+      plan.transfer_date = `${year}-${month}-${day}`;
+      plan.start_date = `${year}-${month}-${day}`; // 确定夏窗冬窗具体时间
+
+      const endYear = year + Number(this.transferDetails.contractDuration);
+      plan.end_date = `${endYear}-${month}-${day}`;  // 确定合同到期时间
+
+      console.log("plan is ", plan);
+      axios({
+        method: 'OPTIONS',
+        url: `/api/v1/agent/newplan?userid=${this.$store.getters["user/getUserId"]}`,
+        data: plan, // 上传计划的JSON BODY
+        headers: {
+          'Content-Type': 'application/json' // 明确指定请求的数据类型
+        }
+      }).then(res => {
+        if (res.status === 200) {
+          this.$message.success('转会成功！经纪人同意转会。');
+          this.$emit('closeDialog');
+        } else if (res.status === 400) {
+          this.$message.error(`转会失败：${res.data.reason}`);
+        } else if (res.status === 403) {
+          this.$message.error('新建计划失败，无权限操作。');
+        }
+      }).catch(err => {
+        this.$message.error(`请求失败：${err.message}`);
+      });
     },
     saveTransferDetails() {
-      alert('协商成功！转会数据已保存, 请点击保存按钮完成转会！');
-      this.save_disabled = false;
-      this.input_disabled = true;
-      console.log(this.save_disabled);
+      this.$confirm('协商成功！请最终确定是否完成转会', '这里是提示', {
+        confirmButtonText: '确定转会',
+        cancelButtonText: '需要再考虑一下',
+        type: 'success'
+      }).then(() => {
+        this.save_disabled = false;
+        this.input_disabled = true;
+        this.$emit('save', this.transferDetails);
+        this.closeDialog();
+      }).catch(() => {
+        this.$message({
+            type: 'warning',
+            message: '已经取消转会申请，再次转会需要重新协商！'
+          });
+          this.closeDialog();
+      });      
     },
 
     //search input prompts
@@ -278,11 +333,10 @@ export default {
 
       return true;
     },
-
     handleSelect(item) {
       this.inputcard_visible = true;
       this.input_disabled = true;
-      console.log(this.currentKeywordIndex);
+      // console.log(this.currentKeywordIndex);
 
       const value = item.value;
       if (value === '转会费') {
@@ -319,7 +373,7 @@ export default {
       this.inputdata = null;
       this.input_disabled = false;
       this.messages = [
-        { user: 'manager', text: `我们球队有一个球员${this.value}可以考虑转会。` },
+        { user: 'manager', text: `我们球队有一个球员${this.value.playerName}可以考虑转会。` },
         { user: 'you', text: '我对这个球员很感兴趣，能聊聊转会费吗？' },
         // 你可以在这里添加更多的预设对话
       ],
@@ -371,7 +425,7 @@ export default {
       this.$nextTick(() => {
         this.scrollToBottom();
       });
-    }
+    },
   },
   computed: {
     isDialogVisible() {
@@ -379,12 +433,12 @@ export default {
     },
     playerName: {
       get() {
-        return this.value;
+        return this.value.playerName;
       },
       set(newValue) {
         this.$emit('update:value', newValue);
       }
-    }
+    },
   },
   mounted() {
     this.inputprompt = this.loadAllprompts();

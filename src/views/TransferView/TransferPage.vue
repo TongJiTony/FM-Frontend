@@ -136,9 +136,17 @@ export default {
           `/api/v1/agent/connect?userid=${this.$store.getters["user/getUserId"]}`
         );
 
-        console.log("API response 2 :", response);
-        if (response.data === "已创建新会话，您可以提出转会申请了!") {
-          this.$message.success("已创建新会话，您可以提出转会申请了!");
+        // console.log("API response 2 :", response);
+        if (response.status === 200) {
+          this.$message.success(response.data);
+          this.transferInfo.playerID = player.PLAYER_ID;
+          this.transferInfo.playerName = player.PLAYER_NAME;
+          this.transferInfo.teamIdFrom = player.TEAM_ID;
+          // this.transferInfo.teamNameFrom = this.$store.getters
+          this.transferInfo.teamIdTo = this.$store.getters["user/getTeamID"];
+          this.transferInfo.teamId = this.transferInfo.teamIdTo;
+          console.log("Transfer info:", this.transferInfo);
+
           this.dialogVisible = true;
         } else {
           this.$message.error(response.data);
