@@ -82,7 +82,11 @@
             <div slot="header" class="clearfix">
               <span>{{ player[0].ROLE }}</span>
             </div>
-            <img src="imageUrl" alt="Football Field" class="field-image" />
+            <img
+              :src="fieldImageUrl"
+              alt="Football Field"
+              class="field-image"
+            />
           </el-card>
         </el-col>
 
@@ -219,7 +223,7 @@ export default {
       lineupData: [],
       tableData: [],
       allData: [],
-      imageUrl: "https://i.ibb.co/2jL5H73/playground.jpg", // 默认图片
+      fieldImageUrl: "",
       loading: true,
       player: null,
     };
@@ -313,7 +317,11 @@ export default {
         .then((response) => {
           console.log("Received data:", response.data);
           this.player = response.data;
-          this.updateImageUrl();
+
+          const role = this.player[0].ROLE;
+          console.log("Player Role:", role);
+          this.fieldImageUrl = this.getImageUrlByRole(role);
+          console.log("Field Image URL:", this.fieldImageUrl);
           this.loading = false;
         })
         .catch((error) => {
@@ -321,24 +329,18 @@ export default {
           this.loading = false;
         });
     },
-    updatePositionStyle() {
-      if (this.player && this.player[0].ROLE) {
-        switch (this.player[0].ROLE) {
-          case "F":
-            this.imageUrl = "https://s21.ax1x.com/2024/09/04/pAZA1Xt.png"; // 前锋位置图片
-            break;
-          case "M":
-            this.imageUrl = "https://s21.ax1x.com/2024/09/04/pAZAl6I.png"; // 中场位置图片
-            break;
-          case "B":
-            this.imageUrl = "https://s21.ax1x.com/2024/09/04/pAZAufH.png"; // 后卫位置图片
-            break;
-          case "GK":
-            this.imageUrl = "https://s21.ax1x.com/2024/09/04/pAZAJ78.png"; // 守门员位置图片
-            break;
-          default:
-            this.imageUrl = "https://i.ibb.co/2jL5H73/playground.jpg"; // 默认图片
-        }
+    getImageUrlByRole(role) {
+      switch (role) {
+        case "守门员":
+          return "https://s21.ax1x.com/2024/09/04/pAZAJ78.png";
+        case "后卫":
+          return "https://s21.ax1x.com/2024/09/04/pAZAufH.png";
+        case "中场":
+          return "https://s21.ax1x.com/2024/09/04/pAZAl6I.png";
+        case "前锋":
+          return "https://s21.ax1x.com/2024/09/04/pAZA1Xt.png";
+        default:
+          return "https://i.ibb.co/2jL5H73/playground.jpg";
       }
     },
   },
