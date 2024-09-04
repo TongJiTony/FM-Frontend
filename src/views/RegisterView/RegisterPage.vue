@@ -42,7 +42,7 @@
             @input="checkPasswordStrength"
           ></el-input>
         </el-form-item>
-        <el-form-item label="确认密码" prop="confirmPassword">
+        <el-form-item label="确认密码：" prop="confirmPassword">
           <el-input
             type="password"
             v-model="registerForm.confirmPassword"
