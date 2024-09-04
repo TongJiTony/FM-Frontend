@@ -39,7 +39,12 @@
             placeholder="请输入密码"
             show-password
             class="input-field"
+            @input="checkPasswordStrength"
+            
           ></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="confirmPassword">
+          <el-input type="password" v-model="registerForm.confirmPassword" placeholder="再次输入密码" />
         </el-form-item>
         <el-form-item label="手机号码：" prop="userPhone">
           <el-input
@@ -88,6 +93,13 @@
           >
         </el-form-item>
       </el-form>
+      <div class="password-strength">
+        <h4>密码强度</h4>
+        <div class="strength-bar">
+          <div :style="strengthBarStyle" class="strength-bar-fill"></div>
+        </div>
+        <p>{{ passwordStrengthMessage }}</p>
+      </div>
     </el-main>
   </el-container>
 </template>
@@ -106,7 +118,16 @@ export default {
         userPhone: "",
         icon: "",
         TeamID: "",
+        confirmPassword: '',
       },
+
+      passwordStrengthMessage: '',
+
+       strengthBarStyle: {
+        width: '0%',
+        backgroundColor: '#ccc'
+      },
+
       registerRule: {
         userName: [
           { required: true, message: "用户姓名不可以为空", trigger: "blur" },
@@ -116,6 +137,10 @@ export default {
         ],
         userPassword: [
           { required: true, message: "密码不可以为空", trigger: "blur" },
+        ],
+        confirmPassword: [
+          { required: true, message: '请确认密码', trigger: 'blur' },
+          { validator: this.validateConfirmPassword, trigger: 'blur' }
         ],
         userPhone: [
           { required: true, message: "电话号码不可以为空", trigger: "blur" },
@@ -149,6 +174,54 @@ export default {
     };
   },
   methods: {
+    validateConfirmPassword(rule, value, callback) {
+      if (value !== this.registerForm.userPassword) {
+        callback(new Error('确认密码与密码不匹配'));
+      } else {
+        callback();
+      }
+    },
+
+    checkPasswordStrength() {
+      const password = this.registerForm.userPassword;
+      let strength = 0;
+
+      if (password.length >= 8) strength += 1;
+      if (/[A-Z]/.test(password)) strength += 1;
+      if (/[a-z]/.test(password)) strength += 1;
+      if (/\d/.test(password)) strength += 1;
+      if (/[@$!%*?&#]/.test(password)) strength += 1;
+
+      this.setPasswordStrength(strength);
+    },
+    setPasswordStrength(strength) {
+      switch (strength) {
+        case 1:
+          this.passwordStrengthMessage = '非常弱';
+          this.strengthBarStyle = { width: '20%', backgroundColor: 'red' };
+          break;
+        case 2:
+          this.passwordStrengthMessage = '弱';
+          this.strengthBarStyle = { width: '40%', backgroundColor: 'orange' };
+          break;
+        case 3:
+          this.passwordStrengthMessage = '中等';
+          this.strengthBarStyle = { width: '60%', backgroundColor: 'yellow' };
+          break;
+        case 4:
+          this.passwordStrengthMessage = '强';
+          this.strengthBarStyle = { width: '80%', backgroundColor: 'lightgreen' };
+          break;
+        case 5:
+          this.passwordStrengthMessage = '非常强';
+          this.strengthBarStyle = { width: '100%', backgroundColor: 'green' };
+          break;
+        default:
+          this.passwordStrengthMessage = '';
+          this.strengthBarStyle = { width: '0%', backgroundColor: '#ccc' };
+      }
+    },
+
     customUpload(request) {
       const formData = new FormData();
       formData.append("image", request.file);
@@ -378,4 +451,25 @@ export default {
   border-radius: 50%;
   object-fit: cover; /* 确保图片填充容器并保持比例 */
 }
+
+
+.password-strength {
+  margin-top: 20px;
+}
+
+.strength-bar {
+  width: 100%;
+  height: 10px;
+  background-color: #ccc;
+  border-radius: 5px;
+  margin: 10px 0;
+}
+
+.strength-bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+
 </style>
