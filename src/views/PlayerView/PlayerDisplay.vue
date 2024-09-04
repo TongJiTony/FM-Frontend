@@ -82,11 +82,7 @@
             <div slot="header" class="clearfix">
               <span>{{ player[0].ROLE }}</span>
             </div>
-            <img
-              src="https://i.ibb.co/2jL5H73/playground.jpg"
-              alt="Football Field"
-              class="field-image"
-            />
+            <img src="imageUrl" alt="Football Field" class="field-image" />
             <div class="player-position" :style="positionStyle"></div>
           </el-card>
         </el-col>
@@ -224,19 +220,18 @@ export default {
       lineupData: [],
       tableData: [],
       allData: [],
-      positionStyle: {
-        position: "absolute",
-        top: "50%", // Adjust based on player role/position
-        left: "20%", // Adjust based on player role/position
-        transform: "translate(-50%, -50%)",
-        width: "20px",
-        height: "20px",
-        backgroundColor: "red",
-        borderRadius: "50%",
-      },
+      imageUrl: "https://i.ibb.co/2jL5H73/playground.jpg", // 默认图片
       loading: true,
       player: null,
     };
+  },
+  watch: {
+    "player[0].ROLE": {
+      immediate: true,
+      handler(newRole) {
+        this.updateImageUrl(newRole);
+      },
+    },
   },
   created() {
     this.fetchTransferRecords();
@@ -335,24 +330,22 @@ export default {
           this.loading = false;
         });
     },
-    updatePositionStyle() {
-      if (this.player && this.player[0].ROLE) {
-        switch (this.player[0].ROLE) {
-          case "F":
-            this.positionStyle.left = "30%"; // Example value for forward
-            break;
-          case "M":
-            this.positionStyle.left = "21%"; // Example value for midfielder
-            break;
-          case "B":
-            this.positionStyle.left = "10%"; // Example value for defender
-            break;
-          case "GK":
-            this.positionStyle.left = "7%"; // Example value for goalkeeper
-            break;
-          default:
-            this.positionStyle.left = "20%"; // Default or unknown role
-        }
+    updateImageUrl(role) {
+      switch (role) {
+        case "F":
+          this.imageUrl = "https://i.ibb.co/xyz/forward.jpg"; // 前锋位置图片
+          break;
+        case "M":
+          this.imageUrl = "https://i.ibb.co/xyz/midfielder.jpg"; // 中场位置图片
+          break;
+        case "B":
+          this.imageUrl = "https://i.ibb.co/xyz/defender.jpg"; // 后卫位置图片
+          break;
+        case "GK":
+          this.imageUrl = "https://i.ibb.co/xyz/goalkeeper.jpg"; // 守门员位置图片
+          break;
+        default:
+          this.imageUrl = "https://i.ibb.co/2jL5H73/playground.jpg"; // 默认图片
       }
     },
   },
@@ -436,14 +429,6 @@ export default {
 .field-image {
   width: 100%;
   height: auto;
-}
-
-.player-position {
-  position: absolute;
-  background-color: red;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
 }
 
 .el-row {
