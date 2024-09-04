@@ -139,7 +139,6 @@ export default {
         // 可以添加更多队伍
       ],
       userRights: [
-        { value: "admin", label: "管理员" },
         { value: "manager", label: "球队经理" },
       ],
       uploadAction: "https://api.imgbb.com/1/upload",
