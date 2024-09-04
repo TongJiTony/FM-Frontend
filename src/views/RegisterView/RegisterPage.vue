@@ -137,6 +137,7 @@ export default {
         ],
         userPassword: [
           { required: true, message: "密码不可以为空", trigger: "blur" },
+          { min: 6, max: 20, message: '密码长度应在 6 到 20 个字符之间', trigger: 'blur' }
         ],
         confirmPassword: [
           { required: true, message: '请确认密码', trigger: 'blur' },
@@ -144,6 +145,7 @@ export default {
         ],
         userPhone: [
           { required: true, message: "电话号码不可以为空", trigger: "blur" },
+          { pattern: /^[0-9]+$/, message: '电话号码只能包含数字', trigger: 'blur' },
         ],
         TeamID: [
           { required: true, message: "队伍ID 不能为空", trigger: "blur" },
@@ -405,7 +407,8 @@ export default {
 .el-main {
   width: 100%;
   max-width: 500px;
-  background-color: #fff;
+  background-color: #fff !important;
+  color: #333333 !important;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
