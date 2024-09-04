@@ -39,7 +39,15 @@
             placeholder="请输入密码"
             show-password
             class="input-field"
+            @input="checkPasswordStrength"
           ></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码：" prop="confirmPassword">
+          <el-input
+            type="password"
+            v-model="registerForm.confirmPassword"
+            placeholder="再次输入密码"
+          />
         </el-form-item>
         <el-form-item label="手机号码：" prop="userPhone">
           <el-input
@@ -52,12 +60,14 @@
           <el-select
             v-model="registerForm.TeamID"
             placeholder="请选择所属队伍"
-            class="select-field">
+            class="select-field"
+          >
             <el-option
-               v-for="team in teams"
+              v-for="team in teams"
               :key="team.id"
               :label="team.name"
-              :value="team.id">
+              :value="team.id"
+            >
             </el-option>
           </el-select>
         </el-form-item>
@@ -86,8 +96,20 @@
             class="register-button"
             >注册</el-button
           >
+           <el-button
+            type="text"
+            @click="resetFormAndGoBack"
+            >返回登陆页面</el-button
+          >
         </el-form-item>
       </el-form>
+      <div class="password-strength">
+        <h4>密码强度</h4>
+        <div class="strength-bar">
+          <div :style="strengthBarStyle" class="strength-bar-fill"></div>
+        </div>
+        <p>{{ passwordStrengthMessage }}</p>
+      </div>
     </el-main>
   </el-container>
 </template>
@@ -106,7 +128,16 @@ export default {
         userPhone: "",
         icon: "",
         TeamID: "",
+        confirmPassword: "",
       },
+
+      passwordStrengthMessage: "",
+
+      strengthBarStyle: {
+        width: "0%",
+        backgroundColor: "#ccc",
+      },
+
       registerRule: {
         userName: [
           { required: true, message: "用户姓名不可以为空", trigger: "blur" },
@@ -116,9 +147,24 @@ export default {
         ],
         userPassword: [
           { required: true, message: "密码不可以为空", trigger: "blur" },
+          {
+            min: 6,
+            max: 20,
+            message: "密码长度应在 6 到 20 个字符之间",
+            trigger: "blur",
+          },
+        ],
+        confirmPassword: [
+          { required: true, message: "请确认密码", trigger: "blur" },
+          { validator: this.validateConfirmPassword, trigger: "blur" },
         ],
         userPhone: [
           { required: true, message: "电话号码不可以为空", trigger: "blur" },
+          {
+            pattern: /^[0-9]+$/,
+            message: "电话号码只能包含数字",
+            trigger: "blur",
+          },
         ],
         TeamID: [
           { required: true, message: "队伍ID 不能为空", trigger: "blur" },
@@ -126,7 +172,6 @@ export default {
         icon: [
           { required: true, message: "头像信息不可以为空", trigger: "blur" },
         ],
-       
       },
       teams: [
         { id: "1000000001", name: "阿森纳" },
@@ -138,10 +183,7 @@ export default {
         { id: "1000000007", name: "切尔西" },
         // 可以添加更多队伍
       ],
-      userRights: [
-        { value: "admin", label: "管理员" },
-        { value: "manager", label: "球队经理" },
-      ],
+      userRights: [{ value: "manager", label: "球队经理" }],
       uploadAction: "https://api.imgbb.com/1/upload",
       currentDeleteUrl: "",
       imgbbApiKey: "a18b4cdd1ea4b32881a598e7f32b854a",
@@ -150,6 +192,79 @@ export default {
     };
   },
   methods: {
+    resetFormAndGoBack() {
+      this.$refs["registerForm"].resetFields();
+      this.passwordStrengthMessage = "";
+      this.strengthBarStyle = { width: "0%", backgroundColor: "#ccc" };
+      this.$router.replace({ name: "Login" });
+    },
+
+
+    validateConfirmPassword(rule, value, callback) {
+      if (value !== this.registerForm.userPassword) {
+        callback(new Error("确认密码与密码不匹配"));
+      } else {
+        callback();
+      }
+    },
+
+    checkPasswordStrength() {
+      const password = this.registerForm.userPassword;
+      let strength = 0;
+      const suggestions = [];
+
+      if (password.length >= 8) strength += 1;
+      else suggestions.push("至少8个字符");
+
+      if (/[A-Z]/.test(password)) strength += 1;
+      else suggestions.push("包含大写字母");
+
+      if (/[a-z]/.test(password)) strength += 1;
+      else suggestions.push("包含小写字母");
+
+      if (/\d/.test(password)) strength += 1;
+      else suggestions.push("包含数字");
+
+      if (/[@$!%*?&#]/.test(password)) strength += 1;
+      else suggestions.push("包含特殊字符");
+
+      this.setPasswordStrength(strength);
+      this.passwordStrengthMessage = suggestions.length
+        ? "建议：" + suggestions.join("，")
+        : this.passwordStrengthMessage;
+    },
+
+    setPasswordStrength(strength) {
+      switch (strength) {
+        case 1:
+          this.passwordStrengthMessage = "非常弱";
+          this.strengthBarStyle = { width: "20%", backgroundColor: "red" };
+          break;
+        case 2:
+          this.passwordStrengthMessage = "弱";
+          this.strengthBarStyle = { width: "40%", backgroundColor: "orange" };
+          break;
+        case 3:
+          this.passwordStrengthMessage = "中等";
+          this.strengthBarStyle = { width: "60%", backgroundColor: "yellow" };
+          break;
+        case 4:
+          this.passwordStrengthMessage = "强";
+          this.strengthBarStyle = {
+            width: "80%",
+            backgroundColor: "lightgreen",
+          };
+          break;
+        case 5:
+          this.passwordStrengthMessage = "非常强";
+          this.strengthBarStyle = { width: "100%", backgroundColor: "green" };
+          break;
+        default:
+          this.passwordStrengthMessage = "";
+          this.strengthBarStyle = { width: "0%", backgroundColor: "#ccc" };
+      }
+    },
+
     customUpload(request) {
       const formData = new FormData();
       formData.append("image", request.file);
@@ -236,10 +351,10 @@ export default {
               userPassword: this.registerForm.userPassword,
               userPhone: this.registerForm.userPhone,
               icon: this.registerForm.icon,
-              TeamID: this.registerForm.TeamID
+              TeamID: this.registerForm.TeamID,
             })
             .then(({ data }) => {
-              console.log("data:",data);
+              console.log("data:", data);
               if (data.code == 200) {
                 this.showSuccessMessage(
                   data.user_id,
@@ -248,7 +363,7 @@ export default {
                   data.user_password,
                   data.user_phone,
                   data.icon,
-                  data.team_id,
+                  data.team_id
                 );
                 //然后上传用户头像信息
                 axios
@@ -333,7 +448,8 @@ export default {
 .el-main {
   width: 100%;
   max-width: 500px;
-  background-color: #fff;
+  background-color: #fff !important;
+  color: #333333 !important;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -378,5 +494,23 @@ export default {
   height: 100%;
   border-radius: 50%;
   object-fit: cover; /* 确保图片填充容器并保持比例 */
+}
+
+.password-strength {
+  margin-top: 20px;
+}
+
+.strength-bar {
+  width: 100%;
+  height: 10px;
+  background-color: #ccc;
+  border-radius: 5px;
+  margin: 10px 0;
+}
+
+.strength-bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.3s ease;
 }
 </style>
