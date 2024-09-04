@@ -90,11 +90,20 @@ export default {
       loading: true,
       dialogVisible: false,
       transferInfo: {
+        playerID: "",
         playerName: "", // 球员姓名
+        teamId_from: "",
+        teamName_from: "",
+        teamId_to: "",
+        teamName_to: "",
+        teamId: "",
+        teamName: "",
+        start_date: "",
+        end_date: "",
         transferFee: 0, // 转会费
         salary: 0, // 工资
         transferDate: "", // 转会时间
-        contractDuration: 0, // 合同年限
+        //contractDuration: 0, // 合同年限
       }, // 用于存储传递和接收的转会信息
     };
   },
@@ -123,20 +132,21 @@ export default {
       // console.log("Selected player:", this.transferInfo.playerName);
 
       try {
-        const response = await axios.options(`/api/v1/agent/connect?userid=${this.$store.getters["user/getUserId"]}`);
-          
+        const response = await axios.options(
+          `/api/v1/agent/connect?userid=${this.$store.getters["user/getUserId"]}`
+        );
+
         console.log("API response 2 :", response);
         if (response.data === "已创建新会话，您可以提出转会申请了!") {
-          this.$message.success('已创建新会话，您可以提出转会申请了!');
+          this.$message.success("已创建新会话，您可以提出转会申请了!");
           this.dialogVisible = true;
         } else {
           this.$message.error(response.data);
         }
       } catch (error) {
         console.error("Error fetching agent status:", error);
-        this.$message.error('无法与服务器通信');
+        this.$message.error("无法与服务器通信");
       }
-
     },
 
     // 计算球员年龄的函数
@@ -205,7 +215,9 @@ export default {
   created() {
     // 页面加载时获取转会数据
     this.fetchPlayers();
-    axios.options(`/api/v1/agent/disconnect?userid=${this.$store.getters["user/getUserId"]}`);
+    axios.options(
+      `/api/v1/agent/disconnect?userid=${this.$store.getters["user/getUserId"]}`
+    );
   },
 };
 </script>
