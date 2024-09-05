@@ -114,9 +114,9 @@ export default {
         password: [
           { required: true, message: "密码不能为空", trigger: "blur" },
         ],
-        // captcha: [
-        //   { required: true, message: "验证码不能为空", trigger: "blur" },
-        // ],
+        captcha: [
+          { required: true, message: "验证码不能为空", trigger: "blur" },
+        ],
       },
       generatedCaptcha: "",//生成的验证码
       captchaTimestamp: null, // 验证码生成时间
@@ -231,13 +231,9 @@ export default {
             this.generateCaptcha(); // 验证码过期时重新生成
             return; // 阻止后续的登录逻辑执行
           }
-          // if (
-          //   this.dataForm.captcha.toUpperCase() ===
-          //   this.generatedCaptcha.toUpperCase()
-          // ) {
           if (
-            !this.dataForm.captcha ||
-            this.dataForm.captcha.toUpperCase() === this.generatedCaptcha.toUpperCase()
+            this.dataForm.captcha.toUpperCase() ===
+            this.generatedCaptcha.toUpperCase()
           ) {
             // 验证码匹配，执行登录操作
             console.log("验证码正确");
