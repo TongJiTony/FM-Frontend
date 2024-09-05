@@ -63,9 +63,9 @@
                   <el-table-column prop="PLAYER_NAME" label="球员姓名" width="170"></el-table-column>
                   <el-table-column prop="ROLE" label="位置" ></el-table-column>
                   <el-table-column prop="RANK" label="评分" ></el-table-column>
-                  <el-table-column>
+                  <el-table-column label="操作">
                     <template slot-scope="scope">
-                      <el-button @click="handlePlayerDetails(scope.row)" type="text" size="small">查看详情</el-button>
+                      <el-button @click="handlePlayerDetails(scope.row)" type="text" size="small">详情</el-button>
                     </template>
                   </el-table-column>
                 </el-table>     
@@ -83,6 +83,11 @@
                     <el-table-column prop="HOME_TEAM_NAME" label="主场球队" width="150" ></el-table-column>
                     <el-table-column prop="AWAY_TEAM_NAME" label="客场球队" width="150" ></el-table-column>
                     <el-table-column prop="MATCH_STADIUM_NAME" label="地点"></el-table-column>
+                    <el-table-column label="操作">
+                    <template slot-scope="scope">
+                      <el-button @click="handleMatchDetails(scope.row)" type="text" size="small">详情</el-button>
+                    </template>
+                  </el-table-column>
                   </el-table>
                   <el-pagination
                     @current-change="handlePageChange"
@@ -182,6 +187,11 @@
       console.log('Navigating to player detail page for:', row.PLAYER_ID);
       const playerId = row.PLAYER_ID;
       const route = `/player-display/${playerId}`;
+      this.$router.push(route);
+    },
+    handleMatchDetails(row) {
+      const matchID = row.MATCH_ID;
+      const route = `/match/${matchID}`;
       this.$router.push(route);
     },
     handlePageChange(page) {
