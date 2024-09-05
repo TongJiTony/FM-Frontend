@@ -142,7 +142,8 @@ export default {
           this.transferInfo.playerID = player.PLAYER_ID;
           this.transferInfo.playerName = player.PLAYER_NAME;
           this.transferInfo.teamIdFrom = player.TEAM_ID;
-          // this.transferInfo.teamNameFrom = this.$store.getters
+          this.transferInfo.teamNameFrom = player.TEAM_NAME;
+          // this.transferInfo.teamNameTo = this.$store.getters["user/getTeamID"];
           this.transferInfo.teamIdTo = this.$store.getters["user/getTeamID"];
           this.transferInfo.teamId = this.transferInfo.teamIdTo;
           console.log("Transfer info:", this.transferInfo);

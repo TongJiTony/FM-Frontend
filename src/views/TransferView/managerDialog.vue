@@ -1,7 +1,7 @@
 <template>
     <el-dialog :visible="visible" @close="closeDialog"
     :before-close="handleClose"
-    width="1200px"
+    width="1350px"
     >
       <el-row style="margin-left: 40px;" divider>
         <!-- 左侧：用户1信息 -->
@@ -48,7 +48,7 @@
         </el-col>
 
         <!-- 右侧：用户2信息 -->
-        <el-col :span="4" class="user-info" :offset="1">
+        <el-col :span="6" class="user-info" :offset="1">
           <el-card>
             <img :src="userInfo.user_icon" :alt="`${userInfo.user_name}-Icon`" class="user-icon" @error="handleImageError"/>
             <h4>{{ userInfo.user_name }}</h4>
@@ -71,6 +71,34 @@
                 </el-option>
               </el-select>
             </div>
+          </el-card>
+
+          <el-card v-if="form_visible" class="prompts">
+            <el-form :model="transferDetails" label-width="60px">
+              <el-form-item label="转会费">
+                <el-input v-model="transferDetails.fee" placeholder="请输入转会费"></el-input>
+              </el-form-item>
+              <el-form-item label="薪水">
+                <el-input v-model="transferDetails.salary" placeholder="请输入薪水"></el-input>
+              </el-form-item>
+              <el-form-item label="窗口">
+                <el-select v-model="transferDetails.transferWindow" placeholder="请选择">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="期限">
+                <el-input v-model="transferDetails.contractDuration" placeholder="请输入合同期限（月数）"></el-input>
+              </el-form-item>
+              <el-form-item>
+                <!-- <el-button type="primary" @click="submitForm">确定</el-button> -->
+                <el-button @click="form_visible = false">取消</el-button>
+              </el-form-item>
+            </el-form>
           </el-card>
         </el-col>
       </el-row>
@@ -123,6 +151,8 @@ export default {
       requiredKeywords: ['转会费', '工资', '转会窗口', '合同时长'],
       currentKeywordIndex: 0,
       inputcard_visible: false,
+      form_visible: false,
+      refuse_reply: '',
 
       //avatars
       randomAvatar: '',
@@ -152,6 +182,10 @@ export default {
   },
   methods: {
     sendMessage() {
+      if (this.form_visible) {
+        this.sendMessage_edit();
+        return;
+      }
       if (this.input.trim()) {
         // 检测并修改 [] 中的内容
         let text = this.input;
@@ -172,6 +206,10 @@ export default {
         // this.isDialogVisible = false;
         this.input_disabled = false;
       }
+    },
+    sendMessage_edit() {
+      this.messages.push({ user: 'you', text: '我尝试做出一些让步，这是修改后的合同内容' });
+      this.checkAllDetailsConfirmed()
     },
     checkKeywordSequence(inputText) {
       const currentKeyword = this.requiredKeywords[this.currentKeywordIndex];
@@ -218,22 +256,30 @@ export default {
       if (this.transferDetails.fee !== null && this.transferDetails.salary !== null &&
           this.transferDetails.transferWindow && this.transferDetails.contractDuration !== null) {
         
-        ///////////////// 检测是否同意转会
-        if (this.checkTransfer()) {
-          this.messages.push({ user: 'manager', text: `好的，基本情况已经确定，${this.playerName}对于加盟贵队非常感兴趣，您给出的条件看起来非常合理。我们已经与${this.playerName}和他的经纪人讨论了这份提议，他们没有异议，我们将接受这个方案` });
-          // 使用 Loading 服务
-          const loadingInstance = this.$loading({
-            lock: true,
-            text: '保存中...',
-            spinner: 'el-icon-loading',
-            background: 'rgba(0, 0, 0, 0.7)'
-          });
+        this.checkTransfer();
+        // 检测是否同意转会
+        // if (this.checkTransfer()) {
+        //   this.messages.push({ user: 'manager', text: `好的，基本情况已经确定，${this.playerName}对于加盟贵队非常感兴趣，您给出的条件看起来非常合理。我们已经与${this.playerName}和他的经纪人讨论了这份提议，他们没有异议，我们将接受这个方案` });
+        //   // 使用 Loading 服务
+        //   const loadingInstance = this.$loading({
+        //     lock: true,
+        //     text: '保存中...',
+        //     spinner: 'el-icon-loading',
+        //     background: 'rgba(0, 0, 0, 0.7)'
+        //   });
 
-          setTimeout(() => {
-          loadingInstance.close(); // 关闭加载动画
-          this.confirmTransfer();
-        }, 1000);
-        }
+        //   setTimeout(() => {
+        //   loadingInstance.close(); // 关闭加载动画
+        //   this.confirmTransfer();
+        // }, 1000);
+        // } else {
+        //   console.log('拒绝转会');
+          
+        //   this.messages.push({ user: 'manager', text: `抱歉，请您尝试修改条款。` });
+        //   this.messages.push({ user: 'manager', text: this.refuse_reply });
+        //   this.$message.error('协商失败，请您尝试修改条款。');
+        //   this.form_visible = true;
+        // }
       }
     },
     checkTransfer() {
@@ -242,102 +288,130 @@ export default {
       plan.salary = 10000 * Number(this.transferDetails.salary);
 
       plan.player_id = Number(this.value.playerID);
-      // plan.player_name = this.value.playerName;
+      plan.player_name = this.value.playerName;
       plan.team_id_from = Number(this.value.teamIdFrom);
       plan.team_id_to = Number(this.value.teamIdTo);
-      // plan.team_name_to = this.value.teamNameTo;
-      // plan.team_name_from = this.value.teamNameFrom;
+      plan.team_id = Number(plan.team_id_to);
+      plan.team_name_to = this.value.teamNameTo;
+      plan.team_name_from = this.value.teamNameFrom;
 
       // 使用 Date 对象获取当前日期
       const today = new Date();
-      const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, '0'); // 月份从0开始，所以需要加1
-      const day = String(today.getDate()).padStart(2, '0');
-      
-      plan.transfer_date = `${year}-${month}-${day}`;
-      plan.start_date = `${year}-${month}-${day}`; // 确定夏窗冬窗具体时间
 
-      const endYear = year + Number(this.transferDetails.contractDuration);
-      plan.end_date = `${endYear}-${month}-${day}`;  // 确定合同到期时间
+      // 确保使用 ISO 格式的日期字符串
+      plan.transfer_date = today.toISOString();  // 使用 ISO 8601 格式的日期字符串
+      plan.start_date = plan.transfer_date;  // 转会日期和合同开始日期相同
+
+      // 确定合同到期时间，使用合同期限增加年份
+      const endYear = today.getFullYear() + Number(this.transferDetails.contractDuration);
+      const endDate = new Date(endYear, today.getMonth(), today.getDate());
+      plan.end_date = endDate.toISOString();  // 使用 ISO 8601 格式的日期字符串
 
       console.log("plan is ", plan);
-      const res = axios({
+
+      axios({
         method: 'OPTIONS',
         url: `/api/v1/agent/newplan?userid=${this.$store.getters["user/getUserId"]}`,
-        data: plan, // 上传计划的JSON BODY
+        data: plan,  // 上传计划的JSON BODY
         headers: {
-          'Content-Type': 'application/json' // 明确指定请求的数据类型
+          'Content-Type': 'application/json'  // 明确指定请求的数据类型
         }
       }).then(res => {
         if (res.status === 200) {
           this.$message.success('转会成功！经纪人同意转会。');
-          return true;
-        } else if (res.status === 400) {
-          this.$message.error(`转会失败：${res.data.reason}`);
-          return false;
-        } else if (res.status === 403) {
-          this.$message.error('新建计划失败，无权限操作。');
-          return false;
+          this.messages.push({ user: 'manager', text: `好的，基本情况已经确定，${this.playerName}对于加盟贵队非常感兴趣，您给出的条件看起来非常合理。我们已经与${this.playerName}和他的经纪人讨论了这份提议，他们没有异议，我们将接受这个方案` });
+          
+          const loadingInstance = this.$loading({
+            lock: true,
+            text: '保存中...',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+          });
+
+          setTimeout(() => {
+            loadingInstance.close();  // 关闭加载动画
+            this.confirmTransfer();
+          }, 1000);
         }
       }).catch(err => {
-        this.$message.error(`请求失败：${err.message}`);
-        return false;
+        if (err.response.status === 403) {
+          this.$message.error('新建计划失败，无权限操作。');
+          this.closeDialog();
+        }
+        console.log("refuse the transfer", err);
+        this.messages.push({ user: 'manager', text: `抱歉，请您尝试修改条款。` });
+        this.messages.push({ user: 'manager', text: err.response.data });
+        this.$message.error('协商失败，请您尝试修改条款。');
+        this.form_visible = true;
+        this.input_disabled = true;
       });
-
-      
-      console.log("res is ", res);
     },
     confirmTransfer() {
-      this.$confirm('协商成功！请最终确定是否完成转会', '最终确认', {
-        confirmButtonText: '确定转会',
-        cancelButtonText: '需要再考虑一下',
-        type: 'success'
-      }).then(() => {
-        // 确认转会，发送OPTIONS请求
-        axios({
-          method: 'OPTIONS',
-          url: `/api/v1/agent/confirm?userid=${this.$store.getters["user/getUserId"]}&confirm=1`, // confirm=1表示确认转会
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(res => {
-          if (res.status === 200) {
-            this.$message.success('转会成功，状态已更新！');
-            // this.save_disabled = false;
-            this.input_disabled = true;
+  // 延时 2 秒
+      setTimeout(() => {
+        this.$confirm('协商成功！请最终确定是否完成转会', '最终确认', {
+          confirmButtonText: '确定转会',
+          cancelButtonText: '需要再考虑一下',
+          type: 'success'
+        }).then(() => {
+          //////// test test ///////////////
+          axios.get(`/api/v1/agent/status?userid=${this.$store.getters["user/getUserId"]}`)
+          .then(res => {
+            // console.log("the data in the host is ", res);
+            // console.log("the data in the host is",  res.status);
+            console.log("the data in the host is", res.data);
+          })
+          
+          axios.options(`/api/v1/agent/confirm?userid=${this.$store.getters["user/getUserId"]}&confirm=${1}`)
+          .then(res => {
+            console.log(res.status);
+            console.log(res.data);
+            
+            if (res.status === 200) {
+              console.log("this is  a test: 转会成功" )
+              this.$message.success('转会成功，状态已更新！');
+              this.input_disabled = true;
+              // this.closeDialog();
+            } else if (res.status === 403) {
+              this.$message.error('转会确认失败，您没有权限操作。');
+              // this.closeDialog();
+            }
+          }).catch(err => {
+            axios.get(`/api/v1/agent/status?userid=${this.$store.getters["user/getUserId"]}`)
+            .then(res => {
+              // console.log("the data in the host is ", res);
+              // console.log("the data in the host is",  res.status);
+              console.log("the data in the host is", res.data);
+            })
+            this.$message.error(`请求失败：${err.message}`);
+            // this.closeDialog();
+          });
+        }).catch(() => {
+          // 取消转会，发送 OPTIONS 请求
+          axios({
+            method: 'OPTIONS',
+            url: `/api/v1/agent/confirm?userid=${this.$store.getters["user/getUserId"]}&confirm=0`, // confirm=0 表示取消转会
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }).then(res => {
+            console.log("decline res is", res);
+            if (res.status === 200) {
+              this.$message({
+                type: 'warning',
+                message: '已经取消转会申请，再次转会需要重新协商！'
+              });
+              this.closeDialog();
+            } else if (res.status === 403) {
+              this.$message.error('取消转会失败，您没有权限操作。');
+              this.closeDialog();
+            }
+          }).catch(err => {
+            this.$message.error(`请求失败：${err.message}`);
             this.closeDialog();
-          } else if (res.status === 403) {
-            this.$message.error('转会确认失败，您没有权限操作。');
-            this.closeDialog();
-          }
-        }).catch(err => {
-          this.$message.error(`请求失败：${err.message}`);
-          this.closeDialog();
+          });
         });
-      }).catch(() => {
-        // 取消转会，发送OPTIONS请求
-        axios({
-          method: 'OPTIONS',
-          url: `/api/v1/agent/confirm?userid=${this.$store.getters["user/getUserId"]}&confirm=0`, // confirm=0表示取消转会
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(res => {
-          if (res.status === 200) {
-            this.$message({
-              type: 'warning',
-              message: '已经取消转会申请，再次转会需要重新协商！'
-            });
-            this.closeDialog();
-          } else if (res.status === 403) {
-            this.$message.error('取消转会失败，您没有权限操作。');
-            this.closeDialog();
-          }
-        }).catch(err => {
-          this.$message.error(`请求失败：${err.message}`);
-          this.closeDialog();
-        });
-      });
+      }, 2000); // 延时 2 秒
     },
 
     //search input prompts
