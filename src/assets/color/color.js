@@ -1,8 +1,8 @@
 // color.js
 export const themes = {
   green: {
-    "--primary-background": "#CDDC39",
-    "--footer-background": "#8BC34A",
+    "--primary-background": "#246221",
+    "--footer-background": "#246221",
     "--text-color": "#fff",
     "--active-text-color": "#fff",
     "--username-title-color": "#212121",
@@ -27,4 +27,13 @@ export const themes = {
     "--main-bg-gradient":
       "linear-gradient(rgba(153,50,204, 0.3), rgba(162, 239, 172, 0.3))",
   },
+  blueGrey:{
+    "--primary-background": "#455A64",
+    "--footer-background": "#455A64",
+    "--text-color": "#FFFFFF",
+    "--active-text-color": "#607D8B",
+    "--username-title-color": "#BDBDBD",
+    "--main-bg-gradient":
+      "linear-gradient(rgba(7,87,87, 0.3), rgba(162, 239, 172, 0.3))",
+  }
 };

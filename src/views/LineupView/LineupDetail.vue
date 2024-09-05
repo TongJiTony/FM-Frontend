@@ -1,7 +1,8 @@
 <template>
   <p v-if="loading">Loading...</p>
   <div v-else>
-    <el-header style="font-size: 20px; display: flex; justify-content: space-between; align-items: center;"
+  
+      <el-header style="font-size: 20px; display: flex; justify-content: space-between; align-items: center;"
     >阵容 ID: {{ this.lineupId }}
       <div class="button-contanier">
         <el-button
@@ -11,7 +12,6 @@
         >返回上级页面</el-button>
       </div>
     </el-header>
-
     <el-table
       :data="filteredLineupData"
       stripe
@@ -90,6 +90,10 @@
         </template>
       </el-table-column>
     </el-table>
+
+  
+
+
 
     <!-- Edit lineup drawer -->
     <el-drawer

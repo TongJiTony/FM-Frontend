@@ -10,8 +10,8 @@
               <el-button type="primary" size='small' icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
             </div>
             <el-col :span="6">
-              <div class="team-image">
-                <img v-if="teamURL" :src="teamURL" alt="Team Image" />
+              <div >
+                <img v-if="teamURL" :src="teamURL" alt="Team Image" class="team-image"/>
               </div>
             </el-col>                 
             <h2 style="font-size: 24px;">{{ team[0].TEAM_NAME }}</h2>                                          
@@ -51,20 +51,24 @@
             <el-card shadow="never" class="box-card">
               <div slot="header" class="clearfix">
                 <span style="font-size: 20px;font-weight: bold;">关键人物</span>
-                  <el-button type="primary" size='small' @click="handleMorePlayer" class="back-button1">更多球员</el-button>    
+                <el-button type="primary" size='small' @click="handleMorePlayer" class="back-button1">更多球员</el-button>    
               </div> 
               <el-container>
-                  <el-table :data="topPlayers" style="width: 100% ;height:250px" >
-                    <el-table-column prop="PLAYER_NAME" label="球员姓名" width="150"></el-table-column>
-                    <el-table-column prop="ROLE" label="位置" width="150"></el-table-column>
-                    <el-table-column prop="RANK" label="评分" width="150"></el-table-column>
-                    <el-table-column>
-                      <!-- eslint-disable-next-line -->           
-                      <template slot-scope="scope">
-                        <el-button @click="handlePlayerDetails(scope.row)" type="text" size="small">查看详情</el-button>
-                      </template>
-                    </el-table-column>
-                  </el-table>       
+                <el-table :data="topPlayers" style="width: 100%;" max-height="250">
+                  <el-table-column label="头像">
+                    <template slot-scope="scope">
+                      <img :src="scope.row.ICON" alt="球员头像" style="width: 36px; height: 36px; border-radius: 50%;">
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="PLAYER_NAME" label="球员姓名" width="170"></el-table-column>
+                  <el-table-column prop="ROLE" label="位置" ></el-table-column>
+                  <el-table-column prop="RANK" label="评分" ></el-table-column>
+                  <el-table-column>
+                    <template slot-scope="scope">
+                      <el-button @click="handlePlayerDetails(scope.row)" type="text" size="small">查看详情</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>     
               </el-container>          
             </el-card>
             <el-col :span="24" style="height: 20px;"></el-col> 
@@ -73,7 +77,7 @@
                 <span style="font-size: 20px;font-weight: bold;">比赛日程</span>
                 <el-button type="primary"  size='small' @click="handleClickLineup" class="back-button1">查看阵容</el-button>
               </div>
-                  <div>
+                <div>
                     <el-table :data="filteredMatches" style="width: 100%;height:250px ">
                     <el-table-column prop="MATCH_DATE" label="比赛日期" width="150" ></el-table-column>
                     <el-table-column prop="HOME_TEAM_NAME" label="主场球队" width="150" ></el-table-column>
@@ -81,13 +85,13 @@
                     <el-table-column prop="MATCH_STADIUM_NAME" label="地点"></el-table-column>
                   </el-table>
                   <el-pagination
-      @current-change="handlePageChange"
-      :current-page="currentPage"
-      :page-size="pageSize"
-      :total="filteredData.length"
-      layout="total, prev, pager, next"
-    ></el-pagination>
-                  </div>        
+                    @current-change="handlePageChange"
+                    :current-page="currentPage"
+                    :page-size="pageSize"
+                    :total="filteredData.length"
+                    layout="total, prev, pager, next"
+                  ></el-pagination>
+                </div>        
                  
                  
                        
@@ -163,8 +167,8 @@
     },
       filteredMatches() {
         const start = (this.currentPage - 1) * this.pageSize;
-      const end = start + this.pageSize;
-      return this.filteredData.slice(start, end);
+        const end = start + this.pageSize;
+        return this.filteredData.slice(start, end);
       },
     
   },
@@ -216,9 +220,9 @@
             console.log('Received data:', response.data);
             this.player = response.data;
             this.topPlayers = this.player
-      .sort((a, b) => b.RANK - a.RANK) // 按 RANK 降序排序
-      .slice(0, 3); // 取前三个元素
-      console.log('TOPPLAYER',this.topPlayers)
+            .sort((a, b) => b.RANK - a.RANK) // 按 RANK 降序排序
+            .slice(0, 3); // 取前三个元素
+            console.log('TOPPLAYER',this.topPlayers)
             this.loading = false;
         })
         .catch(error => {
@@ -373,8 +377,8 @@
 
   <style scoped>
 .team-image {
-  width: 60%;
-  height: 190px;
+  width:55%;
+  height: 55%;
   background-color: #f2f2f2;
   display: flex;
   align-items: center;
@@ -401,7 +405,6 @@
   margin-left: 1rem;
 }
 .box-card3 {
-    width: 100%;
     height: 350px;
    
   }
