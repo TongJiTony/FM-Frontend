@@ -33,8 +33,8 @@
       <span class="username-title">{{ this.$store.getters["user/getUserName"] }}</span>
       <img :src="this.$store.getters['user/getUserIcon']" class="user-icon" @error="handleImageError" />
     </template>
-    <el-menu-item class="user-action-item" index="/changepsw">Change Password</el-menu-item>
-    <el-menu-item class="user-action-item" index="/userinfo">{{ this.$store.getters["user/getUserName"] }}'s info</el-menu-item>
+    <el-menu-item class="user-action-item" index="/changepsw">修改密码</el-menu-item>
+    <el-menu-item class="user-action-item" index="/userinfo">个人信息</el-menu-item>
   </el-submenu>
 
   <button class="button-change-theme" @click="toggleTheme">切换主题</button>
