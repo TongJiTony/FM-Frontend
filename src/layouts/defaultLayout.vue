@@ -30,7 +30,7 @@
   <el-submenu class="menu-right">
     <template slot="title">
       <i class="el-icon-setting"></i>
-      <span class="username-title">{{ this.$store.getters["user/getUserName"] }}</span>
+      <span class="username-title">Hello, {{ this.$store.getters["user/getUserName"] }}!</span>
       <img :src="this.$store.getters['user/getUserIcon']" class="user-icon" @error="handleImageError" />
     </template>
     <el-menu-item class="user-action-item" index="/changepsw">修改密码</el-menu-item>
