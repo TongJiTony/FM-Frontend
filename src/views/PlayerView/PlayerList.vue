@@ -39,27 +39,34 @@
     <el-row :gutter="20">
       <el-col v-for="(player, index) in pagedData" :key="index" :span="12">
         <el-card shadow="always" class="player-card">
-          <h3>{{ player.PLAYER_NAME }}</h3>
-          <p><strong>球员编号:</strong> {{ player.PLAYER_ID }}</p>
-          <p><strong>队伍:</strong> {{ player.TEAM_NAME }}</p>
-          <p><strong>位置:</strong> {{ player.ROLE }}</p>
-          <el-button @click="handleClick(player)" type="text" size="small"
-            >详情</el-button
-          >
-          <el-button
-            @click="confirmEdit(player)"
-            type="text"
-            size="small"
-            style="color: blue"
-            >编辑</el-button
-          >
-          <el-button
-            @click="confirmDelete(player)"
-            type="text"
-            size="small"
-            style="color: red"
-            >删除</el-button
-          >
+          <div class="card-content">
+            <div class="player-info">
+              <h3>{{ player.PLAYER_NAME }}</h3>
+              <p><strong>球员编号:</strong> {{ player.PLAYER_ID }}</p>
+              <p><strong>队伍:</strong> {{ player.TEAM_NAME }}</p>
+              <p><strong>位置:</strong> {{ player.ROLE }}</p>
+              <el-button @click="handleClick(player)" type="text" size="small"
+                >详情</el-button
+              >
+              <el-button
+                @click="confirmEdit(player)"
+                type="text"
+                size="small"
+                style="color: blue"
+                >编辑</el-button
+              >
+              <el-button
+                @click="confirmDelete(player)"
+                type="text"
+                size="small"
+                style="color: red"
+                >删除</el-button
+              >
+            </div>
+            <div class="player-avatar">
+              <img :src="player.ICON" alt="Player Image" class="card-image" />
+            </div>
+          </div>
         </el-card>
       </el-col>
     </el-row>
@@ -695,6 +702,29 @@ export default {
 
 .player-card {
   margin-bottom: 20px;
+}
+
+.player-card .card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.player-card .player-info {
+  flex-grow: 1;
+}
+
+.player-card .player-avatar {
+  margin-left: 20px;
+  /* 头像大小 */
+  width: 200px;
+  height: 200px;
+}
+
+.player-card .card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 保持图像比例 */
 }
 
 .dialog-footer {
