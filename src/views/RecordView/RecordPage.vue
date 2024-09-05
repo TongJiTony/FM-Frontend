@@ -233,6 +233,7 @@ export default {
       activeName:'first',
       selectedDate: '2024-08', // 选择的日期
       dateOptions: [
+        { label: '2024年9月', value: '2024-09' },
         { label: '2024年8月', value: '2024-08' },
         { label: '2024年7月', value: '2024-07' },
         { label: '2024年6月', value: '2024-06' },
@@ -241,6 +242,7 @@ export default {
       ],
       selectedDate2: '2024-08', 
       dateOptions2: [
+        { label: '2024年9月', value: '2024-09' },
         { label: '2024年8月', value: '2024-08' },
         { label: '2024年7月', value: '2024-07' },
         { label: '2024年6月', value: '2024-06' },

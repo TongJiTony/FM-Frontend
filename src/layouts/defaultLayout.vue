@@ -69,17 +69,19 @@ export default {
   data() {
     return {
       themes,
-      currentThemeName: "purpleBlack", // 初始主题
+      currentThemeName: "green", // 初始主题
       currentThemeIndex: 1,
       backgroundViews: {
         greenGradient: "linear-gradient(to right, #43cea2, #185a9d)",
         purpleGradient: "linear-gradient(to right, #8e2de2, #4a00e0)",
-        orangeGradient: "linear-gradient(to right, #ff7e5f, #feb47b)",
+        orangeGradient: "linear-gradient(to right, #FF9800, #FFE0B2)",
         blueGrey:"#607D8B",
+        deepBlue:'#3F51B5',
+       
         image1: `url(${require("@/assets/img/main-bg-1.png")})`,
         image2: `url(${require("@/assets/img/main-bg-2.png")})`,
       },
-      currentBackgroundName: "purpleGradient", // 初始背景
+      currentBackgroundName: "image1", // 初始背景
       currentBackgroundIndex: 1,
     };
   },

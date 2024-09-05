@@ -1,17 +1,18 @@
 <template>
   <p v-if="loading">Loading...</p>
   <div v-else>
-  
-      <el-header style="font-size: 20px; display: flex; justify-content: space-between; align-items: center;"
-    >阵容 ID: {{ this.lineupId }}
+    <el-card>
+      <el-card-header style="font-size: 20px; display: flex; justify-content: space-between; align-items: center;"
+    >阵容编号: {{ this.lineupId }}
       <div class="button-contanier">
         <el-button
-          type="info"
+         
           class="goback_button"
           @click="goback"
-        >返回上级页面</el-button>
+          type="primary" size='small' icon="el-icon-arrow-left"
+        >返回</el-button>
       </div>
-    </el-header>
+    </el-card-header>
     <el-table
       :data="filteredLineupData"
       stripe
@@ -90,6 +91,8 @@
         </template>
       </el-table-column>
     </el-table>
+    </el-card>
+     
 
   
 

@@ -4,8 +4,8 @@ export const themes = {
     "--primary-background": "#246221",
     "--footer-background": "#246221",
     "--text-color": "#fff",
-    "--active-text-color": "#fff",
-    "--username-title-color": "#212121",
+    "--active-text-color": "#689F38",
+    "--username-title-color": "#DCEDC8",
     "--main-bg-gradient":
       "linear-gradient(rgba(255, 255, 255, 0.3), rgba(162, 239, 172, 0.3))",
   },
@@ -35,5 +35,15 @@ export const themes = {
     "--username-title-color": "#BDBDBD",
     "--main-bg-gradient":
       "linear-gradient(rgba(7,87,87, 0.3), rgba(162, 239, 172, 0.3))",
-  }
+  },
+  deepBlue:{
+    "--primary-background": "#303F9F",
+    "--footer-background": "#303F9F",
+    "--text-color": "#FFFFFF",
+    "--active-text-color": "#536DFE",
+    "--username-title-color": "#C5CAE9",
+    "--main-bg-gradient":
+      "linear-gradient(rgba(7,87,87, 0.3), rgba(162, 239, 172, 0.3))",
+  },
+
 };
