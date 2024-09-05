@@ -1,14 +1,11 @@
 <template>
   <div class="player-list">
-    <el-row :gutter="20" class="header-row" justify="end">
+    <el-card>
+      <el-row :gutter="20" class="header-row" justify="end">
       <el-col :span="18">
-        <el-button
-          @click="openAddPlayerDialog"
-          type="primary"
-          size="small"
-          style="margin-bottom: 1rem"
-          >添加球员</el-button
-        >
+        <el-button  @click="openAddPlayerDialog" type="primary" size="small" style="margin-bottom: 1rem" >
+          添加球员
+        </el-button>
       </el-col>
       <el-col :span="6">
         <el-input-group class="el-input-group">
@@ -38,12 +35,18 @@
     </el-row>
     <el-row :gutter="20">
       <el-col v-for="(player, index) in pagedData" :key="index" :span="12">
-        <el-card shadow="always" class="player-card">
-          <h3>{{ player.PLAYER_NAME }}</h3>
+        <el-card shadow="hover" class="player-card">
+        
+          <el-col span="7">
+            <img :src="player.ICON" alt="Player Image" class="card-image" />
+          </el-col>
+          <el-col span="16">
+            <h3>{{ player.PLAYER_NAME }}</h3>
           <p><strong>球员编号:</strong> {{ player.PLAYER_ID }}</p>
           <p><strong>队伍:</strong> {{ player.TEAM_NAME }}</p>
           <p><strong>位置:</strong> {{ player.ROLE }}</p>
-          <el-button @click="handleClick(player)" type="text" size="small"
+       
+            <el-button @click="handleClick(player)" type="text" size="small"
             >详情</el-button
           >
           <el-button
@@ -51,6 +54,7 @@
             type="text"
             size="small"
             style="color: blue"
+          
             >编辑</el-button
           >
           <el-button
@@ -60,18 +64,24 @@
             style="color: red"
             >删除</el-button
           >
+        
+          
+          </el-col>             
         </el-card>
       </el-col>
     </el-row>
     <el-pagination
       background
-      layout="prev, pager, next"
+      layout="total,prev, pager, next"
       :total="total"
       :page-size="pageSize"
       :current-page.sync="currentPage"
       @current-change="handleCurrentChange"
     >
     </el-pagination>
+    </el-card>
+   
+  
 
     <!-- Confirm Delete Dialog -->
     <el-dialog
@@ -716,5 +726,16 @@ export default {
   height: 100%;
   border-radius: 50%;
   object-fit: cover; /* 确保图片填充容器并保持比例 */
+}
+
+.card-image{
+  width: 100%;
+  height: 180px;
+  background-color: #f2f2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  overflow: hidden;
 }
 </style>

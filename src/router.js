@@ -35,7 +35,7 @@ const router = new Router({
           component: () => import("@/views/TeamView/TeamDetail.vue"),
         },
         {
-          path: "/record/:teamID",
+          path: "/record/:teamID?",
           name: "RecordPage",
           component: () => import("@/views/RecordView/RecordPage.vue"),
         },
