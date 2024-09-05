@@ -2,22 +2,20 @@
     <div>
       <p v-if="loading">Loading...</p>
       <div v-else>
-        <el-container>
-          <el-main>
-           
-      <el-col :span="18">
-        <el-button type="primary"  @click="formTeam" >组建球队</el-button>
-        
-
-      </el-col>
-      <el-col :span="6">
-        <el-input v-model="search" placeholder="输入球队名称搜索" clearable>
-           <i slot="prefix" class="el-input__icon el-icon-search"></i>
-           </el-input>
-      </el-col>
-
+        <el-card>
+          <el-row>
+            <el-col :span="18">
+              <el-button type="primary"  @click="formTeam" >组建球队</el-button>      
+            </el-col>
+            <el-col :span="6">
+              <el-input v-model="search" placeholder="输入球队名称搜索" clearable>
+                <i slot="prefix" class="el-input__icon el-icon-search"></i>
+              </el-input>
+            </el-col>
+          </el-row>
+      
       <el-col :span="24" style="height: 12px;"></el-col> 
-          
+          <el-row>
             <el-table :data="team.filter(data => !search || data.TEAM_NAME.includes(search))" style="width: 100%">
               <el-table-column prop="TEAM_ID" label="ID" width="200">
               </el-table-column>
@@ -34,14 +32,58 @@
                 <!-- eslint-disable-next-line -->
             
                 <template slot-scope="scope">
-                  <el-button @click="handleDetails(scope.row)" type="text" size="small">Details</el-button>
-                  <el-button @click="handleEdit( scope.row)" type="text" size="small">Edit</el-button>
-                  <el-button @click="handleDelete(scope.row)" type="text" size="small">Delete</el-button>
+                  <el-button @click="handleDetails(scope.row)" type="text" size="small" >详情</el-button>
+                  <el-button @click="handleEdit( scope.row)" type="text" size="small"  style="color: blue">编辑</el-button>
+                  <el-button @click="handleDelete(scope.row)" type="text" size="small"  style="color: red">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
-          </el-main>    
-        </el-container>
+          </el-row>
+            
+            
+       
+        </el-card>
+        <el-dialog
+      title="添加球队信息"
+      :visible.sync="addDialogVisible"
+      width="50%"
+      @close="handleAddDialogClose"
+    >
+      <el-form :model="addForm" :rules="formRules" ref="addFormRef">
+        <el-form-item label="球队名称" :label-width="formLabelWidth">
+          <el-input v-model="addForm.TEAM_NAME"></el-input>
+        </el-form-item>
+        <el-form-item label="主教练" :label-width="formLabelWidth">
+          <el-input v-model="addForm.HEAD_COACH"></el-input>
+        </el-form-item>
+        <el-form-item label="成立时间" :label-width="formLabelWidth">
+          <el-date-picker
+            v-model="addForm.ESTABLISHED_DATE"
+            type="datetime"
+            placeholder="选择日期时间"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="城市" :label-width="formLabelWidth">
+          <el-input v-model="addForm.CITY"></el-input>
+        </el-form-item>
+        <el-form-item label="球队队徽：" prop="TEAM_ICON">
+          <el-upload
+            class="avatar-uploader"
+            list-type="picture-card"
+            :action="uploadAction"
+            :http-request="customUpload"
+            :show-file-list="true"
+          >
+            <img v-if="addForm.icon" :src="addForm.icon" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon">上传球队队徽</i>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleAddDialogClose">取消</el-button>
+        <el-button type="primary" @click="handleAddMedical">添加</el-button>
+      </span>
+    </el-dialog>
       </div>
     </div>
   </template>
@@ -55,6 +97,15 @@
         search: '',
         loading: true,
         team: [],
+        addDialogVisible: false,
+
+        addForm: {
+        TEAM_NAME: "",
+        ESTABLISHED_DATE: "",
+        HEAD_COACH: "",
+        CITY: "",
+        TEAM_ICON: "",
+      },
       };
     },
     created() {
@@ -105,7 +156,12 @@
           message: Message,
         });
       },
-
+      formTeam(){
+        this.addDialogVisible=true;
+      },
+      handleAddDialogClose() {
+      this.addDialogVisible = false;
+    },
 
     },
   };

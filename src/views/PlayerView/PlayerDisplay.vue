@@ -65,7 +65,7 @@
               <span>惯用脚</span>
             </div>
             <el-tag type="info">{{
-              player[0].USED_FOOT === 1 ? "右脚" : "左脚"
+              player[0].USED_FOOT === 1 ? "Right Foot" : "Left Foot"
             }}</el-tag>
           </el-card>
         </el-col>
@@ -83,10 +83,11 @@
               <span>{{ player[0].ROLE }}</span>
             </div>
             <img
-              :src="fieldImageUrl"
+              src="https://i.ibb.co/2jL5H73/playground.jpg"
               alt="Football Field"
               class="field-image"
             />
+            <div class="player-position" :style="positionStyle"></div>
           </el-card>
         </el-col>
 
@@ -223,7 +224,16 @@ export default {
       lineupData: [],
       tableData: [],
       allData: [],
-      fieldImageUrl: "",
+      positionStyle: {
+        position: "absolute",
+        top: "50%", // Adjust based on player role/position
+        left: "20%", // Adjust based on player role/position
+        transform: "translate(-50%, -50%)",
+        width: "20px",
+        height: "20px",
+        backgroundColor: "red",
+        borderRadius: "50%",
+      },
       loading: true,
       player: null,
     };
@@ -317,11 +327,7 @@ export default {
         .then((response) => {
           console.log("Received data:", response.data);
           this.player = response.data;
-
-          const role = this.player[0].ROLE;
-          console.log("Player Role:", role);
-          this.fieldImageUrl = this.getImageUrlByRole(role);
-          console.log("Field Image URL:", this.fieldImageUrl);
+          this.updatePositionStyle(); // 调用方法更新positionStyle
           this.loading = false;
         })
         .catch((error) => {
@@ -329,18 +335,24 @@ export default {
           this.loading = false;
         });
     },
-    getImageUrlByRole(role) {
-      switch (role) {
-        case "守门员":
-          return "https://s21.ax1x.com/2024/09/04/pAZAJ78.png";
-        case "后卫":
-          return "https://s21.ax1x.com/2024/09/04/pAZAufH.png";
-        case "中场":
-          return "https://s21.ax1x.com/2024/09/04/pAZAl6I.png";
-        case "前锋":
-          return "https://s21.ax1x.com/2024/09/04/pAZA1Xt.png";
-        default:
-          return "https://i.ibb.co/2jL5H73/playground.jpg";
+    updatePositionStyle() {
+      if (this.player && this.player[0].ROLE) {
+        switch (this.player[0].ROLE) {
+          case "F":
+            this.positionStyle.left = "30%"; // Example value for forward
+            break;
+          case "M":
+            this.positionStyle.left = "21%"; // Example value for midfielder
+            break;
+          case "B":
+            this.positionStyle.left = "10%"; // Example value for defender
+            break;
+          case "GK":
+            this.positionStyle.left = "7%"; // Example value for goalkeeper
+            break;
+          default:
+            this.positionStyle.left = "20%"; // Default or unknown role
+        }
       }
     },
   },
@@ -424,6 +436,14 @@ export default {
 .field-image {
   width: 100%;
   height: auto;
+}
+
+.player-position {
+  position: absolute;
+  background-color: red;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
 }
 
 .el-row {
