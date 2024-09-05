@@ -1,5 +1,6 @@
 <template>
-  <el-container style="height: 500px; border: 1px solid #eee">
+  <el-card class="display-card1">
+ <el-container style="height: 550px; border: 1px solid #eee">
     <el-aside
       round
       width="160px"
@@ -19,41 +20,26 @@
       </el-menu>
     </el-aside>
 
-    <el-container>
-      <el-header style="text-align: right; font-size: 12px">
-        <el-row>
-          <el-col
-            :span="12"
-            style="text-align: left; font-size: 20px"
-          >
-            <span v-if="teamName" :style="{color: '#6A5ACD', fontWeight: 'bold'}"> {{ teamName }}</span>
-            <span v-else :style="{color: '#6A5ACD', fontWeight: 'bold'}">所有球队</span>
-             训练表
-          </el-col>
-          <el-col :span="12">
-            <el-dropdown>
-              <i
-                class="el-icon-setting"
-                style="font-size: 25px; margin-top: 5px; color: white;"
-              ></i>
-              <span style="font-size: 20px; margin-right: 20px; color: white">更多</span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item
-                  @click.native="handleAdd" style="font-size: 20px;">新增</el-dropdown-item>
-                <el-dropdown-item
-                  @click.native="handleDelete" style="font-size: 20px;">删除</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-            <el-button
-              type="info"
-              @click="goback"
-              class="goback_button"
-            >返回上级页面</el-button>
-          </el-col>
-        </el-row>
-      </el-header>
+    <el-container >
+      <el-card style="width:100%;">
 
-      <el-main>
+      
+     
+        <el-row type="flex" justify="space-between">
+  <!-- 文字列 -->
+  <el-col :span="20" style="text-align: left; font-size: 20px;">
+    <span v-if="teamName" :style="{ color: '#6A5ACD', fontWeight: 'bold' }">{{ teamName }}</span>
+    <span v-else :style="{ color: '#6A5ACD', fontWeight: 'bold' }">所有球队</span>
+    训练表
+  </el-col>
+
+  <!-- 按钮列 -->
+  <el-col :span="4" style="text-align: right;">
+    <el-button type="primary" icon="el-icon-arrow-left" @click="goback" size="small">返回</el-button>
+  </el-col>
+</el-row>
+     
+
         <div
           v-if="trainingData.length === 0"
           class="empty-message"
@@ -61,31 +47,40 @@
           当前训练信息为空，请使用添加按钮新增训练信息
         </div>
         <div v-else>
-          <el-row type="flex" justify="end">
-            <div class='el-input-group' style="display: flex; width: 30%">
-              <el-select
-                v-model="selectedColumn"
-                placeholder="选择列"
-                style="width:40%"
-              >
-                <el-option
-                v-for="column in columns"
-                  :key="column.prop"
-                  :label="column.label"
-                  :value="column.prop"
-                >
-                </el-option>
-              </el-select>
-              <el-select v-model="searchQuery" clearable>
-                <el-option
-                  v-for="option in getOptions(selectedColumn)"
-                  :key="option.value"
-                  :label="option.label"
-                  :value="option.value">
-                </el-option>                
-              </el-select>         
-            </div> 
-          </el-row>
+          <el-row type="flex" justify="space-between">
+  <!-- 按钮组 -->
+  <div style="display: flex;">
+    <el-button type="primary" @click="handleAdd" class="small-height-button" size="small">新增</el-button>
+    <el-button type="primary" @click="handleDelete" class="small-height-button" size="small">删除</el-button>
+  </div>
+
+  <!-- 选择器组 -->
+  <div class='el-input-group' style="display: flex; width: 30%;">
+    <el-select
+      v-model="selectedColumn"
+      placeholder="选择列"
+      style="width: 40%;"
+    >
+      <el-option
+        v-for="column in columns"
+        :key="column.prop"
+        :label="column.label"
+        :value="column.prop"
+      >
+      </el-option>
+    </el-select>
+    <el-select v-model="searchQuery" clearable style="width: 60%;">
+      <el-option
+        v-for="option in getOptions(selectedColumn)"
+        :key="option.value"
+        :label="option.label"
+        :value="option.value"
+      >
+      </el-option>
+    </el-select>
+  </div>
+</el-row>
+
           <div v-if="filteredTrainingData.length === 0" class="empty-message">
                 <el-empty
                   description="没有找到符合条件的训练信息"
@@ -158,7 +153,7 @@
             </el-row>
           </div>
         </div>
-      </el-main>
+      </el-card>
     </el-container>
 
     <!-- Add dialog -->
@@ -247,6 +242,9 @@
      </el-drawer>
 
   </el-container>
+  </el-card>
+
+ 
 </template>
 
 <script>
@@ -570,13 +568,16 @@ export default {
   background-color: #f9f9f9; /* 背景颜色 */
 }
 .display-card {
-  height: 150px;
+  height: 200px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   margin-top: 20px;
   position: relative;
+}
+.display-card1 {
+    height: 600px;
 }
 .title {
   position: absolute;
@@ -587,6 +588,12 @@ export default {
   width: 53%;
   height: auto;
   margin: 0 auto 0 30%; /* 调整左边距 */
+}
+
+.small-height-button {
+  height: 32px; /* 根据需要调整高度 */
+  line-height:32px; /* 根据需要调整行高 */
+  padding: 0 20px; /* 根据需要调整内边距 */
 }
 
 </style>

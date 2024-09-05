@@ -35,7 +35,7 @@ const router = new Router({
           component: () => import("@/views/TeamView/TeamDetail.vue"),
         },
         {
-          path: "/record/:teamID",
+          path: "/record/:teamID?",
           name: "RecordPage",
           component: () => import("@/views/RecordView/RecordPage.vue"),
         },
@@ -174,13 +174,14 @@ router.beforeEach((to, from, next) => {
     isLoggedIn !== "true"
   ) {
     next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
-  } else if (to.name === "Login" && isLoggedIn === "true") {
+  } 
+  else if (to.name === "Login" && isLoggedIn === "true") {
     // 用户已经登录并试图访问登录页面
     if (userRole === "manager") {
       if (userTeamid) {
         next({ name: "TeamPage", params: { teamID: userTeamid } });
       } else {
-        this.$messager.error("队伍ID为空，请检查账号重新登录");
+        Vue.prototype.$messager.error("队伍ID为空，请检查账号重新登录");
         router.app.$store.commit("user/resetUser");
         Vue.$cookies.remove("isLoggedIn");
         Vue.$cookies.remove("token");
@@ -191,7 +192,8 @@ router.beforeEach((to, from, next) => {
     } else {
       next({ name: "Home" });
     }
-  } else {
+  } 
+  else {
     next();
   }
 });

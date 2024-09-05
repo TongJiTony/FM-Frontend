@@ -5,53 +5,42 @@
         <img src="../assets/img/FM-Logo-2.png" class="logo" alt="Logo" />
         <div class="site-title">FOOTBALLMANAGER</div>
         <el-menu
-          :default-active="$route.path"
-          class="el-menu-custom"
-          mode="horizontal"
-          @select="handleSelect"
-          background-color="var(--primary-background)"
-          text-color="var(--text-color)"
-          active-text-color="var(--active-text-color)"
-        >
-          <!-- <el-menu-item class="test" index="/">Home</el-menu-item>
-          <el-menu-item index="/test">Test</el-menu-item> -->
-          <el-menu-item index="/team">队伍主页</el-menu-item>
-          <el-menu-item index="/player-list">球员总览</el-menu-item>
-          <el-menu-item index="/lineup">排兵布阵</el-menu-item>
-          <el-menu-item index="/medical">健康情况</el-menu-item>
-          <el-menu-item index="/training">训练计划</el-menu-item>
-          <el-menu-item index="/transfer">转会市场</el-menu-item>
+  :default-active="$route.path"
+  class="el-menu-custom"
+  mode="horizontal"
+  @select="handleSelect"
+  background-color="var(--primary-background)"
+  text-color="var(--text-color)"
+  active-text-color="var(--active-text-color)"
+>
+  <el-menu-item index="/team">队伍主页</el-menu-item>
+  <el-menu-item index="/player-list">球员总览</el-menu-item>
 
-          <el-submenu class="menu-right">
-            <template slot="title">
-              <i class="el-icon-setting"></i>
-              <span class="username-title">{{
-                this.$store.getters["user/getUserName"]
-              }}</span>
-              <img
-                :src="this.$store.getters['user/getUserIcon']"
-                class="user-icon"
-                @error="handleImageError"
-              />
-            </template>
-            <el-menu-item class="user-action-item" index="/changepsw"
-              >Change Password</el-menu-item
-            >
-            <el-menu-item class="user-action-item" index="/userinfo"
-              >{{ this.$store.getters["user/getUserName"] }}'s
-              info</el-menu-item
-            >
-          </el-submenu>
-          <button class="button-change-theme" @click="toggleTheme">
-            切换主题
-          </button>
-          <button
-            class="button-change-BackGroundImages"
-            @click="toggleBackgroundImage"
-          >
-            切换背景
-          </button>
-        </el-menu>
+  <el-submenu index="sub-menu">
+    <template slot="title">
+      <span>策略与训练</span>
+    </template>
+    <el-menu-item index="/lineup">排兵布阵</el-menu-item>
+    <el-menu-item index="/training">训练计划</el-menu-item>
+   
+  </el-submenu>
+  <el-menu-item index="/record">财务情况</el-menu-item>
+  <el-menu-item index="/medical">健康情况</el-menu-item>
+
+  <el-submenu class="menu-right">
+    <template slot="title">
+      <i class="el-icon-setting"></i>
+      <span class="username-title">{{ this.$store.getters["user/getUserName"] }}</span>
+      <img :src="this.$store.getters['user/getUserIcon']" class="user-icon" @error="handleImageError" />
+    </template>
+    <el-menu-item class="user-action-item" index="/changepsw">Change Password</el-menu-item>
+    <el-menu-item class="user-action-item" index="/userinfo">{{ this.$store.getters["user/getUserName"] }}'s info</el-menu-item>
+  </el-submenu>
+
+  <button class="button-change-theme" @click="toggleTheme">切换主题</button>
+  <button class="button-change-BackGroundImages" @click="toggleBackgroundImage">切换背景</button>
+</el-menu>
+
       </div>
     </el-header>
     <el-container>
@@ -81,16 +70,17 @@ export default {
     return {
       themes,
       currentThemeName: "purpleBlack", // 初始主题
-      currentThemeIndex: 0,
+      currentThemeIndex: 1,
       backgroundViews: {
         greenGradient: "linear-gradient(to right, #43cea2, #185a9d)",
         purpleGradient: "linear-gradient(to right, #8e2de2, #4a00e0)",
         orangeGradient: "linear-gradient(to right, #ff7e5f, #feb47b)",
+        blueGrey:"#607D8B",
         image1: `url(${require("@/assets/img/main-bg-1.png")})`,
         image2: `url(${require("@/assets/img/main-bg-2.png")})`,
       },
       currentBackgroundName: "purpleGradient", // 初始背景
-      currentBackgroundIndex: 0,
+      currentBackgroundIndex: 1,
     };
   },
   computed: {
@@ -118,7 +108,6 @@ export default {
     },
     toggleTheme() {
       const themeNames = Object.keys(this.themes);
-      console.log("themeNames:", themeNames);
       this.currentThemeIndex = (this.currentThemeIndex + 1) % themeNames.length;
       this.currentThemeName = themeNames[this.currentThemeIndex];
       this.$message.info(`主题切换至 ${this.currentThemeName}`);
@@ -133,7 +122,41 @@ export default {
       this.applyBackView(this.currentBackground);
     },
     handleSelect(key) {
-      if (this.$route.path !== key) {
+      const userright = this.$store.getters["user/getUserRight"]; // 获取用户角色
+      const userTeamid = this.$store.getters["user/getTeamID"];
+      if (key === "/team" && userright === "manager") {
+        if (this.$route.path !== `/teamdetail/${userTeamid}`)
+          this.$router.push({
+            name: "TeamPage",
+            params: { teamID: userTeamid },
+          });
+        return;
+      }
+      if (key === "/player-list" && userright === "manager") {
+        if (this.$route.path !== `/player-list/${userTeamid}`)
+          this.$router.push({
+            name: "PlayerList",
+            params: { teamId: userTeamid },
+          });
+        return;
+      }
+
+    if (key === '/lineup' && userright === 'manager') {
+      if (this.$route.path!==`/lineup/${userTeamid}`)
+        this.$router.push( { name: "lineup", params: { teamID: userTeamid }});
+      return;
+    }
+    if (key === '/training' && userright === 'manager') {
+      if (this.$route.path!==`/training/${userTeamid}`)
+        this.$router.push( { name: "training", params: { teamId: userTeamid }});
+      return;
+    }
+    if (key === '/record' && userright === 'manager') {
+      if (this.$route.path!==`/record/${userTeamid}`)
+        this.$router.push( { name: "RecordPage", params: { teamID: userTeamid }});
+      return;
+    }
+    if (this.$route.path !== key) {
         this.$router.push(key);
       }
     },
