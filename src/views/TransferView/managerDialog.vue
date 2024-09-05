@@ -78,8 +78,8 @@
 
       
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取消转会</el-button>
-        <el-button type="primary" @click="saveTransfer" :disabled="save_disabled">确认</el-button>
+        <el-button @click="handleClose">终止协商</el-button>
+        <!-- <el-button type="primary" @click="saveTransfer" :disabled="save_disabled">确认</el-button> -->
       </div>      
 
     </el-dialog>
@@ -108,7 +108,7 @@ export default {
       inputprompt: [],
       inputdata: null,
       input_disabled: false,
-      save_disabled: true,
+      // save_disabled: true,
       messages: [
         { user: 'manager', text: `我们球队有一个球员${this.value.playerName}可以考虑转会。` },
         { user: 'you', text: '我对这个球员很感兴趣，能聊聊转会费吗？' },
@@ -303,7 +303,7 @@ export default {
         }).then(res => {
           if (res.status === 200) {
             this.$message.success('转会成功，状态已更新！');
-            this.save_disabled = false;
+            // this.save_disabled = false;
             this.input_disabled = true;
             this.closeDialog();
           } else if (res.status === 403) {

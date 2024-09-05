@@ -50,7 +50,7 @@ const router = new Router({
           component: () => import("@/views/PlayerView/PlayerDisplay.vue"),
         },
         {
-          path: "medical",
+          path: "medical/:teamID?",
           name: "medical",
           component: () => import("@/views/MedicalView/MedicalList.vue"),
         },
