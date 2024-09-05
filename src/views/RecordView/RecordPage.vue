@@ -1,8 +1,8 @@
 <template>
   <div>
     <el-button type="primary" size='small' icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
-    <h1 style="font-size: 20px">财政</h1>
-    <p style="font-size: 12px">财政状况：安全</p>
+    <h1 style="font-size: 20px;color:#ffffff">财政</h1>
+    <p style="font-size: 12px;color:#ffffff">财政状况：安全</p>
     <el-tabs v-model="activeName">
     <el-tab-pane label="摘要" name="first">
       <el-container>
@@ -159,6 +159,13 @@
 </template>
 
 <style scoped>
+::v-deep .el-tabs__item {
+  color: #ffffff; /* 默认字体颜色 */
+}
+
+::v-deep .el-tabs__item.is-active {
+  color: #BDBDBD; /* 选中后的字体颜色 */
+}
 .spacing {
   height: 35px; /* 根据需要设置高度 */
   /* 或者使用 margin 属性来设置垂直间距 */

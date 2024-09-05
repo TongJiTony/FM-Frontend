@@ -29,7 +29,7 @@
                     <span style="margin-right: 10px;"></span>
                     <span style="margin-right: 10px; vertical-align: middle;">
                     <el-tag type="info" style="font-size: 14px;">{{ player[0].TEAM_NAME }}</el-tag>
-                    <img :src="teamURL" alt="球员头像" style="width: 60px; height: 60px; border-radius: 50%; vertical-align: middle;">
+                    <img :src="teamURL" alt="队伍" style="width: 60px; height: 60px; border-radius: 50%; vertical-align: middle;">
                     </span>
                   </div>
                 </el-col>
@@ -130,26 +130,31 @@
 
         <el-tab-pane label="转会记录" name="forth">
           <el-card shadow="never">
-            <p>Transfer</p>
             <el-table
               :data="transferData"
               style="width: 100%"
              
               height="120"
             >
-     
               <el-table-column
                 prop="TEAM_ID_FROM"
                 label="转出球队"
+               :formatter="row => this.teams[row.TEAM_ID_FROM] || '未找到球队'"
               ></el-table-column>
-              <el-table-column prop="TEAM_ID_TO" label="转入球队"></el-table-column>
+              <el-table-column 
+                prop="TEAM_ID_TO" 
+                label="转入球队"
+                :formatter="row => this.teams[row.TEAM_ID_TO] || '未找到球队'"
+                ></el-table-column>
               <el-table-column
                 prop="TRANSFER_FEES"
                 label="转会费"
+                 :formatter="formatTransferFees"
               ></el-table-column>
               <el-table-column
                 prop="TRANSFER_DATE"
                 label="转会日期"
+                :formatter="formatTransferDate"
               ></el-table-column>
             </el-table>
           
@@ -189,6 +194,7 @@ export default {
       players:[],
       avgRank:0,
       activeTab: 'first', // 默认打开的标签页名称
+     
     };
   },
   created() {
@@ -196,8 +202,30 @@ export default {
     this.fetchLineupRecords();
     this.fetchPlayerData();
     this.fetchMedicalRecords();
+    this.getTeamName();
   },
   methods: {
+    formatTransferDate(row, column, cellValue) {
+    // 将日期字符串解析为 Date 对象，并使用 toLocaleDateString 方法格式化为年月日
+    return new Date(cellValue).toLocaleDateString();
+  },
+    formatTransferFees(row, column, cellValue) {
+    // 将转会费转换为万为单位，并添加千分位分隔符和货币符号
+    return `¥${(cellValue / 10000).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}万`;
+  },
+    getTeamName(){
+      fetch('/api/v1/team/displayall')
+      .then(response => response.json())
+      .then(teamsData => {
+        this.teams = teamsData.reduce((acc, team) => {
+          acc[team.TEAM_ID] = team.TEAM_NAME;
+          return acc;
+        }, {});
+      })
+      .catch(error => {
+        console.error('Error fetching teams:', error);
+      });
+    },
     getAverageRank(teamId){
       axios.get(`/api/v1/player/displayall?teamid=${teamId}`)
           .then((response) => {

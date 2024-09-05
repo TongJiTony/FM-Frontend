@@ -145,6 +145,8 @@
     created() {
       this.fetchTeamDetail()
       this.fetchTeamRecords()
+      this.fetchTopPlayer()
+      this.fetchMatchList()
     },
 
    
@@ -213,8 +215,10 @@
           })
           .catch(error => {
             console.error('Failed to fetch team data:', error);
-          });
-
+          });   
+      },
+      fetchTopPlayer(){
+        const teamID = this.$route.params.teamID;
         axios.get(`/api/v1/player/displayall?teamid=${teamID}`)
           .then(response => {
             console.log('Received data:', response.data);
@@ -229,7 +233,9 @@
           console.error('Failed to fetch player data:',error);
           this.loading = false;
         });
-
+      },
+      fetchMatchList(){
+        const teamID = this.$route.params.teamID;
         axios.get(`/api/v1/match/displayall?match_id=${teamID}`)
           .then(response => {
             console.log('Received data:', response.data);
@@ -261,8 +267,6 @@
           }
           });
           const amounts=[positiveSum,negativeSum];
-          console.log("Positive Sum:", positiveSum);
-          console.log("Negative Sum:", negativeSum);
           // 用于存储每个日期的金额之和
           const dateAmountMap = {};
           // 遍历 records 数组
@@ -347,6 +351,7 @@
     xAxis: {
       type: 'category',
       data: dates,
+   
     },
     yAxis: {
       type: 'value',
@@ -464,7 +469,7 @@ h2 {
     margin-left: 0px;
 }
 .echart-box {
-  width: 600px;
+  width: 650px;
   height: 300px;
   margin: 20px auto;
   
