@@ -38,9 +38,8 @@
     <ul v-if="transferHistory.length > 0">
       <li v-for="(transfer, index) in transferHistory" :key="index">
         {{ transfer.PLAYER_NAME }} 从 {{ transfer.TEAM_NAME_FROM }} 转会到
-        {{ transfer.TEAM_NAME_TO }}，费用: £{{
-          formatTransferFee(transfer.TRANSFER_FEES)
-        }}，日期:
+        {{ transfer.TEAM_NAME_TO }}，费用:
+        {{ formatTransferFee(transfer.TRANSFER_FEES) }}，日期:
         {{ formatDate(transfer.TRANSFER_DATE) }}
       </li>
     </ul>
@@ -82,6 +81,7 @@ export default {
         .get("/api/v1/transfer/displayall", axiosConfig)
         .then((response) => {
           this.transferHistory = response.data; // 根据实际 API 响应格式调整
+          console.log("Received data:", response.data);
         })
         .catch((error) => {
           console.error("获取转会信息时发生错误:", error);
