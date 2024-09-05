@@ -1,46 +1,43 @@
 <template>
   <el-container class="default-layout">
-    <el-header>
+    <el-header class="custom-header">
       <div class="header-content">
         <img src="../assets/img/FM-Logo-2.png" class="logo" alt="Logo" />
         <div class="site-title">FOOTBALLMANAGER</div>
         <el-menu
-  :default-active="$route.path"
-  class="el-menu-custom"
-  mode="horizontal"
-  @select="handleSelect"
-  background-color="var(--primary-background)"
-  text-color="var(--text-color)"
-  active-text-color="var(--active-text-color)"
->
-  <el-menu-item index="/team">队伍主页</el-menu-item>
-  <el-menu-item index="/player-list">球员总览</el-menu-item>
+          :default-active="$route.path"
+          class="el-menu-custom"
+          mode="horizontal"
+          @select="handleSelect"
+          background-color="var(--primary-background)"
+          text-color="var(--text-color)"
+          active-text-color="var(--active-text-color)"
+        >
+          <el-menu-item index="/team">队伍主页</el-menu-item>
+          <el-menu-item index="/player-list">球员总览</el-menu-item>
 
-  <el-submenu index="sub-menu">
-    <template slot="title">
-      <span>策略与训练</span>
-    </template>
-    <el-menu-item index="/lineup">排兵布阵</el-menu-item>
-    <el-menu-item index="/training">训练计划</el-menu-item>
-   
-  </el-submenu>
-  <el-menu-item index="/record">财务情况</el-menu-item>
-  <el-menu-item index="/medical">健康情况</el-menu-item>
+          <el-submenu index="sub-menu">
+            <template slot="title">
+              <span>策略与训练</span>
+            </template>
+            <el-menu-item index="/lineup">排兵布阵</el-menu-item>
+            <el-menu-item index="/training">训练计划</el-menu-item>
+          </el-submenu>
+          <el-menu-item index="/record">财务情况</el-menu-item>
+          <el-menu-item index="/medical">健康情况</el-menu-item>
 
-  <el-submenu class="menu-right">
-    <template slot="title">
-      <i class="el-icon-setting"></i>
-      <span class="username-title">{{ this.$store.getters["user/getUserName"] }}</span>
-      <img :src="this.$store.getters['user/getUserIcon']" class="user-icon" @error="handleImageError" />
-    </template>
-    <el-menu-item class="user-action-item" index="/changepsw">Change Password</el-menu-item>
-    <el-menu-item class="user-action-item" index="/userinfo">{{ this.$store.getters["user/getUserName"] }}'s info</el-menu-item>
-  </el-submenu>
-
-  <button class="button-change-theme" @click="toggleTheme">切换主题</button>
-  <button class="button-change-BackGroundImages" @click="toggleBackgroundImage">切换背景</button>
-</el-menu>
-
+          <el-submenu class="menu-right">
+            <template slot="title">
+              <i class="el-icon-setting"></i>
+              <span class="username-title">{{ this.$store.getters["user/getUserName"] }}</span>
+              <img :src="this.$store.getters['user/getUserIcon']" class="user-icon" @error="handleImageError" />
+            </template>
+            <el-menu-item class="user-action-item" index="/changepsw">Change Password</el-menu-item>
+            <el-menu-item class="user-action-item" index="/userinfo">{{ this.$store.getters["user/getUserName"] }}'s info</el-menu-item>
+          </el-submenu>
+          <button class="button-change-theme" @click="toggleTheme">切换主题</button>
+          <button class="button-change-BackGroundImages" @click="toggleBackgroundImage">切换背景</button>
+        </el-menu>
       </div>
     </el-header>
     <el-container>
@@ -187,20 +184,31 @@ export default {
   min-height: 100vh;
 }
 
-.el-header {
+.custom-header {
   background: var(--primary-background);
   transition: background 0.3s;
   line-height: 60px;
-}
-.el-menu-item:hover {
-  background-color: var(--active-text-color) !important; /* 强制背景色 */
-  color: var(--primary-background) !important; /* 强制文字颜色 */
+  height: 60px; /* Set header height */
+  padding: 0; /* Ensure no extra padding */
+  display: flex;
+  align-items: center; /* Vertically center the content */
 }
 
-.el-submenu :hover {
-  background-color: var(--active-text-color) !important; /* 强制背景色 */
-  color: var(--primary-background) !important; /* 强制文字颜色 */
+.el-header .el-menu {
+  height: 60px; /* Match the header height */
+  line-height: 60px; /* Vertically align menu items */
 }
+
+.el-menu-item:hover {
+  background-color: var(--active-text-color) !important;
+  color: var(--primary-background) !important;
+}
+
+.el-submenu:hover {
+  background-color: var(--active-text-color) !important;
+  color: var(--primary-background) !important;
+}
+
 .header-content {
   display: flex;
   align-items: center;
@@ -237,8 +245,8 @@ export default {
 }
 
 .user-icon {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   object-fit: cover;
   margin-left: 10px;
@@ -269,7 +277,7 @@ export default {
 }
 
 .menu-right {
-  margin-left: 100px;
+  margin-left: auto;
   display: flex;
   align-items: center;
 }

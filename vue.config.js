@@ -6,14 +6,14 @@ module.exports = defineConfig({
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://www.tonyhuang0908.com:8080', // 后端API的URL
+        target: 'http://localhost:8080', // 后端API的URL
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
         }
       },
     },
-    port: 80, // 开发服务器的端口号为80
+    port: 8082, // 开发服务器的端口号为8082,即localhost:8082
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
