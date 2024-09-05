@@ -42,6 +42,9 @@ export default {
       lineupData: null,
       playerData: null,
       recordData: null,
+      teamData: null,
+      trainingData: null,
+      transferData: null,
     };
   },
   mounted() {
@@ -57,13 +60,19 @@ export default {
         const lineupRequest = axios.get(`/api/v1/lineup/displayall?teamid=${this.team_id}`);
         const playerRequest = axios.get(`/api/v1/player/displayall?teamid=${this.team_id}`);
         const recordRequest = axios.get(`/api/v1/record/search?team_id=${this.team_id}`);
+        const teamRequest = axios.get(`/api/v1/team/displayone?Teamid=${this.team_id}`);
+        const trainingRequest = axios.get(`/api/v1/training/displayall?teamid=${this.team_id}`);
+        const transferRequest = axios.get(`/api/v1/transfer/displayall?teamid=${this.team_id}`);
 
         // 并行请求所有数据
-        const [contractData, lineupData, playerData, recordData] = await Promise.all([
+        const [contractData, lineupData, playerData, recordData, teamData, trainingData,transferData] = await Promise.all([
           contractRequest,
           lineupRequest,
           playerRequest,
           recordRequest,
+          teamRequest,
+          trainingRequest,
+          transferRequest,
         ]);
 
 
@@ -71,11 +80,17 @@ export default {
         console.log("Lineup Data:", lineupData.data);
         console.log("Player Data:", playerData.data);
         console.log("Record Data:", recordData.data);
+        console.log("Team Data:", teamData.data);
+        console.log("Training Data:", trainingData.data);
+        console.log("Transfer Data:", transferData.data);
          // 保存数据到状态
         this.contractData = contractData.data;
         this.lineupData = lineupData.data;
         this.playerData = playerData.data;
         this.recordData = recordData.data;
+        this.teamData = teamData.data;
+        this.trainingData = trainingData.data;
+        this.transferData = transferData.data;
         
 
       } catch (error) {
@@ -94,11 +109,14 @@ export default {
       this.userInput = ''; // Clear input field
       try {
         const systemMessage = `你是Football-Manager的智能助手，负责为球队经理提供球队信息汇总和球队发展建议。
-          队伍合同数据: ${JSON.stringify(this.contractData)},
+          队伍信息数据: ${JSON.stringify(this.teamData)}。
+          队伍当前合同数据: ${JSON.stringify(this.contractData)},
           队伍阵容数据: ${JSON.stringify(this.lineupData)}, 
-          球员数据: ${JSON.stringify(this.playerData)}, 
+          队伍所有球员数据: ${JSON.stringify(this.playerData)}, 
           财务记录数据: ${JSON.stringify(this.recordData)}。
-          请你用中文回答，一次回答尽量不要超过60个字`;
+          队伍训练数据: ${JSON.stringify(this.trainingData)}。
+          队伍转会数据(FROM意味着队员离开到另外的队伍，TO意味着队员来带本队伍，在说明球员总数的时候可以附加说明转会球员是谁): ${JSON.stringify(this.transferData)}。
+          请你用中文回答，一次回答尽量不要超过100个字`;
         const response = await api.post("/chat/completions", {
           model: "step-1-8k",
           messages: [
