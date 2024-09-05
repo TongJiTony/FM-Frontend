@@ -83,7 +83,7 @@
               <span>{{ player[0].ROLE }}</span>
             </div>
             <img
-              src="https://i.ibb.co/2jL5H73/playground.jpg"
+              :src="fieldImageUrl"
               alt="Football Field"
               class="field-image"
             />
@@ -224,16 +224,7 @@ export default {
       lineupData: [],
       tableData: [],
       allData: [],
-      positionStyle: {
-        position: "absolute",
-        top: "50%", // Adjust based on player role/position
-        left: "20%", // Adjust based on player role/position
-        transform: "translate(-50%, -50%)",
-        width: "20px",
-        height: "20px",
-        backgroundColor: "red",
-        borderRadius: "50%",
-      },
+      fieldImageUrl: "",
       loading: true,
       player: null,
     };
@@ -327,7 +318,12 @@ export default {
         .then((response) => {
           console.log("Received data:", response.data);
           this.player = response.data;
-          this.updatePositionStyle(); // 调用方法更新positionStyle
+
+          const role = this.player[0].ROLE;
+          console.log("Player Role:", role);
+          this.fieldImageUrl = this.getImageUrlByRole(role);
+          console.log("Field Image URL:", this.fieldImageUrl);
+
           this.loading = false;
         })
         .catch((error) => {
@@ -335,24 +331,18 @@ export default {
           this.loading = false;
         });
     },
-    updatePositionStyle() {
-      if (this.player && this.player[0].ROLE) {
-        switch (this.player[0].ROLE) {
-          case "F":
-            this.positionStyle.left = "30%"; // Example value for forward
-            break;
-          case "M":
-            this.positionStyle.left = "21%"; // Example value for midfielder
-            break;
-          case "B":
-            this.positionStyle.left = "10%"; // Example value for defender
-            break;
-          case "GK":
-            this.positionStyle.left = "7%"; // Example value for goalkeeper
-            break;
-          default:
-            this.positionStyle.left = "20%"; // Default or unknown role
-        }
+    getImageUrlByRole(role) {
+      switch (role) {
+        case "守门员":
+          return "https://s21.ax1x.com/2024/09/04/pAZAJ78.png";
+        case "后卫":
+          return "https://s21.ax1x.com/2024/09/04/pAZAufH.png";
+        case "中场":
+          return "https://s21.ax1x.com/2024/09/04/pAZAl6I.png";
+        case "前锋":
+          return "https://s21.ax1x.com/2024/09/04/pAZA1Xt.png";
+        default:
+          return "https://i.ibb.co/2jL5H73/playground.jpg";
       }
     },
   },
@@ -436,14 +426,6 @@ export default {
 .field-image {
   width: 100%;
   height: auto;
-}
-
-.player-position {
-  position: absolute;
-  background-color: red;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
 }
 
 .el-row {
