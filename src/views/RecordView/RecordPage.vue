@@ -3,7 +3,7 @@
     <el-button type="primary" size='small' icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
     <h1 style="font-size: 20px;color:#ffffff">财政</h1>
     <p style="font-size: 12px;color:#ffffff">财政状况：安全</p>
-    <el-tabs v-model="activeName">
+    <el-tabs v-model="activeName" >
     <el-tab-pane label="摘要" name="first">
       <el-container>
         <el-main>
@@ -142,7 +142,7 @@
     <el-tab-pane label="工资" name="fourth">
       <el-card shadow="never" class="box-card4">
         
-              <el-table :data="contract" style="width: 100%">
+              <el-table :data=" filteredContracts" style="width: 100%">
               <el-table-column prop="PLAYER_NAME" label="球员" width="800">
               </el-table-column>
               <el-table-column prop="SALARY" label="薪水" :formatter="formatSalary">
@@ -152,6 +152,13 @@
               <el-table-column prop="END_DATE" label="结束日期" :formatter="formatDate">
               </el-table-column>
               </el-table>
+              <el-pagination
+                    @current-change="handlePageChange"
+                    :current-page="currentPage"
+                    :page-size="pageSize"
+                    :total="contract.length"
+                    layout="total, prev, pager, next"
+                  ></el-pagination>
             </el-card>
     </el-tab-pane>
     </el-tabs>
@@ -164,7 +171,7 @@
 }
 
 ::v-deep .el-tabs__item.is-active {
-  color: #BDBDBD; /* 选中后的字体颜色 */
+  color: #c3c8ab; /* 选中后的字体颜色 */
 }
 .spacing {
   height: 35px; /* 根据需要设置高度 */
@@ -224,6 +231,8 @@ import axios from 'axios';
 export default {
   data() {
     return {
+      currentPage: 1,
+      pageSize: 10,
       records: [],
       contract:[],
       sum_amount:0,
@@ -277,9 +286,17 @@ export default {
       const sumAmountInTenThousand = this.negativeSum / 10000;
       return `¥${sumAmountInTenThousand.toFixed(2)}万`;
     },
+    filteredContracts() {
+        const start = (this.currentPage - 1) * this.pageSize;
+        const end = start + this.pageSize;
+        return this.contract.slice(start, end);
+      },
   },
 
   methods: {
+    handlePageChange(page) {
+      this.currentPage = page;
+    },
     formatSalary(row, column, cellValue) {
     // 将薪水的值除以 10000，得到以万为单位的值
     const salaryInTenThousand = cellValue / 10000;

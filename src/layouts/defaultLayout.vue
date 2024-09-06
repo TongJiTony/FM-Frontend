@@ -22,8 +22,8 @@
     </template>
     <el-menu-item index="/lineup">排兵布阵</el-menu-item>
     <el-menu-item index="/training">训练计划</el-menu-item>
-   
   </el-submenu>
+  
   <el-menu-item index="/record">财务情况</el-menu-item>
   <el-menu-item index="/medical">健康情况</el-menu-item>
 
@@ -69,7 +69,7 @@ export default {
   data() {
     return {
       themes,
-      currentThemeName: "green", // 初始主题
+      currentThemeName: "deepBlue", // 初始主题
       currentThemeIndex: 1,
       backgroundViews: {
         greenGradient: "linear-gradient(to right, #43cea2, #185a9d)",
@@ -81,7 +81,7 @@ export default {
         image1: `url(${require("@/assets/img/main-bg-1.png")})`,
         image2: `url(${require("@/assets/img/main-bg-2.png")})`,
       },
-      currentBackgroundName: "image1", // 初始背景
+      currentBackgroundName: "image2", // 初始背景
       currentBackgroundIndex: 1,
     };
   },
