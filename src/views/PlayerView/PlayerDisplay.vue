@@ -133,7 +133,7 @@
 
         <el-tab-pane label="医疗记录" name="second">
           <el-card shadow="hover">
-            <h2 v-if="HEALTH_STATE">健康状况：受伤</h2>
+            <h2 v-if="player[0].HEALTH_STATE">健康状况：受伤</h2>
             <h2 v-else>健康状况：健康</h2>
             <el-table :data="tableData" style="width: 100%">
               <el-table-column
@@ -163,8 +163,8 @@
 
         <el-tab-pane label="所在阵容" name="third">
           <el-card shadow="never">
-            <h2 v-if="GAME_STATE">比赛状态：禁赛</h2>
-            <h2 v-else>比赛状态：允许出场</h2>
+            <h2 v-if="player[0].GAME_STATE">比赛状态：允许出场</h2>
+            <h2 v-else>比赛状态：禁赛</h2>
             <el-table :data="lineupData" style="width: 100%">
               <el-table-column prop="NOTE" label="阵容名称"></el-table-column>
               <el-table-column label="位置">{{
