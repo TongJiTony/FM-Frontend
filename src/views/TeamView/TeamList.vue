@@ -2,7 +2,7 @@
     <div>
       <p v-if="loading">Loading...</p>
       <div v-else>
-        <el-card>
+        <el-card class="card-style">
           <el-row>
             <el-col :span="18">
               <el-button type="primary"  @click="formTeam" size="small">组建球队</el-button>      
@@ -16,6 +16,11 @@
       
       <el-col :span="24" style="height: 12px;"></el-col> 
           <el-row>
+            <div class="regional_table">
+
+           <el-card class="card-style">
+
+         
             <el-table :data="team.filter(data => !search || data.TEAM_NAME.includes(search))" style="width: 100%">
               <el-table-column prop="TEAM_ID" label="ID" width="200">
               </el-table-column>
@@ -38,6 +43,8 @@
                 </template>
               </el-table-column>
             </el-table>
+          </el-card>
+             </div>
           </el-row>                
         </el-card>
 
@@ -356,5 +363,22 @@
 }
 .dialog-footer {
   text-align: right;
+}
+/*最外层透明*/
+.regional_table /deep/ .el-table,
+.regional_table /deep/ .el-table__expanded-cell {
+  background-color: transparent;
+  color: white;
+}
+/* 表格内背景颜色 */
+.regional_table /deep/ .el-table th,
+.regional_table /deep/ .el-table tr,
+.regional_table /deep/ .el-table td {
+  background-color: transparent !important;
+  
+  color: rgb(0, 0, 0);
+}
+.card-style{
+  background-color: rgba(255, 255, 255, 0.8);
 }
 </style>

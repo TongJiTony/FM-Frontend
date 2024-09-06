@@ -260,6 +260,7 @@ export default {
 .user-info-card {
   max-width: 400px;
   margin: auto;
+  background-color: rgba(255, 255, 255, 0.8);
 }
 .user-icon {
   width: 100px;

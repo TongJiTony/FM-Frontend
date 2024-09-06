@@ -2,7 +2,7 @@
   <div class="medical-list">
 
 
-    <el-card shadow="never">
+    <el-card shadow="never" class="card-style">
       <el-row :gutter="20" class="header-row" justify="end">
       
           <el-col :span="12">
@@ -48,8 +48,9 @@
       </el-col>      
     </el-row>
     <el-row :gutter="20">
-      <el-card shadow="never">
-        <el-table :data="pagedData" style="width: 100%">
+      <el-card shadow="never" class="card-style">
+        <div class="regional_table">
+          <el-table :data="pagedData" style="width: 100%">
         <el-table-column prop="MEDICAL_ID" label="医疗编号" >
         </el-table-column>
         <el-table-column prop="PLAYER_NAME" label="球员姓名" >
@@ -90,6 +91,8 @@
                 </template>
               </el-table-column>
             </el-table>
+        </div>
+      
       </el-card>
       <el-pagination
       background
@@ -527,6 +530,9 @@ export default {
 </script>
 
 <style scoped>
+.card-style{
+  background-color: rgba(255, 255, 255, 0.8);
+}
 .medical-list {
   padding: 20px;
 }
@@ -568,5 +574,19 @@ export default {
   display: flex;
   gap: 8px;
   align-items: center;
+}
+/*最外层透明*/
+.regional_table /deep/ .el-table,
+.regional_table /deep/ .el-table__expanded-cell {
+  background-color: transparent;
+  color: white;
+}
+/* 表格内背景颜色 */
+.regional_table /deep/ .el-table th,
+.regional_table /deep/ .el-table tr,
+.regional_table /deep/ .el-table td {
+  background-color: transparent !important;
+  
+  color: rgb(0, 0, 0);
 }
 </style>

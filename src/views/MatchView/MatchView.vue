@@ -1,6 +1,6 @@
 <template>
     <div>
-      <el-card>
+      <el-card class="card-style">
         <div>
             <el-button type="primary" size='small' icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
        
@@ -20,7 +20,7 @@
         </div>
      
 
-       <el-card>
+       <el-card class="card-style">
         <el-row>
             <el-col>
                 <h4 style="font-size: 20px;">
@@ -54,7 +54,7 @@
         </el-row>
        </el-card>
        <el-col :span="24" style="height: 12px;"></el-col> 
-       <el-card>
+       <el-card class="card-style">
           <div class="calendar-container">
             <div class="calendar-header">
                 <button @click="changeMonth(-1)" class="calendar-nav-button">上个月</button>
@@ -73,7 +73,9 @@
   </template>
   
   <style scoped>
-
+.card-style{
+  background-color: rgba(255, 255, 255, 0.8);
+}
 .back-button1 {
   float: right;
   margin-left: 10px;

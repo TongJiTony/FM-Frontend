@@ -66,7 +66,7 @@
             </el-col>
           </el-row> 
           <el-col :span="24" style="height: 12px;"></el-col> 
-          <el-card>
+          <el-card class="card-style">
             <el-row class="title-selector-container" style="margin-bottom: 20px;">
               <h2 style="font-size: 20px; line-height: 40px;">收入明细</h2>
               <el-select v-model="selectedDate" placeholder="请选择日期" style="margin-left: auto;">
@@ -78,12 +78,15 @@
               </el-option>
               </el-select>
             </el-row>
-            <el-table :data="filteredPosRecords" style="width: 100%">
+            <div class="regional_table">
+              <el-table :data="filteredPosRecords" style="width: 100%">
               <el-table-column prop="DESCRIPTION" label="项目" width="1100">
               </el-table-column>
               <el-table-column prop="AMOUNT" label="本月" :formatter="formatAmount">
               </el-table-column>
             </el-table>
+            </div>
+         
           </el-card>     
         </el-main>      
       </el-container>               
@@ -116,7 +119,7 @@
                          
           </el-row>
           <el-col :span="24" style="height: 12px;"></el-col> 
-          <el-card>
+          <el-card class="card-style">
             <el-row class="title-selector-container" style="margin-bottom: 20px;">
               <h2 style="font-size: 20px; line-height: 40px;">支出明细</h2>
               <el-select v-model="selectedDate" placeholder="请选择日期" style="margin-left: auto;">
@@ -128,12 +131,15 @@
               </el-option>
               </el-select>
             </el-row>
-            <el-table :data="filteredNegRecords" style="width: 100%">
+            <div class="regional_table">
+              <el-table :data="filteredNegRecords" style="width: 100%">
               <el-table-column prop="DESCRIPTION" label="项目" width="1100">
               </el-table-column>
               <el-table-column prop="AMOUNT" label="本月" :formatter="formatAmount">
               </el-table-column>
             </el-table>
+            </div>
+         
           </el-card>   
           </el-main>       
         </el-container>              
@@ -141,8 +147,8 @@
 
     <el-tab-pane label="工资" name="fourth">
       <el-card shadow="never" class="box-card4">
-        
-              <el-table :data=" filteredContracts" style="width: 100%">
+        <div class="regional_table">
+          <el-table :data=" filteredContracts" style="width: 100%">
               <el-table-column prop="PLAYER_NAME" label="球员" width="800">
               </el-table-column>
               <el-table-column prop="SALARY" label="薪水" :formatter="formatSalary">
@@ -159,6 +165,8 @@
                     :total="contract.length"
                     layout="total, prev, pager, next"
                   ></el-pagination>
+        </div>
+            
             </el-card>
     </el-tab-pane>
     </el-tabs>
@@ -166,6 +174,9 @@
 </template>
 
 <style scoped>
+.card-style{
+  background-color: rgba(255, 255, 255, 0.8);
+}
 ::v-deep .el-tabs__item {
   color: #ffffff; /* 默认字体颜色 */
 }
@@ -180,20 +191,22 @@
 }
 .box-card {
     width: 100%;
-    height: 390px;   
+    height: 390px;  
+    background-color: rgba(255, 255, 255, 0.8); 
   }
 .box-card2 {
     width: 100%;
     height: 390px;
-    box-shadow:none
+    background-color: rgba(255, 255, 255, 0.8);
   }
   .box-card3 {
     width: 100%;
     height: 100px;
+    background-color: rgba(255, 255, 255, 0.8);
   }
  .box-card4 {
     width: 100%;
-   
+    background-color: rgba(255, 255, 255, 0.8);
   }
 .echart-box {
   width: 650px;
@@ -222,6 +235,20 @@
   position: absolute;
   right: 2rem;
  
+}
+/*最外层透明*/
+.regional_table /deep/ .el-table,
+.regional_table /deep/ .el-table__expanded-cell {
+  background-color: transparent;
+  color: white;
+}
+/* 表格内背景颜色 */
+.regional_table /deep/ .el-table th,
+.regional_table /deep/ .el-table tr,
+.regional_table /deep/ .el-table td {
+  background-color: transparent !important;
+  
+  color: rgb(0, 0, 0);
 }
 </style>
 
