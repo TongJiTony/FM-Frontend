@@ -162,7 +162,7 @@ export default {
         if (this.$route.path !== `/medical/${userTeamid}`)
           this.$router.push({
             name: "medical",
-            params: { teamID: userTeamid },
+            params: { teamId: userTeamid },
           });
         return;
       }
