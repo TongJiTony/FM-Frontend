@@ -604,6 +604,9 @@ export default {
     },
     handleInputNumber(value) {
       // 限制数字长度，假设最大长度为5位数字
+      if (value <= 0) {
+        this.form.inputdata = 1; // 强制设为1
+      } 
       if (String(value).length > 5) {
         this.form.inputdata = String(value).slice(0, 5);  // 保留前5位数字
       }
