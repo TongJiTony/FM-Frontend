@@ -45,46 +45,59 @@
             </el-col>           
           </el-card>
         </el-row>
+
         <el-col :span="24" style="height: 20px;"></el-col>  
+
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-card shadow="never" class="box-card">
-              <div slot="header" class="clearfix">
-                <span style="font-size: 20px;font-weight: bold;">关键人物</span>
-                <el-button type="primary" size='small' @click="handleMorePlayer" class="back-button1">更多球员</el-button>    
-              </div> 
-              <el-container>
-                <el-table :data="topPlayers" style="width: 100%;" max-height="250">
-                  <el-table-column label="头像">
-                    <template slot-scope="scope">
-                      <img :src="scope.row.ICON" alt="球员头像" style="width: 36px; height: 36px; border-radius: 50%;">
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="PLAYER_NAME" label="球员姓名" width="170"></el-table-column>
-                  <el-table-column prop="ROLE" label="位置" ></el-table-column>
-                  <el-table-column prop="RANK" label="评分" ></el-table-column>
-                  <el-table-column>
-                    <template slot-scope="scope">
-                      <el-button @click="handlePlayerDetails(scope.row)" type="text" size="small">查看详情</el-button>
-                    </template>
-                  </el-table-column>
-                </el-table>     
-              </el-container>          
-            </el-card>
+            <el-card shadow="never" class="box-card transparent-card">
+  <div slot="header" class="clearfix">
+    <span style="font-size: 20px;font-weight: bold;">关键人物</span>
+    <el-button type="primary" size='small' @click="handleMorePlayer" class="back-button1">更多球员</el-button>    
+  </div> 
+  <el-container>
+    <div class="regional_table">
+      <el-table class="custom-table-font-color" :data="topPlayers" style="width: 100%;" max-height="250">
+      <el-table-column label="头像">
+        <template slot-scope="scope">
+          <img :src="scope.row.ICON" alt="球员头像" style="width: 36px; height: 36px; border-radius: 50%;">
+        </template>
+      </el-table-column>
+      <el-table-column prop="PLAYER_NAME" label="球员姓名" width="170"></el-table-column>
+      <el-table-column prop="ROLE" label="位置" ></el-table-column>
+      <el-table-column prop="RANK" label="评分" ></el-table-column>
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button @click="handlePlayerDetails(scope.row)" type="text" size="small">详情</el-button>
+        </template>
+      </el-table-column>
+    </el-table>  
+    </div>
+     
+  </el-container>          
+</el-card>
+
+
             <el-col :span="24" style="height: 20px;"></el-col> 
             <el-card shadow="never" class="box-card">
               <div slot="header" class="clearfix">
                 <span style="font-size: 20px;font-weight: bold;">比赛日程</span>
                 <el-button type="primary"  size='small' @click="handleClickLineup" class="back-button1">查看阵容</el-button>
               </div>
-                <div>
+                <div class="regional_table">
                     <el-table :data="filteredMatches" style="width: 100%;height:250px ">
                     <el-table-column prop="MATCH_DATE" label="比赛日期" width="150" ></el-table-column>
                     <el-table-column prop="HOME_TEAM_NAME" label="主场球队" width="150" ></el-table-column>
                     <el-table-column prop="AWAY_TEAM_NAME" label="客场球队" width="150" ></el-table-column>
                     <el-table-column prop="MATCH_STADIUM_NAME" label="地点"></el-table-column>
+                    <el-table-column label="操作">
+                    <template slot-scope="scope">
+                      <el-button @click="handleMatchDetails(scope.row)" type="text" size="small">详情</el-button>
+                    </template>
+                  </el-table-column>
                   </el-table>
                   <el-pagination
+                  background
                     @current-change="handlePageChange"
                     :current-page="currentPage"
                     :page-size="pageSize"
@@ -145,6 +158,8 @@
     created() {
       this.fetchTeamDetail()
       this.fetchTeamRecords()
+      this.fetchTopPlayer()
+      this.fetchMatchList()
     },
 
    
@@ -182,6 +197,11 @@
       const route = `/player-display/${playerId}`;
       this.$router.push(route);
     },
+    handleMatchDetails(row) {
+      const matchID = row.MATCH_ID;
+      const route = `/match/${matchID}`;
+      this.$router.push(route);
+    },
     handlePageChange(page) {
       this.currentPage = page;
     },
@@ -213,8 +233,10 @@
           })
           .catch(error => {
             console.error('Failed to fetch team data:', error);
-          });
-
+          });   
+      },
+      fetchTopPlayer(){
+        const teamID = this.$route.params.teamID;
         axios.get(`/api/v1/player/displayall?teamid=${teamID}`)
           .then(response => {
             console.log('Received data:', response.data);
@@ -229,7 +251,9 @@
           console.error('Failed to fetch player data:',error);
           this.loading = false;
         });
-
+      },
+      fetchMatchList(){
+        const teamID = this.$route.params.teamID;
         axios.get(`/api/v1/match/displayall?match_id=${teamID}`)
           .then(response => {
             console.log('Received data:', response.data);
@@ -261,8 +285,6 @@
           }
           });
           const amounts=[positiveSum,negativeSum];
-          console.log("Positive Sum:", positiveSum);
-          console.log("Negative Sum:", negativeSum);
           // 用于存储每个日期的金额之和
           const dateAmountMap = {};
           // 遍历 records 数组
@@ -347,6 +369,7 @@
     xAxis: {
       type: 'category',
       data: dates,
+   
     },
     yAxis: {
       type: 'value',
@@ -376,6 +399,7 @@
   </script>
 
   <style scoped>
+  
 .team-image {
   width:55%;
   height: 55%;
@@ -406,27 +430,26 @@
 }
 .box-card3 {
     height: 350px;
-   
+     background-color: rgba(255, 255, 255, 0.8);
+
   }
 .box-card2 {
     width: 100%;
     height: 800px;
-   
+        background-color: rgba(255, 255, 255, 0.8);
+
   }
 .box-card {
     width: 100%;
     height: 390px;
-   
+        background-color: rgba(255, 255, 255, 0.8);
+
   }
   .card-header{
   margin-left: 1rem;
  
   }
-.back-button2 {
-  float: right;
-  margin-right: 10px;
-  background-color: #0bac51;
-}
+
 .back-button1 {
   float: right;
   margin-left: 10px;
@@ -464,9 +487,26 @@ h2 {
     margin-left: 0px;
 }
 .echart-box {
-  width: 600px;
+  width: 650px;
   height: 300px;
   margin: 20px auto;
   
 }
+
+/*最外层透明*/
+.regional_table /deep/ .el-table,
+.regional_table /deep/ .el-table__expanded-cell {
+  background-color: transparent;
+  color: white;
+}
+/* 表格内背景颜色 */
+.regional_table /deep/ .el-table th,
+.regional_table /deep/ .el-table tr,
+.regional_table /deep/ .el-table td {
+  background-color: transparent !important;
+  
+  color: rgb(0, 0, 0);
+}
+
+
   </style>

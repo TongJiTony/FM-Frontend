@@ -11,6 +11,7 @@
       <el-menu>
         <el-menu-item
           v-for="(item, index) in filteredTrainingData"
+          class="card-style"
           :key="item.TRAINING_ID"
           :class="{ 'is-active': selectedIndex === index }"
           @click="selectItem(index)"
@@ -21,10 +22,7 @@
     </el-aside>
 
     <el-container >
-      <el-card style="width:100%;">
-
-      
-     
+      <el-card style="width:100%;" class="card-style">
         <el-row type="flex" justify="space-between">
   <!-- 文字列 -->
   <el-col :span="20" style="text-align: left; font-size: 20px;">
@@ -558,6 +556,9 @@ export default {
 </script>
 
 <style scoped>
+.card-style{
+  background-color: rgba(255, 255, 255, 0.8);
+}
 .empty-message {
   color: #999; /* 文字颜色 */
   font-size: 16px; /* 字体大小 */
@@ -575,9 +576,11 @@ export default {
   align-items: center;
   margin-top: 20px;
   position: relative;
+  background-color: rgba(255, 255, 255, 0.8);
 }
 .display-card1 {
     height: 600px;
+    background-color: rgba(255, 255, 255, 0.8);
 }
 .title {
   position: absolute;

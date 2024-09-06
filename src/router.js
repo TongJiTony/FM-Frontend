@@ -30,22 +30,27 @@ const router = new Router({
           component: () => import("@/views/TeamView/TeamList.vue"),
         },
         {
-          path: "/teamdetail/:teamID",
+          path: "teamdetail/:teamID",
           name: "TeamPage",
           component: () => import("@/views/TeamView/TeamDetail.vue"),
         },
         {
-          path: "/record/:teamID?",
+          path: "match/:matchID?",
+          name: "MatchPage",
+          component: () => import("@/views/MatchView/MatchView.vue"),
+        },
+        {
+          path: "record/:teamID?",
           name: "RecordPage",
           component: () => import("@/views/RecordView/RecordPage.vue"),
         },
         {
-          path: "/player-list/:teamId?",
+          path: "player-list/:teamId?",
           name: "PlayerList",
           component: () => import("@/views/PlayerView/PlayerList.vue"),
         },
         {
-          path: "/player-display/:playerId",
+          path: "player-display/:playerId",
           name: "PlayerDisplay",
           component: () => import("@/views/PlayerView/PlayerDisplay.vue"),
         },
@@ -55,27 +60,27 @@ const router = new Router({
           component: () => import("@/views/MedicalView/MedicalList.vue"),
         },
         {
-          path: "/lineup/:teamID?",
+          path: "lineup/:teamID?",
           name: "lineup",
           component: () => import("@/views/LineupView/LineupView.vue"),
         },
         {
-          path: "/lineupDetail/:lineupId",
+          path: "lineupDetail/:lineupId",
           name: "lineupDetail",
           component: () => import("@/views/LineupView/LineupDetail.vue"),
         },
         {
-          path: "/training/:teamId?",
+          path: "training/:teamId?",
           name: "training",
           component: () => import("@/views/TrainingView/TrainingView.vue"),
         },
         {
-          path: "/transfer/:teamId?",
+          path: "transfer/:teamId?",
           name: "transfer",
           component: () => import("@/views/TransferView/TransferPage.vue"),
         },
         {
-          path: "/transfer/history",
+          path: "transfer/history",
           name: "TransferHistory",
           component: () => import("@/views/TransferView/TransferHistory.vue"),
         },
@@ -92,7 +97,7 @@ const router = new Router({
         {
           path: "AIChat",
           name: "AIChat",
-          component: () => import('@/views/LLMView/ChatPage.vue'),
+          component: () => import("@/views/LLMView/ChatPage.vue"),
         },
       ],
     },
@@ -179,8 +184,7 @@ router.beforeEach((to, from, next) => {
     isLoggedIn !== "true"
   ) {
     next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
-  }
-  else if (to.name === "Login" && isLoggedIn === "true") {
+  } else if (to.name === "Login" && isLoggedIn === "true") {
     // 用户已经登录并试图访问登录页面
     if (userRole === "manager") {
       if (userTeamid) {
@@ -197,8 +201,7 @@ router.beforeEach((to, from, next) => {
     } else {
       next({ name: "Home" });
     }
-  }
-  else {
+  } else {
     next();
   }
 });
