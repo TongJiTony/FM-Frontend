@@ -26,6 +26,7 @@
   </el-submenu>
   <el-menu-item index="/record">财务情况</el-menu-item>
   <el-menu-item index="/medical">健康情况</el-menu-item>
+  <el-menu-item index="/transfer">球员转会</el-menu-item>
 
   <el-submenu class="menu-right">
     <template slot="title">

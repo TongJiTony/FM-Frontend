@@ -418,15 +418,15 @@ export default {
         })
           .then(() => {
             //////// test test ///////////////
-            axios
-              .get(
-                `/api/v1/agent/status?userid=${this.$store.getters["user/getUserId"]}`
-              )
-              .then((res) => {
-                // console.log("the data in the host is ", res);
-                // console.log("the data in the host is",  res.status);
-                console.log("the data in the host is", res.data);
-              });
+            // axios
+            //   .get(
+            //     `/api/v1/agent/status?userid=${this.$store.getters["user/getUserId"]}`
+            //   )
+            //   .then((res) => {
+            //     // console.log("the data in the host is ", res);
+            //     // console.log("the data in the host is",  res.status);
+            //     console.log("the data in the host is", res.data);
+            //   });
 
             axios
               .options(
@@ -442,10 +442,10 @@ export default {
                   console.log("this is  a test: 转会成功");
                   this.$message.success("转会成功，状态已更新！");
                   this.input_disabled = true;
-                  // this.closeDialog();
+                  this.closeDialog();
                 } else if (res.status === 403) {
                   this.$message.error("转会确认失败，您没有权限操作。");
-                  // this.closeDialog();
+                  this.closeDialog();
                 }
               })
               .catch((err) => {
@@ -459,7 +459,7 @@ export default {
                     console.log("the data in the host is", res.data);
                   });
                 this.$message.error(`请求失败：${err.message}`);
-                // this.closeDialog();
+                this.closeDialog();
               });
           })
           .catch(() => {
