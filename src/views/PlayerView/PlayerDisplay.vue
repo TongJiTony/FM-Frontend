@@ -176,7 +176,7 @@
 
         <el-tab-pane label="转会记录" name="forth">
           <el-card shadow="never">
-            <p>Transfer</p>
+            <h2>转会记录</h2>
             <el-table :data="transferData" style="width: 100%" height="120">
               <el-table-column
                 prop="TEAM_ID_FROM"
