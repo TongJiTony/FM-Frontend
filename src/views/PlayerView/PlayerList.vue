@@ -1,6 +1,6 @@
 <template>
   <div class="player-list">
-    <el-card>
+    <el-card class="card-style">
       <el-row :gutter="20" class="header-row" justify="end">
         <el-col :span="4">
           <el-button
@@ -718,6 +718,7 @@ export default {
 
 .player-card {
   margin-bottom: 20px;
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 .dialog-footer {
@@ -750,5 +751,8 @@ export default {
   justify-content: center;
   border-radius: 8px;
   overflow: hidden;
+}
+.card-style{
+  background-color: rgba(255, 255, 255, 0.8);
 }
 </style>

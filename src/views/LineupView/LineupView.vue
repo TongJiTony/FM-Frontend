@@ -2,7 +2,7 @@
   <div>
     <p v-if="loading">Loading...</p>
     <div v-else class="lineup-list">
-      <el-card>
+      <el-card class="card-style">
         <el-row>
           <el-col span="16">
             <el-button  type="primary"  @click="handleAdd"  class="add_button" size="small">添加阵容</el-button>
@@ -32,47 +32,50 @@
         </el-row>
         <el-col :span="24" style="height: 12px;"></el-col> 
         <el-row>
-          <el-card shadow="never">
-            <el-table :data="filteredData"  style="width: 100%" >
+          <el-card shadow="never" class="card-style">
+            <div class="regional_table">
+              <el-table :data="filteredData"  style="width: 100%" >
              
-              <el-table-column
-                prop="TEAM_NAME"
-                label="球队"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="LINEUP_ID"
-                label="阵容编号"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="NOTE"
-                label="阵容名称"
-              >
-              </el-table-column>
-              <el-table-column label="操作"  >
-            
-                <template slot-scope="scope">
-                  <el-button
-                   type="text"
-                    size="small"
-                    @click="handleDetails(scope.row)"
-                  >详情</el-button>
-                  <el-button
+             <el-table-column
+               prop="TEAM_NAME"
+               label="球队"
+             >
+             </el-table-column>
+             <el-table-column
+               prop="LINEUP_ID"
+               label="阵容编号"
+             >
+             </el-table-column>
+             <el-table-column
+               prop="NOTE"
+               label="阵容名称"
+             >
+             </el-table-column>
+             <el-table-column label="操作"  >
+           
+               <template slot-scope="scope">
+                 <el-button
                   type="text"
-                size="small"
-                style="color: blue"
-                    @click="handleEdit(scope.$index, scope.row)"
-                  >编辑</el-button>
-                  <el-button
-                  type="text"
-                size="small"
-                style="color: red"
-                    @click="handleDelete(scope.$index, scope.row)"
-                  >删除</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
+                   size="small"
+                   @click="handleDetails(scope.row)"
+                 >详情</el-button>
+                 <el-button
+                 type="text"
+               size="small"
+               style="color: blue"
+                   @click="handleEdit(scope.$index, scope.row)"
+                 >编辑</el-button>
+                 <el-button
+                 type="text"
+               size="small"
+               style="color: red"
+                   @click="handleDelete(scope.$index, scope.row)"
+                 >删除</el-button>
+               </template>
+             </el-table-column>
+           </el-table>
+            </div>
+           
           </el-card>
           <el-pagination
           background
@@ -91,7 +94,7 @@
           :visible.sync="editDialogVisible"
         >
           <el-form :model="editForm">
-            <el-form-item label="备注">
+            <el-form-item label="阵容名称">
               <el-input v-model="editForm.NOTE"></el-input>
             </el-form-item>
           </el-form>
@@ -216,8 +219,8 @@ export default {
       selectedColumn: '',
       columns: [
         { prop: 'TEAM_NAME', label: '球队' },
-        { prop: 'LINEUP_ID', label: '阵容ID' },
-        { prop: 'NOTE', label: '备注' },
+        { prop: 'LINEUP_ID', label: '阵容编号' },
+        { prop: 'NOTE', label: '阵容名称' },
       ],
       // edit
       editDialogVisible: false,
@@ -500,7 +503,23 @@ export default {
 
 
 <style scoped>
-
+/*最外层透明*/
+.regional_table /deep/ .el-table,
+.regional_table /deep/ .el-table__expanded-cell {
+  background-color: transparent;
+  color: white;
+}
+/* 表格内背景颜色 */
+.regional_table /deep/ .el-table th,
+.regional_table /deep/ .el-table tr,
+.regional_table /deep/ .el-table td {
+  background-color: transparent !important;
+  
+  color: rgb(0, 0, 0);
+}
+.card-style{
+  background-color: rgba(255, 255, 255, 0.8);
+}
 .add-teamID-card {
   width: 300px;
   position: absolute;

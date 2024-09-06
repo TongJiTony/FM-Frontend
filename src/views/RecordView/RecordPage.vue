@@ -1,9 +1,9 @@
 <template>
   <div>
     <el-button type="primary" size='small' icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
-    <h1 style="font-size: 20px">财政</h1>
-    <p style="font-size: 12px">财政状况：安全</p>
-    <el-tabs v-model="activeName">
+    <h1 style="font-size: 20px;color:#ffffff">财政</h1>
+    <p style="font-size: 12px;color:#ffffff">财政状况：安全</p>
+    <el-tabs v-model="activeName" >
     <el-tab-pane label="摘要" name="first">
       <el-container>
         <el-main>
@@ -66,7 +66,7 @@
             </el-col>
           </el-row> 
           <el-col :span="24" style="height: 12px;"></el-col> 
-          <el-card>
+          <el-card class="card-style">
             <el-row class="title-selector-container" style="margin-bottom: 20px;">
               <h2 style="font-size: 20px; line-height: 40px;">收入明细</h2>
               <el-select v-model="selectedDate" placeholder="请选择日期" style="margin-left: auto;">
@@ -78,12 +78,15 @@
               </el-option>
               </el-select>
             </el-row>
-            <el-table :data="filteredPosRecords" style="width: 100%">
+            <div class="regional_table">
+              <el-table :data="filteredPosRecords" style="width: 100%">
               <el-table-column prop="DESCRIPTION" label="项目" width="1100">
               </el-table-column>
               <el-table-column prop="AMOUNT" label="本月" :formatter="formatAmount">
               </el-table-column>
             </el-table>
+            </div>
+         
           </el-card>     
         </el-main>      
       </el-container>               
@@ -116,7 +119,7 @@
                          
           </el-row>
           <el-col :span="24" style="height: 12px;"></el-col> 
-          <el-card>
+          <el-card class="card-style">
             <el-row class="title-selector-container" style="margin-bottom: 20px;">
               <h2 style="font-size: 20px; line-height: 40px;">支出明细</h2>
               <el-select v-model="selectedDate" placeholder="请选择日期" style="margin-left: auto;">
@@ -128,12 +131,15 @@
               </el-option>
               </el-select>
             </el-row>
-            <el-table :data="filteredNegRecords" style="width: 100%">
+            <div class="regional_table">
+              <el-table :data="filteredNegRecords" style="width: 100%">
               <el-table-column prop="DESCRIPTION" label="项目" width="1100">
               </el-table-column>
               <el-table-column prop="AMOUNT" label="本月" :formatter="formatAmount">
               </el-table-column>
             </el-table>
+            </div>
+         
           </el-card>   
           </el-main>       
         </el-container>              
@@ -141,8 +147,8 @@
 
     <el-tab-pane label="工资" name="fourth">
       <el-card shadow="never" class="box-card4">
-        
-              <el-table :data="contract" style="width: 100%">
+        <div class="regional_table">
+          <el-table :data=" filteredContracts" style="width: 100%">
               <el-table-column prop="PLAYER_NAME" label="球员" width="800">
               </el-table-column>
               <el-table-column prop="SALARY" label="薪水" :formatter="formatSalary">
@@ -152,6 +158,15 @@
               <el-table-column prop="END_DATE" label="结束日期" :formatter="formatDate">
               </el-table-column>
               </el-table>
+              <el-pagination
+                    @current-change="handlePageChange"
+                    :current-page="currentPage"
+                    :page-size="pageSize"
+                    :total="contract.length"
+                    layout="total, prev, pager, next"
+                  ></el-pagination>
+        </div>
+            
             </el-card>
     </el-tab-pane>
     </el-tabs>
@@ -159,6 +174,16 @@
 </template>
 
 <style scoped>
+.card-style{
+  background-color: rgba(255, 255, 255, 0.8);
+}
+::v-deep .el-tabs__item {
+  color: #ffffff; /* 默认字体颜色 */
+}
+
+::v-deep .el-tabs__item.is-active {
+  color: #c3c8ab; /* 选中后的字体颜色 */
+}
 .spacing {
   height: 35px; /* 根据需要设置高度 */
   /* 或者使用 margin 属性来设置垂直间距 */
@@ -166,28 +191,30 @@
 }
 .box-card {
     width: 100%;
-    height: 390px;   
+    height: 390px;  
+    background-color: rgba(255, 255, 255, 0.8); 
   }
 .box-card2 {
     width: 100%;
     height: 390px;
-    box-shadow:none
+    background-color: rgba(255, 255, 255, 0.8);
   }
   .box-card3 {
     width: 100%;
     height: 100px;
+    background-color: rgba(255, 255, 255, 0.8);
   }
  .box-card4 {
     width: 100%;
-   
+    background-color: rgba(255, 255, 255, 0.8);
   }
 .echart-box {
-  width: 600px;
+  width: 650px;
   height: 350px;
   margin: 20px auto;
 }
 .echart-box2 {
-  width: 600px;
+  width: 700px;
   height: 300px;
   margin: 20px auto;
  
@@ -209,6 +236,20 @@
   right: 2rem;
  
 }
+/*最外层透明*/
+.regional_table /deep/ .el-table,
+.regional_table /deep/ .el-table__expanded-cell {
+  background-color: transparent;
+  color: white;
+}
+/* 表格内背景颜色 */
+.regional_table /deep/ .el-table th,
+.regional_table /deep/ .el-table tr,
+.regional_table /deep/ .el-table td {
+  background-color: transparent !important;
+  
+  color: rgb(0, 0, 0);
+}
 </style>
 
 <script>
@@ -217,6 +258,8 @@ import axios from 'axios';
 export default {
   data() {
     return {
+      currentPage: 1,
+      pageSize: 10,
       records: [],
       contract:[],
       sum_amount:0,
@@ -226,6 +269,7 @@ export default {
       activeName:'first',
       selectedDate: '2024-08', // 选择的日期
       dateOptions: [
+        { label: '2024年9月', value: '2024-09' },
         { label: '2024年8月', value: '2024-08' },
         { label: '2024年7月', value: '2024-07' },
         { label: '2024年6月', value: '2024-06' },
@@ -234,6 +278,7 @@ export default {
       ],
       selectedDate2: '2024-08', 
       dateOptions2: [
+        { label: '2024年9月', value: '2024-09' },
         { label: '2024年8月', value: '2024-08' },
         { label: '2024年7月', value: '2024-07' },
         { label: '2024年6月', value: '2024-06' },
@@ -268,9 +313,17 @@ export default {
       const sumAmountInTenThousand = this.negativeSum / 10000;
       return `¥${sumAmountInTenThousand.toFixed(2)}万`;
     },
+    filteredContracts() {
+        const start = (this.currentPage - 1) * this.pageSize;
+        const end = start + this.pageSize;
+        return this.contract.slice(start, end);
+      },
   },
 
   methods: {
+    handlePageChange(page) {
+      this.currentPage = page;
+    },
     formatSalary(row, column, cellValue) {
     // 将薪水的值除以 10000，得到以万为单位的值
     const salaryInTenThousand = cellValue / 10000;

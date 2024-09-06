@@ -1,24 +1,26 @@
 <template>
   <p v-if="loading">Loading...</p>
   <div v-else>
-  
-      <el-header style="font-size: 20px; display: flex; justify-content: space-between; align-items: center;"
-    >阵容 ID: {{ this.lineupId }}
+    <el-card class="card-style">
+      <el-card-header style="font-size: 20px; display: flex; justify-content: space-between; align-items: center;"
+    >阵容编号: {{ this.lineupId }}
       <div class="button-contanier">
         <el-button
-          type="info"
+         
           class="goback_button"
           @click="goback"
-        >返回上级页面</el-button>
+          type="primary" size='small' icon="el-icon-arrow-left"
+        >返回</el-button>
       </div>
-    </el-header>
+    </el-card-header>
+    <el-card class="card-style">
+      <div class="regional_table"> 
     <el-table
       :data="filteredLineupData"
       stripe
       style="width: 100%"
       fit>
-      <el-table-column
-        type="index"/>
+
       <el-table-column
         prop="PLAYER_ID"
         label="编号">
@@ -90,6 +92,11 @@
         </template>
       </el-table-column>
     </el-table>
+  </div>
+    </el-card>
+  
+    </el-card>
+     
 
   
 
@@ -294,6 +301,23 @@ export default {
 </script>
   
 <style scoped>
+  .card-style{
+  background-color: rgba(255, 255, 255, 0.8);
+}
+/*最外层透明*/
+.regional_table /deep/ .el-table,
+.regional_table /deep/ .el-table__expanded-cell {
+  background-color: transparent;
+  color: white;
+}
+/* 表格内背景颜色 */
+.regional_table /deep/ .el-table th,
+.regional_table /deep/ .el-table tr,
+.regional_table /deep/ .el-table td {
+  background-color: transparent !important;
+  
+  color: rgb(0, 0, 0);
+}
   .button-contanier {
     margin-left: auto;
   }
