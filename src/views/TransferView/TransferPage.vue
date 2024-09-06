@@ -54,7 +54,7 @@
           惯用脚: {{ player.USED_FOOT === 1 ? "右脚" : "左脚" }} | 健康状态:{{
             player.HEALTH_STATE === 0 ? "健康" : "受伤"
           }}
-          | 等级:{{ player.RANK }}
+          | 能力:{{ player.RANK }}
           <!-- 添加按钮 -->
           <el-button @click="openDialog(player)"> 向经纪人询问转会 </el-button>
         </li>
