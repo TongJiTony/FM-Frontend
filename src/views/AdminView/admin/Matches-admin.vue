@@ -23,43 +23,43 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="matchId"
+        prop="MATCH_ID"
         header-align="center"
         align="center"
         label="比赛ID">
       </el-table-column>
       <el-table-column
-        prop="matchDate"
+        prop="MATCH_DATE"
         header-align="center"
         align="center"
         label="比赛日期">
       </el-table-column>
       <el-table-column
-        prop="matchStadium"
+        prop="MATCH_STADIUM"
         header-align="center"
         align="center"
         label="比赛地点">
       </el-table-column>
       <el-table-column
-        prop="homeTeamId"
+        prop="HOME_TEAM_ID"
         header-align="center"
         align="center"
         label="主场球队ID">
       </el-table-column>
       <el-table-column
-        prop="awayTeamId"
+        prop="AWAY_TEAM_ID"
         header-align="center"
         align="center"
         label="客场球队ID">
       </el-table-column>
       <el-table-column
-        prop="homeTeamScore"
+        prop="HOME_TEAM_SCORE"
         header-align="center"
         align="center"
         label="主场得分">
       </el-table-column>
       <el-table-column
-        prop="awayTeamScore"
+        prop="AWAY_TEAM_SCORE"
         header-align="center"
         align="center"
         label="客场得分">
@@ -114,6 +114,9 @@ export default {
   components: {
     AddOrUpdate
   },
+  created() {
+    this.getDataList();
+  },
   activated() {
     this.getDataList();
   },
@@ -122,16 +125,16 @@ export default {
     // 获取数据列表
     getDataList() {
       this.dataListLoading = true;
-      axios.get('/api/v1/match/admin/displayall', {
+      axios.get('/api/v1/match/displayall', {
         params: {
           page: this.pageIndex,
           limit: this.pageSize,
           key: this.dataForm.key
         }
       }).then(({ data }) => {
-        if (data && data.code === 0) {
-          this.dataList = data.page.list;
-          this.totalPage = data.page.totalCount;
+        if (data) {
+          this.dataList = data.slice((this.pageIndex-1)*this.pageSize,this.pageIndex*this.pageSize);
+          this.totalPage = data.length;
         } else {
           this.dataList = [];
           this.totalPage = 0;
