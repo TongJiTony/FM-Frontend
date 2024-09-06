@@ -221,6 +221,8 @@ export default {
   height: 500px;
   border: 1px solid #ccc;
   padding: 10px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
 }
 .messages {
   flex: 1;

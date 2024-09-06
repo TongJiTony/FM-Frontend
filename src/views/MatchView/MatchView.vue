@@ -10,7 +10,8 @@
     style="font-size: 32px;"
   >
     <template slot="formatter">
-      <span style="font-size: 36px;">{{ match[0].HOME_TEAM_SCORE }}</span> -
+      <span style="font-size: 36px;">{{ match[0].HOME_TEAM_SCORE }}</span>
+      <span style="font-size: 36px;">-</span>
       <span style="font-size: 36px;">{{ match[0].AWAY_TEAM_SCORE }}</span>
     </template>
   </el-statistic>

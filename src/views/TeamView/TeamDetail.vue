@@ -391,6 +391,7 @@
   </script>
 
   <style scoped>
+  
 .team-image {
   width:55%;
   height: 55%;
@@ -421,17 +422,20 @@
 }
 .box-card3 {
     height: 350px;
-   
+     background-color: rgba(255, 255, 255, 0.8);
+
   }
 .box-card2 {
     width: 100%;
     height: 800px;
-   
+        background-color: rgba(255, 255, 255, 0.8);
+
   }
 .box-card {
     width: 100%;
     height: 390px;
-   
+        background-color: rgba(255, 255, 255, 0.8);
+
   }
   .card-header{
   margin-left: 1rem;
