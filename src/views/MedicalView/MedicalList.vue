@@ -15,7 +15,7 @@
           <el-statistic :value="hurtCount" :title="title1"></el-statistic>
         </el-col>
         <el-col :span="3">
-          <el-statistic :value="retiredCount" :title="title2"></el-statistic>
+          <el-statistic :value="nowHurtCount" :title="title2"></el-statistic>
         </el-col>
         <el-col :span="6">
           <el-input-group class="el-input-group">
@@ -224,10 +224,10 @@ import axios from "axios";
 export default {
   data() {
     return {
-      title1: "本月受伤人数",
-      title2: "已痊愈",
+      title1: "本月新增受伤人数",
+      title2: "当前受伤人数",
       hurtCount: 0,
-      retiredCount: 0,
+      nowHurtCount: 0,
       allData: [],
       pagedData: [],
       tableData: [],
@@ -290,14 +290,22 @@ export default {
   },
   methods: {
     countHurtTime(tableData) {
-      const targetDate = "2024-08";
+      const now = new Date();
+      const targetDate = `${now.getFullYear()}-${String(
+        now.getMonth() + 1
+      ).padStart(2, "0")}`;
+
+      this.hurtCount = 0; // 在遍历之前重置 hurtCount
+      this.nowHurtCount = 0; // 在遍历之前重置 nowHurtCount
 
       for (const data of tableData) {
         const hurtTime = data.HURT_TIME;
         const date = hurtTime.substring(0, 7); // 提取日期部分
         if (date == targetDate) {
           this.hurtCount++;
-          if (data.STATE == 1) this.retiredCount++;
+        }
+        if (data.STATE == 1) {
+          this.nowHurtCount++;
         }
       }
     },
