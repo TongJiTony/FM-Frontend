@@ -35,7 +35,7 @@ const router = new Router({
           component: () => import("@/views/TeamView/TeamDetail.vue"),
         },
         {
-          path: "/record/:teamID",
+          path: "/record/:teamID?",
           name: "RecordPage",
           component: () => import("@/views/RecordView/RecordPage.vue"),
         },
@@ -50,7 +50,7 @@ const router = new Router({
           component: () => import("@/views/PlayerView/PlayerDisplay.vue"),
         },
         {
-          path: "medical",
+          path: "medical/:teamID?",
           name: "medical",
           component: () => import("@/views/MedicalView/MedicalList.vue"),
         },
@@ -68,6 +68,16 @@ const router = new Router({
           path: "/training/:teamId?",
           name: "training",
           component: () => import("@/views/TrainingView/TrainingView.vue"),
+        },
+        {
+          path: "/transfer/:teamId?",
+          name: "transfer",
+          component: () => import("@/views/TransferView/TransferPage.vue"),
+        },
+        {
+          path: "/transfer/history",
+          name: "TransferHistory",
+          component: () => import("@/views/TransferView/TransferHistory.vue"),
         },
         {
           path: "changepsw",
@@ -154,7 +164,7 @@ router.beforeEach((to, from, next) => {
   if (to.name) {
     document.title = to.name;
   } else {
-    document.title = 'Football Manager'; // 你可以在这里设置默认的页面标签
+    document.title = "Football Manager"; // 设置默认的页面标签
   }
 
   const isLoggedIn = Vue.$cookies.get("isLoggedIn");

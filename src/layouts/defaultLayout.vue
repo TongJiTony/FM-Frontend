@@ -12,14 +12,20 @@
           background-color="var(--primary-background)"
           text-color="var(--text-color)"
           active-text-color="var(--active-text-color)"
-        >
-          <!-- <el-menu-item class="test" index="/">Home</el-menu-item>
-          <el-menu-item index="/test">Test</el-menu-item> -->
+        >     
           <el-menu-item index="/team">队伍主页</el-menu-item>
           <el-menu-item index="/player-list">球员总览</el-menu-item>
-          <el-menu-item index="/lineup">排兵布阵</el-menu-item>
-          <el-menu-item index="/medical">健康情况</el-menu-item>
-          <el-menu-item index="/training">训练计划</el-menu-item>
+
+          <el-submenu index="sub-menu">
+            <template slot="title">
+              <span>策略与训练</span>
+            </template>
+            <el-menu-item index="/lineup">排兵布阵</el-menu-item>
+            <el-menu-item index="/training">训练计划</el-menu-item>
+
+          </el-submenu>
+        <el-menu-item index="/record">财务情况</el-menu-item>
+        <el-menu-item index="/medical">健康情况</el-menu-item>
           <el-submenu index="sub" class="menu-right">
             <template slot="title">
               <i class="el-icon-setting"></i>
@@ -84,6 +90,7 @@ export default {
         greenGradient: "linear-gradient(to right, #43cea2, #185a9d)",
         purpleGradient: "linear-gradient(to right, #8e2de2, #4a00e0)",
         orangeGradient: "linear-gradient(to right, #ff7e5f, #feb47b)",
+        blueGrey:"#607D8B",
         image1: `url(${require("@/assets/img/main-bg-1.png")})`,
         image2: `url(${require("@/assets/img/main-bg-2.png")})`,
       },
@@ -149,21 +156,22 @@ export default {
         return;
       }
 
-      if (key === "/lineup" && userright === "manager") {
-        if (this.$route.path !== `/lineup/${userTeamid}`)
-          this.$router.push({ name: "lineup", params: { teamID: userTeamid } });
-        return;
-      }
-      if (key === "/training" && userright === "manager") {
-        if (this.$route.path !== `/training/${userTeamid}`)
-          this.$router.push({
-            name: "training",
-            params: { teamId: userTeamid },
-          });
-        return;
-      }
-
-      if (this.$route.path !== key) {
+    if (key === '/lineup' && userright === 'manager') {
+      if (this.$route.path!==`/lineup/${userTeamid}`)
+        this.$router.push( { name: "lineup", params: { teamID: userTeamid }});
+      return;
+    }
+    if (key === '/training' && userright === 'manager') {
+      if (this.$route.path!==`/training/${userTeamid}`)
+        this.$router.push( { name: "training", params: { teamId: userTeamid }});
+      return;
+    }
+    if (key === '/record' && userright === 'manager') {
+      if (this.$route.path!==`/record/${userTeamid}`)
+        this.$router.push( { name: "RecordPage", params: { teamID: userTeamid }});
+      return;
+    }
+    if (this.$route.path !== key) {
         this.$router.push(key);
       }
     },

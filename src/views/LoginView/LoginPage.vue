@@ -227,8 +227,8 @@ export default {
           const timeElapsed = now - this.captchaTimestamp;
           if (timeElapsed > this.captchaValidityPeriod) {
             this.$message.error("验证码已过期，请重新生成验证码");
-            this.generateCaptcha(); // 验证码过期时重新生成
             this.generatedCaptcha = ""; // 清空验证码输入框
+            this.generateCaptcha(); // 验证码过期时重新生成
             return; // 阻止后续的登录逻辑执行
           }
           if (
@@ -261,6 +261,8 @@ export default {
                 if (error.response.data.code == 500) {
                   this.$message.error(error.response.data.msg);
                 } else {
+                  this.generatedCaptcha = ""; //清空验证码
+                  this.generateCaptcha(); // 验证码错误时重新生成
                   this.$message.error("登陆失败，请检查密码或者网络");
                 }
               });

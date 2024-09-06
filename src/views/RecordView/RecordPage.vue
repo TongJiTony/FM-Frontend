@@ -12,15 +12,15 @@
               <el-card class="box-card3">
                 <el-col :span="12">
                   <p style="font-size: 15px;line-height: 0;">总盈亏</p>
-                  <p style="font-size: 20px;font-weight:bold;line-height: 1;">¥{{ sum_amount }}</p>
+                  <p style="font-size: 20px;font-weight:bold;line-height: 1;">{{ formattedSumAmount }}</p>
                 </el-col> 
                 <el-col :span="6">
                   <p style="font-size: 15px;line-height: 0;">总收入</p>
-                  <p style="font-size: 20px;font-weight:bold;line-height: 1;">¥{{ positiveSum }}</p>
+                  <p style="font-size: 20px;font-weight:bold;line-height: 1;">{{ formattedPositiveSum }}</p>
                 </el-col>      
                 <el-col :span="6">
                   <p style="font-size: 15px;line-height: 0">总支出</p>
-                  <p style="font-size: 20px;font-weight:bold;line-height: 1;">¥{{ Math.abs(negativeSum) }}</p>
+                  <p style="font-size: 20px;font-weight:bold;line-height: 1;">{{formattedNegativeSum }}</p>
                 </el-col>                
               </el-card>
             </el-col>
@@ -46,7 +46,7 @@
           <el-row :gutter="12">
             <el-col :span="12">
               <el-card class="box-card2">
-                <h1 style="font-size: 20px;line-height: 0;">总收入：¥{{ positiveSum }}</h1>
+                <h1 style="font-size: 20px;line-height: 0;">总收入：{{ formattedPositiveSum }}</h1>
                 <div class="echart-box2" ref="lineChart2"></div>
               </el-card> 
             </el-col>
@@ -95,7 +95,7 @@
           <el-row :gutter="12">
             <el-col :span="12">
               <el-card class="box-card2">
-              <h1 style="font-size: 20px;line-height: 0;">总支出：¥{{ Math.abs(negativeSum) }}</h1>
+              <h1 style="font-size: 20px;line-height: 0;">总支出：{{formattedNegativeSum }}</h1>
               <div class="echart-box2" ref="lineChart3"></div>      
             </el-card>  
             </el-col>
@@ -141,14 +141,15 @@
 
     <el-tab-pane label="工资" name="fourth">
       <el-card shadow="never" class="box-card4">
+        
               <el-table :data="contract" style="width: 100%">
-              <el-table-column prop="player_id" label="球员编号" width="800">
+              <el-table-column prop="PLAYER_NAME" label="球员" width="800">
               </el-table-column>
-              <el-table-column prop="salary" label="薪水">
+              <el-table-column prop="SALARY" label="薪水" :formatter="formatSalary">
               </el-table-column>
-              <el-table-column prop="start date" label="开始日期">
+              <el-table-column prop="START_DATE" label="开始日期" :formatter="formatDate">
               </el-table-column>
-              <el-table-column prop="end date" label="结束日期">
+              <el-table-column prop="END_DATE" label="结束日期" :formatter="formatDate">
               </el-table-column>
               </el-table>
             </el-card>
@@ -178,7 +179,7 @@
   }
  .box-card4 {
     width: 100%;
-    height: 600px;
+   
   }
 .echart-box {
   width: 600px;
@@ -223,8 +224,6 @@ export default {
       negativeSum:0,
       currentDate: new Date(),
       activeName:'first',
-      cur_month:'',
-      pre_month:'',
       selectedDate: '2024-08', // 选择的日期
       dateOptions: [
         { label: '2024年8月', value: '2024-08' },
@@ -233,22 +232,22 @@ export default {
         { label: '2024年5月', value: '2024-05' }
         // 可以添加更多日期选项
       ],
-      selectedDate2: '2024-08', // 初始化为空字符串
+      selectedDate2: '2024-08', 
       dateOptions2: [
         { label: '2024年8月', value: '2024-08' },
         { label: '2024年7月', value: '2024-07' },
         { label: '2024年6月', value: '2024-06' },
         { label: '2024年5月', value: '2024-05' }
-      ], // 初始化为空数组
+      ], 
+      teamID:this.$route.params.teamID,
     };
+    
   },
 
   created() {
    
     this.fetchTeamRecords();
-    this.currentMonth();
-    this.previousMonth();
-
+    this.fetchTeamContracts();
   },
   computed: {
     filteredPosRecords() {
@@ -257,10 +256,31 @@ export default {
     filteredNegRecords() {
       return this.records.filter(record => record.AMOUNT < 0 && record.TRANSACTION_DATE === this.selectedDate);
     },
-    
+    formattedSumAmount() {    
+      const sumAmountInTenThousand = this.sum_amount / 10000;   
+      return `¥${sumAmountInTenThousand.toFixed(2)}万`;
+    },
+    formattedPositiveSum(){
+      const sumAmountInTenThousand = this.positiveSum / 10000;
+      return `¥${sumAmountInTenThousand.toFixed(2)}万`;
+    },
+    formattedNegativeSum(){
+      const sumAmountInTenThousand = this.negativeSum / 10000;
+      return `¥${sumAmountInTenThousand.toFixed(2)}万`;
+    },
   },
 
   methods: {
+    formatSalary(row, column, cellValue) {
+    // 将薪水的值除以 10000，得到以万为单位的值
+    const salaryInTenThousand = cellValue / 10000;
+    // 使用 toFixed 方法将小数点后保留一位数字，并添加 "万/年" 后缀
+    return `¥${salaryInTenThousand.toFixed(1)}万/年`;
+  },
+    formatDate(row, column, cellValue) {
+    const date = new Date(cellValue);
+    return date.toLocaleDateString();
+  },
     handlePosDateChange(selectedDate2) {
     this.selectedDate2 = selectedDate2;
     
@@ -275,31 +295,17 @@ export default {
     this.renderNegBar(filteredRecords)
     
   },
-    currentMonth() {
-      const date = this.currentDate;
-      const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      this.cur_month=`${year}-${month}`;
-      console.log('current month:',this.cur_month)
-      //return `${year}-${month}`;
-    },
-    previousMonth() {
-      const date = new Date(this.currentDate);
-      date.setMonth(date.getMonth() - 1); // 获取上个月的日期
-      const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      this.pre_month=`${year}-${month}`;
-     // return `${year}-${month}`;
-    },
+
     goBack() {
       this.$router.go(-1); // Navigate to the previous page
     },
     formatAmount(row, column, cellValue) {
       return Math.abs(cellValue);
     },
-    fetchTeamConotracts() {
-       const teamID = this.$route.params.teamID;
-        axios.get(`/api/v1/contract/displayall?teamid=${teamID}`)
+    fetchTeamContracts() {
+       
+       //const teamID = this.$route.params.teamID;
+        axios.get(`/api/v1/contract/displayall?teamid=${this.teamID}`)
           .then(response => {
             console.log('Received contract data:', response.data);
             this.contract = response.data;
@@ -310,9 +316,11 @@ export default {
           this.loading = false;
         });
     },
-    fetchTeamRecords() {
-      const teamID = this.$route.params.teamID;
-        axios.get(`/api/v1/record/search?team_id=${teamID}`)
+     fetchTeamRecords() {
+
+
+      //const teamID = this.$route.params.teamID;
+        axios.get(`/api/v1/record/search?team_id=${this.teamID}`)
         .then(response => {
           console.log('Received record data:', response.data);
           this.records = response.data;
