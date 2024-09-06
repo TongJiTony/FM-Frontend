@@ -2,128 +2,140 @@
   <div class="player-display">
     <el-card shadow="always">
       <!-- 第一层：球员图片，ID/名字/生日，球队，惯用脚 -->
-      <el-row :gutter="20" class="top-layer">
-        <!-- 球员图片 -->
-        <el-col :span="6">
-          <el-card class="module-card" shadow="hover">
-            <img :src="player[0].ICON" alt="Player Image" class="card-image" />
-          </el-card>
-        </el-col>
-
-        <!-- ID，名字，生日 -->
-        <el-col :span="6">
-          <el-card class="module-card" shadow="hover">
-            <div slot="header" class="clearfix">
-              <span>基本信息</span>
-            </div>
-            <el-row class="info-row">
-              <el-col :span="12">
-                <el-tag type="info">{{ player[0].PLAYER_ID }}</el-tag>
-              </el-col>
-              <el-col :span="12">
-                <el-tag type="info">{{ player[0].PLAYER_NAME }}</el-tag>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
-                <el-tag type="info"
-                  >{{ player[0].BIRTHDAY }} ({{
-                    calculateAge(player[0].BIRTHDAY)
-                  }}
-                  岁)</el-tag
-                >
-              </el-col>
-            </el-row>
-          </el-card>
-        </el-col>
-
-        <!-- 球队 -->
-        <el-col :span="6">
-          <el-card class="module-card" shadow="hover">
-            <div slot="header" class="clearfix">
-              <span>球队</span>
-            </div>
-            <el-row>
-              <el-col :span="24">
-                <el-tag type="info">{{ player[0].TEAM_NAME }}</el-tag>
-              </el-col>
-              <el-col>
-                <img
-                  src="https://img.51miz.com/Element/00/91/85/34/422e1064_E918534_f98a4621.png"
-                  alt="Team Image"
-                  class="team-logo"
-                />
-              </el-col>
-            </el-row>
-          </el-card>
-        </el-col>
-
-        <!-- 惯用脚 -->
-        <el-col :span="6">
-          <el-card class="module-card" shadow="hover">
-            <div slot="header" class="clearfix">
-              <span>惯用脚</span>
-            </div>
-            <el-tag type="info">{{
-              player[0].USED_FOOT === 1 ? "Right Foot" : "Left Foot"
-            }}</el-tag>
-          </el-card>
-        </el-col>
-      </el-row>
-
-      <!-- 分隔线 -->
-      <el-divider></el-divider>
-
-      <!-- 第二层：球场和评分 -->
-      <el-row :gutter="20" class="middle-layer">
-        <!-- 球场 -->
-        <el-col :span="12">
-          <el-card class="module-card2" shadow="hover">
-            <div slot="header" class="clearfix">
-              <span>{{ player[0].ROLE }}</span>
-            </div>
-            <img
-              :src="fieldImageUrl"
-              alt="Football Field"
-              class="field-image"
-            />
-            <div class="player-position" :style="positionStyle"></div>
-          </el-card>
-        </el-col>
-
-        <!-- 评分 -->
-        <el-col :span="12">
-          <el-card class="module-card2" shadow="hover">
-            <div slot="header" class="clearfix">
-              <span>评分</span>
-            </div>
-            <el-progress
-              type="circle"
-              :percentage="player[0].RANK"
-            ></el-progress>
-          </el-card>
-        </el-col>
-      </el-row>
-
-      <!-- 分隔线 -->
-      <el-divider></el-divider>
-
-      <!-- 第三层：医疗，阵容，比赛，转会 -->
-      <el-row :gutter="20" class="bottom-layer">
-        <el-col :span="6">
-          <el-card class="module-card3" shadow="hover">
-            <p>Medical</p>
-            <el-table
-              :data="tableData"
-              style="width: 100%"
-              v-if="tableData.length"
-              height="120"
+      <el-row :gutter="20">
+        <el-card shadow="never">
+          <div slot="header" class="clearfix">
+            <span style="font-size: 20px; font-weight: bold">球员简介</span>
+            <el-button
+              type="primary"
+              size="small"
+              icon="el-icon-arrow-left"
+              @click="goBack"
+              class="back-button"
+              >返回</el-button
             >
-              <el-table-column
-                prop="MEDICAL_ID"
-                label="ID"
-                width="80"
-              ></el-table-column>
+          </div>
+          <el-col :span="6">
+            <div>
+              <img
+                :src="player[0].ICON"
+                alt="Player Image"
+                class="card-image"
+              />
+            </div>
+          </el-col>
+          <h2 style="font-size: 24px">{{ player[0].PLAYER_NAME }}</h2>
+          <el-col :span="18" class="player-info">
+            <el-row :gutter="12">
+              <el-col :span="12">
+                <div style="height: 60px; line-height: 60px">
+                  <strong>球员编号:</strong>
+                  <span style="margin-right: 10px"></span>
+                  <el-tag type="info" style="font-size: 14px">{{
+                    player[0].PLAYER_ID
+                  }}</el-tag>
+                </div>
+              </el-col>
+              <el-col :span="12">
+                <div style="height: 60px; line-height: 60px">
+                  <strong>所在球队:</strong>
+                  <span style="margin-right: 10px"></span>
+                  <span style="margin-right: 10px; vertical-align: middle">
+                    <el-tag type="info" style="font-size: 14px">{{
+                      player[0].TEAM_NAME
+                    }}</el-tag>
+                    <img
+                      :src="teamURL"
+                      alt="球员头像"
+                      style="
+                        width: 60px;
+                        height: 60px;
+                        border-radius: 50%;
+                        vertical-align: middle;
+                      "
+                    />
+                  </span>
+                </div>
+              </el-col>
+              <el-col :span="12">
+                <div style="height: 60px; line-height: 60px">
+                  <strong>生日:</strong>
+                  <span style="margin-right: 10px"></span>
+                  <el-tag type="info" style="font-size: 14px"
+                    >{{ player[0].BIRTHDAY }} ({{
+                      calculateAge(player[0].BIRTHDAY)
+                    }}岁)</el-tag
+                  >
+                </div>
+              </el-col>
+              <el-col :span="12">
+                <div style="height: 60px; line-height: 60px">
+                  <strong>惯用脚:</strong>
+                  <span style="margin-right: 10px"></span>
+                  <el-tag type="info" style="font-size: 14px">{{
+                    player[0].USED_FOOT === 1 ? "右脚" : "左脚"
+                  }}</el-tag>
+                </div>
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-card>
+      </el-row>
+
+      <el-tabs v-model="activeTab">
+        <el-tab-pane label="作战能力" name="first">
+          <el-row type="flex" justify="space-between">
+            <el-col :span="12">
+              <el-card class="module-card2" shadow="hover">
+                <div slot="header" class="clearfix">
+                  <span>{{ player[0].ROLE }}</span>
+                </div>
+                <img
+                  :src="fieldImageUrl"
+                  alt="Football Field"
+                  class="field-image"
+                />
+                <div class="player-position" :style="positionStyle"></div>
+              </el-card>
+            </el-col>
+            <el-col :span="12">
+              <el-card class="module-card2" shadow="never">
+                <div class="card-content">
+                  <div class="team-avg-rank">
+                    <div class="rank-info">
+                      <span>队伍平均评分</span>
+                    </div>
+                    <div class="rank-progress">
+                      <el-progress
+                        type="circle"
+                        :percentage="avgRank"
+                        :format="formatTeam"
+                      ></el-progress>
+                    </div>
+                  </div>
+                  <div class="player-rank">
+                    <div class="rank-info">
+                      <span>个人评分</span>
+                    </div>
+                    <div class="rank-progress">
+                      <el-progress
+                        type="circle"
+                        :percentage="player[0].RANK"
+                        :format="formatPlayer"
+                      ></el-progress>
+                    </div>
+                  </div>
+                </div>
+              </el-card>
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+
+        <el-tab-pane label="医疗记录" name="second">
+          <el-card shadow="hover">
+            <h2 v-if="HEALTH_STATE">健康状况：受伤</h2>
+            <h2 v-else>健康状况：健康</h2>
+            <el-table :data="tableData" style="width: 100%">
               <el-table-column
                 prop="HURT_PART"
                 label="受伤部位"
@@ -132,7 +144,7 @@
                 prop="MEDICAL_CARE"
                 label="医疗建议"
               ></el-table-column>
-              <el-table-column label="受伤天数" width="120">
+              <el-table-column label="受伤天数">
                 <template slot-scope="scope">
                   <span
                     >{{
@@ -141,75 +153,51 @@
                         scope.row.PRED_REC_DATE
                       )
                     }}
-                    days</span
+                    天</span
                   >
                 </template>
               </el-table-column>
             </el-table>
-            <p v-else>No medical records found for this player.</p>
           </el-card>
-        </el-col>
-        <el-col :span="6">
-          <el-card class="module-card3" shadow="hover">
-            <p>Line-up</p>
-            <el-table
-              :data="lineupData"
-              style="width: 100%"
-              v-if="lineupData.length"
-              height="120"
-            >
-              <el-table-column
-                prop="LINEUP_ID"
-                label="ID"
-                width="80"
-              ></el-table-column>
-              <el-table-column prop="TEAM_NAME" label="球队"></el-table-column>
-              <el-table-column
-                prop="NOTE"
-                label="备注"
-                width="100"
-              ></el-table-column>
+        </el-tab-pane>
+
+        <el-tab-pane label="所在阵容" name="third">
+          <el-card shadow="never">
+            <h2 v-if="GAME_STATE">比赛状态：禁赛</h2>
+            <h2 v-else>比赛状态：允许出场</h2>
+            <el-table :data="lineupData" style="width: 100%">
+              <el-table-column prop="NOTE" label="阵容名称"></el-table-column>
+              <el-table-column label="位置">{{
+                player[0].ROLE
+              }}</el-table-column>
             </el-table>
-            <p v-else>No lineup records found for this player.</p>
           </el-card>
-        </el-col>
-        <el-col :span="6">
-          <el-card class="module-card3" shadow="hover">
-            <p>Match</p>
-          </el-card>
-        </el-col>
-        <el-col :span="6">
-          <el-card class="module-card3" shadow="hover">
+        </el-tab-pane>
+
+        <el-tab-pane label="转会记录" name="forth">
+          <el-card shadow="never">
             <p>Transfer</p>
-            <el-table
-              :data="transferData"
-              style="width: 100%"
-              v-if="transferData.length"
-              height="120"
-            >
+            <el-table :data="transferData" style="width: 100%" height="120">
               <el-table-column
-                prop="transfer_id"
-                label="ID"
-                width="60"
+                prop="TEAM_ID_FROM"
+                label="转出球队"
               ></el-table-column>
               <el-table-column
-                prop="team_id_from"
-                label="From"
-              ></el-table-column>
-              <el-table-column prop="team_id_to" label="To"></el-table-column>
-              <el-table-column
-                prop="transfer_fees"
-                label="Fees"
+                prop="TEAM_ID_TO"
+                label="转入球队"
               ></el-table-column>
               <el-table-column
-                prop="transfer_date"
-                label="Date"
+                prop="TRANSFER_FEES"
+                label="转会费"
+              ></el-table-column>
+              <el-table-column
+                prop="TRANSFER_DATE"
+                label="转会日期"
               ></el-table-column>
             </el-table>
-            <p v-else>No transfer records found for this player.</p>
           </el-card>
-        </el-col>
-      </el-row>
+        </el-tab-pane>
+      </el-tabs>
     </el-card>
   </div>
 </template>
@@ -224,9 +212,13 @@ export default {
       lineupData: [],
       tableData: [],
       allData: [],
-      fieldImageUrl: "",
       loading: true,
       player: null,
+      teamURL: "",
+      fieldImageUrl: "",
+      players: [],
+      avgRank: 0,
+      activeTab: "first", // 默认打开的标签页名称
     };
   },
   created() {
@@ -236,6 +228,32 @@ export default {
     this.fetchMedicalRecords();
   },
   methods: {
+    getAverageRank(teamId) {
+      axios
+        .get(`/api/v1/player/displayall?teamid=${teamId}`)
+        .then((response) => {
+          console.log("Received data:", response.data);
+          this.players = response.data;
+
+          // 计算RANK之和
+          let rankSum = 0;
+          for (let player of this.players) {
+            rankSum += player.RANK;
+          }
+          // 计算平均值
+          this.avgRank = rankSum / this.players.length;
+          console.log("Average RANK:", this.avgRank);
+        })
+        .catch((error) => {
+          console.error("Failed to fetch player list for team:", error);
+        });
+    },
+    formatPlayer() {
+      return `${this.player[0].RANK.toFixed(1)}分`;
+    },
+    formatTeam() {
+      return `${this.avgRank.toFixed(1)}分`;
+    },
     calculateAge(birthday) {
       const birthDate = new Date(birthday);
       const today = new Date();
@@ -275,16 +293,17 @@ export default {
           });
       }
     },
+
     fetchLineupRecords() {
       const playerId = this.$route.params.playerId;
       if (playerId) {
         axios
           .get(`/api/v1/lineup/displayall?playerid=${playerId}`)
           .then((response) => {
-            console.log("Received lineup data:", response.data);
             this.lineupData = response.data.sort(
               (a, b) => a.LINEUP_ID - b.LINEUP_ID
             );
+            console.log("Received lineup data:", this.lineupData);
           })
           .catch((error) => {
             console.error("Failed to fetch lineup list:", error);
@@ -318,12 +337,11 @@ export default {
         .then((response) => {
           console.log("Received data:", response.data);
           this.player = response.data;
-
+          this.fetchTeamData();
           const role = this.player[0].ROLE;
-          console.log("Player Role:", role);
+          //console.log("Player Role:", role);
           this.fieldImageUrl = this.getImageUrlByRole(role);
-          console.log("Field Image URL:", this.fieldImageUrl);
-
+          //console.log("Field Image URL:", this.fieldImageUrl);
           this.loading = false;
         })
         .catch((error) => {
@@ -331,6 +349,7 @@ export default {
           this.loading = false;
         });
     },
+
     getImageUrlByRole(role) {
       switch (role) {
         case "守门员":
@@ -345,6 +364,25 @@ export default {
           return "https://i.ibb.co/2jL5H73/playground.jpg";
       }
     },
+    fetchTeamData() {
+      const teamID = this.player[0].TEAM_ID;
+      console.log("Fetching data for team ID:", teamID);
+      axios
+        .get(`/api/v1/team/displayone?Teamid=${teamID}`)
+        .then((response) => {
+          console.log("Received data:", response.data);
+          const team = response.data;
+          this.teamURL = team[0].TEAM_ICON;
+          this.getAverageRank(teamID);
+          console.log("URL:", this.teamURL);
+        })
+        .catch((error) => {
+          console.error("Failed to fetch team data:", error);
+        });
+    },
+    goBack() {
+      this.$router.go(-1); // Navigate to the previous page
+    },
   },
 };
 </script>
@@ -353,7 +391,11 @@ export default {
 .player-display {
   padding: 1rem;
 }
-
+.player-info {
+  display: flex;
+  flex-wrap: wrap;
+  height: 150px;
+}
 .module-card {
   width: 300px;
   height: 300px;
@@ -378,21 +420,6 @@ export default {
   align-items: center;
   border-radius: 5px;
   text-align: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.module-card3 {
-  width: 400px;
-  height: 300px;
-  padding: 10px;
-  margin: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border-radius: 5px;
-  text-align: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .medical-card {
@@ -428,14 +455,27 @@ export default {
   height: auto;
 }
 
+.player-position {
+  position: absolute;
+  background-color: red;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+}
+
 .el-row {
   margin-bottom: 20px;
 }
 
 .card-image {
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: 5px;
+  width: 60%;
+  height: 190px;
+  background-color: #f2f2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .info-row {
@@ -458,5 +498,35 @@ export default {
   width: 50%; /* 图像宽度 */
   height: 50%; /* 图像高度 */
   object-fit: cover; /* 保持图像比例，剪裁多余部分 */
+}
+.back-button {
+  float: right;
+  margin-left: 10px;
+}
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+
+.clearfix:after {
+  clear: both;
+}
+
+.module-card2 .card-content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.module-card2 .team-avg-rank,
+.module-card2 .player-rank {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 40px; /* 添加水平间距 */
+}
+
+.module-card2 .rank-info {
+  margin-bottom: 10px;
 }
 </style>
