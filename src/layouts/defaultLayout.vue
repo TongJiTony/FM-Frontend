@@ -247,7 +247,7 @@ export default {
   font-weight: bold;
   color: var(--text-color);
   margin-left: 0px;
-  margin-right: 180px;
+  margin-right: 160px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* 增加阴影效果 */
 }
 
