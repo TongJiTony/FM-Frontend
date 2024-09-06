@@ -23,7 +23,7 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="Stadium_ID"
+        prop="STADIUM_ID"
         header-align="center"
         align="center"
         label="体育馆ID">
@@ -114,9 +114,9 @@ export default {
           key: this.dataForm.key
         }
       }).then(({ data }) => {
-        if (data && data.code === 0) {
-          this.dataList = data.page.list;
-          this.totalPage = data.page.totalCount;
+        if (data) {
+          this.dataList = data.slice((this.pageIndex-1)*this.pageSize,this.pageIndex*this.pageSize);
+          this.totalPage = data.length;
         } else {
           this.dataList = [];
           this.totalPage = 0;

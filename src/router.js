@@ -193,7 +193,7 @@ router.beforeEach((to, from, next) => {
         next({ name: "Login" }); // 跳回去重新登录
       }
     } else if (userRole === "admin") {
-      next({ name: "Users" });
+      next({ name: "Admin" });
     } else {
       next({ name: "Home" });
     }

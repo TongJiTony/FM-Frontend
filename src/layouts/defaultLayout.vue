@@ -22,10 +22,10 @@
             </template>
             <el-menu-item index="/lineup">排兵布阵</el-menu-item>
             <el-menu-item index="/training">训练计划</el-menu-item>
-
+            <el-menu-item index="/medical">球员健康</el-menu-item>
           </el-submenu>
-        <el-menu-item index="/record">财务情况</el-menu-item>
-        <el-menu-item index="/medical">健康情况</el-menu-item>
+        <el-menu-item index="/record">财务管理</el-menu-item>
+        <el-menu-item index="/AIChat">智能助手</el-menu-item>
           <el-submenu index="sub" class="menu-right">
             <template slot="title">
               <i class="el-icon-setting"></i>
@@ -44,7 +44,6 @@
             <el-menu-item class="user-action-item" index="/userinfo"
               >{{ this.$store.getters["user/getUserName"] }}的个人信息</el-menu-item
             >
-            <el-menu-item index="/AIChat">智能助手</el-menu-item>
           </el-submenu>
           <button class="button-change-theme" @click="toggleTheme">
             切换主题
