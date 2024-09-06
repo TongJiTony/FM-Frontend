@@ -23,31 +23,31 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="recordId"
+        prop="RECORD_ID"
         header-align="center"
         align="center"
         label="recordId">
       </el-table-column>
       <el-table-column
-        prop="teamId"
+        prop="TEAM_ID"
         header-align="center"
         align="center"
         label="teamId">
       </el-table-column>
       <el-table-column
-        prop="transactionDate"
+        prop="TRANSACTION_DATe"
         header-align="center"
         align="center"
         label="transactionDate">
       </el-table-column>
       <el-table-column
-        prop="amount"
+        prop="AMOUNT"
         header-align="center"
         align="center"
         label="amount">
       </el-table-column>
       <el-table-column
-        prop="description"
+        prop="DESCRIPTION"
         header-align="center"
         align="center"
         label="description">
@@ -99,6 +99,9 @@ export default {
       addOrUpdateVisible: false
     };
   },
+  created() {
+    this.getDataList();
+  },
   components: {
     AddOrUpdate
   },
@@ -110,7 +113,7 @@ export default {
     // 获取数据列表
     getDataList() {
       this.dataListLoading = true;
-      axios.get('/api/admin/records/list', {
+      axios.get('/api/v1/record/search', {
         params: {
           page: this.pageIndex,
           limit: this.pageSize,

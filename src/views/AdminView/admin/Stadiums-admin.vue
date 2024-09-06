@@ -23,25 +23,25 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="stadiumId"
+        prop="Stadium_ID"
         header-align="center"
         align="center"
         label="体育馆ID">
       </el-table-column>
       <el-table-column
-        prop="stadiumName"
+        prop="STADIUM_NAME"
         header-align="center"
         align="center"
         label="体育馆名称">
       </el-table-column>
       <el-table-column
-        prop="stadiumCapacity"
+        prop="STADIUM_CAPACITY"
         header-align="center"
         align="center"
         label="观众容量">
       </el-table-column>
       <el-table-column
-        prop="stadiumLocation"
+        prop="STADIUM_LOCATION"
         header-align="center"
         align="center"
         label="体育馆地址">
@@ -96,6 +96,9 @@ export default {
   components: {
     AddOrUpdate
   },
+  created() {
+    this.getDataList();
+  },
   activated() {
     this.getDataList();
   },
@@ -104,7 +107,7 @@ export default {
     // 获取数据列表
     getDataList() {
       this.dataListLoading = true;
-      axios.get('/api/admin/stadiums/list', {
+      axios.get('/api/v1/stadium/displayall', {
         params: {
           page: this.pageIndex,
           limit: this.pageSize,
