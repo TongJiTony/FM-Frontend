@@ -35,7 +35,7 @@
             size="small"
           >
             <el-option label="医疗编号" value="MEDICAL_ID"></el-option>
-            <el-option label="球员编号" value="PLAYER_ID"></el-option>
+            <el-option label="球员姓名" value="PLAYER_NAME"></el-option>
           </el-select>
           <el-input
             v-model="searchQuery"
@@ -50,6 +50,8 @@
     <el-row :gutter="20">
       <el-card shadow="never">
         <el-table :data="pagedData" style="width: 100%">
+        <el-table-column prop="MEDICAL_ID" label="医疗编号" >
+        </el-table-column>
         <el-table-column prop="PLAYER_NAME" label="球员姓名" >
         </el-table-column>
         <el-table-column prop="HURT_PART" label="受伤部位">
@@ -101,9 +103,6 @@
     </el-row>
   </el-card>
   
-
-  
-
     <!-- Confirm Delete Dialog -->
     <el-dialog
       title="确认删除"

@@ -91,7 +91,7 @@
           :visible.sync="editDialogVisible"
         >
           <el-form :model="editForm">
-            <el-form-item label="备注">
+            <el-form-item label="阵容名称">
               <el-input v-model="editForm.NOTE"></el-input>
             </el-form-item>
           </el-form>
@@ -216,8 +216,8 @@ export default {
       selectedColumn: '',
       columns: [
         { prop: 'TEAM_NAME', label: '球队' },
-        { prop: 'LINEUP_ID', label: '阵容ID' },
-        { prop: 'NOTE', label: '备注' },
+        { prop: 'LINEUP_ID', label: '阵容编号' },
+        { prop: 'NOTE', label: '阵容名称' },
       ],
       // edit
       editDialogVisible: false,
