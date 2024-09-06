@@ -1,108 +1,107 @@
 <template>
   <div class="medical-list">
-
-
     <el-card shadow="never">
       <el-row :gutter="20" class="header-row" justify="end">
-      
-          <el-col :span="12">
-        <el-button
-          @click="openAddMedicalDialog"
-          type="primary"
-          size="small"
-          style="margin-bottom: 1rem"
-          >添加医疗信息</el-button
-        >
-      </el-col>
-      <el-col :span="3">
-        <el-statistic
-            :value="hurtCount"
-            :title="title1"
-          ></el-statistic>
-        
-      </el-col>
-      <el-col :span="3">
-        <el-statistic
-            :value="retiredCount"
-            :title="title2"
-          ></el-statistic>
-      </el-col>
-      <el-col :span="6">
-        <el-input-group class="el-input-group">
-          <el-select
-            v-model="searchType"
-            placeholder="选择搜索类型"
+        <el-col :span="12">
+          <el-button
+            @click="openAddMedicalDialog"
+            type="primary"
             size="small"
+            style="margin-bottom: 1rem"
+            >添加医疗信息</el-button
           >
-            <el-option label="医疗编号" value="MEDICAL_ID"></el-option>
-            <el-option label="球员编号" value="PLAYER_ID"></el-option>
-          </el-select>
-          <el-input
-            v-model="searchQuery"
-            placeholder="输入搜索内容"
-            size="small"
-          ></el-input>
-          <el-button @click="handleSearch" type="primary" size="small">搜索</el-button>
-          <el-button @click="resetSearch" type="text" size="small">重置</el-button>
-        </el-input-group>
-      </el-col>      
-    </el-row>
-    <el-row :gutter="20">
-      <el-card shadow="never">
-        <el-table :data="pagedData" style="width: 100%">
-        <el-table-column prop="PLAYER_NAME" label="球员姓名" >
-        </el-table-column>
-        <el-table-column prop="HURT_PART" label="受伤部位">
-        </el-table-column>
-        <el-table-column prop="MEDICAL_CARE" label="医疗护理" >
-        </el-table-column>
-        <el-table-column prop="HURT_TIME" label="受伤时间" :formatter="formatData">
-        </el-table-column>     
-        <el-table-column prop="PRED_REC_DATE" label="预计康复时间" :formatter="formatData">
-        </el-table-column>
-        <el-table-column  label="是否痊愈">
-          <template slot-scope="scope">
-          <el-tag :type="scope.row.STATE === 1 ? 'success' : 'danger'">
-            {{ scope.row.STATE === 1 ? '已痊愈' : '未痊愈' }}
-          </el-tag>
-        </template>
-        </el-table-column>
-        <el-table-column label="操作" fixed="right" >
-                <!-- eslint-disable-next-line -->
-            
-                <template slot-scope="scope">
-                  <el-button
-                @click="confirmEdit(scope.row)"
-                type="text"
-                size="small"
-                style="color: blue"
-                >编辑</el-button
-              >
-              <el-button
-                @click="confirmDelete(scope.row)"
-                type="text"
-                size="small"
-                style="color: red"
-                >删除</el-button
-              >
-                </template>
-              </el-table-column>
-            </el-table>
-      </el-card>
-      <el-pagination
-      background
-      layout="total,prev, pager, next"
-      :total="total"
-      :page-size="pageSize"
-      :current-page.sync="currentPage"
-      @current-change="handleCurrentChange"
-    >
-    </el-pagination>
-    </el-row>
-  </el-card>
-  
+        </el-col>
+        <el-col :span="3">
+          <el-statistic :value="hurtCount" :title="title1"></el-statistic>
+        </el-col>
+        <el-col :span="3">
+          <el-statistic :value="retiredCount" :title="title2"></el-statistic>
+        </el-col>
+        <el-col :span="6">
+          <el-input-group class="el-input-group">
+            <el-select
+              v-model="searchType"
+              placeholder="选择搜索类型"
+              size="small"
+            >
+              <el-option label="医疗编号" value="MEDICAL_ID"></el-option>
+              <el-option label="球员编号" value="PLAYER_ID"></el-option>
+            </el-select>
+            <el-input
+              v-model="searchQuery"
+              placeholder="输入搜索内容"
+              size="small"
+            ></el-input>
+            <el-button @click="handleSearch" type="primary" size="small"
+              >搜索</el-button
+            >
+            <el-button @click="resetSearch" type="text" size="small"
+              >重置</el-button
+            >
+          </el-input-group>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-card shadow="never">
+          <el-table :data="pagedData" style="width: 100%">
+            <el-table-column prop="PLAYER_NAME" label="球员姓名">
+            </el-table-column>
+            <el-table-column prop="HURT_PART" label="受伤部位">
+            </el-table-column>
+            <el-table-column prop="MEDICAL_CARE" label="医疗护理">
+            </el-table-column>
+            <el-table-column
+              prop="HURT_TIME"
+              label="受伤时间"
+              :formatter="formatData"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="PRED_REC_DATE"
+              label="预计康复时间"
+              :formatter="formatData"
+            >
+            </el-table-column>
+            <el-table-column label="是否痊愈">
+              <template slot-scope="scope">
+                <el-tag :type="scope.row.STATE === 0 ? 'success' : 'danger'">
+                  {{ scope.row.STATE === 0 ? "已痊愈" : "未痊愈" }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" fixed="right">
+              <!-- eslint-disable-next-line -->
 
-  
+              <template slot-scope="scope">
+                <el-button
+                  @click="confirmEdit(scope.row)"
+                  type="text"
+                  size="small"
+                  style="color: blue"
+                  >编辑</el-button
+                >
+                <el-button
+                  @click="confirmDelete(scope.row)"
+                  type="text"
+                  size="small"
+                  style="color: red"
+                  >删除</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
+        <el-pagination
+          background
+          layout="total,prev, pager, next"
+          :total="total"
+          :page-size="pageSize"
+          :current-page.sync="currentPage"
+          @current-change="handleCurrentChange"
+        >
+        </el-pagination>
+      </el-row>
+    </el-card>
 
     <!-- Confirm Delete Dialog -->
     <el-dialog
@@ -226,9 +225,9 @@ export default {
   data() {
     return {
       title1: "本月受伤人数",
-      title2:'已痊愈',
-      hurtCount:0,
-      retiredCount:0,
+      title2: "已痊愈",
+      hurtCount: 0,
+      retiredCount: 0,
       allData: [],
       pagedData: [],
       tableData: [],
@@ -291,24 +290,22 @@ export default {
   },
   methods: {
     countHurtTime(tableData) {
- 
-      const targetDate = '2024-08';
+      const targetDate = "2024-08";
 
       for (const data of tableData) {
         const hurtTime = data.HURT_TIME;
         const date = hurtTime.substring(0, 7); // 提取日期部分
         if (date == targetDate) {
-         this.hurtCount++;
-         if(data.STATE==1)
-          this.retiredCount++;
+          this.hurtCount++;
+          if (data.STATE == 1) this.retiredCount++;
         }
-     }
+      }
     },
-    formatData(row, column, cellValue){
+    formatData(row, column, cellValue) {
       const date = new Date(cellValue);
       return date.toLocaleDateString();
     },
-    formatHealth(row, column, cellValue){
+    formatHealth(row, column, cellValue) {
       return cellValue === 0 ? "已痊愈" : "未痊愈";
     },
     fetchMedicalRecords() {
@@ -322,8 +319,8 @@ export default {
             this.tableData = response.data.sort(
               (a, b) => a.MEDICAL_ID - b.MEDICAL_ID
             );
-            console.log('医疗信息：',this.tableData )
-            this.countHurtTime(this.tableData );
+            console.log("医疗信息：", this.tableData);
+            this.countHurtTime(this.tableData);
             this.allData = [...this.tableData];
             this.total = this.tableData.length;
             this.updatePagedData();
@@ -338,8 +335,8 @@ export default {
             this.tableData = response.data.sort(
               (a, b) => a.MEDICAL_ID - b.MEDICAL_ID
             );
-            console.log('医疗信息：',this.tableData )
-            this.countHurtTime(this.tableData );
+            console.log("医疗信息：", this.tableData);
+            this.countHurtTime(this.tableData);
             this.allData = [...this.tableData];
             this.total = this.tableData.length;
             this.updatePagedData();
