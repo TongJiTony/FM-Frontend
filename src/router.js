@@ -89,6 +89,11 @@ const router = new Router({
           name: "UserInfo",
           component: () => import("@/views/UserSetting/UserInfo.vue"),
         },
+        {
+          path: "AIChat",
+          name: "AIChat",
+          component: () => import('@/views/LLMView/ChatPage.vue'),
+        },
       ],
     },
     {

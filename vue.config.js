@@ -12,6 +12,11 @@ module.exports = defineConfig({
           '^/api': ''
         }
       },
+      '/chatAPI': {
+        target: 'https://api.stepfun.com',
+        changeOrigin: true, // This allows you to avoid the CORS issue
+        pathRewrite: { '^/chatAPI': '' }, // This will remove '/chatAPI' from the request URL when sending it to the target
+      },
     },
     port: 8081, // 开发服务器的端口号为8081
     headers: {

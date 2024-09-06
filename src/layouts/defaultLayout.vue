@@ -5,42 +5,57 @@
         <img src="../assets/img/FM-Logo-2.png" class="logo" alt="Logo" />
         <div class="site-title">FOOTBALLMANAGER</div>
         <el-menu
-  :default-active="$route.path"
-  class="el-menu-custom"
-  mode="horizontal"
-  @select="handleSelect"
-  background-color="var(--primary-background)"
-  text-color="var(--text-color)"
-  active-text-color="var(--active-text-color)"
->
-  <el-menu-item index="/team">队伍主页</el-menu-item>
-  <el-menu-item index="/player-list">球员总览</el-menu-item>
+          :default-active="$route.path"
+          class="el-menu-custom"
+          mode="horizontal"
+          @select="handleSelect"
+          background-color="var(--primary-background)"
+          text-color="var(--text-color)"
+          active-text-color="var(--active-text-color)"
+        >     
+          <el-menu-item index="/team">队伍主页</el-menu-item>
+          <el-menu-item index="/player-list">球员总览</el-menu-item>
 
-  <el-submenu index="sub-menu">
-    <template slot="title">
-      <span>策略与训练</span>
-    </template>
-    <el-menu-item index="/lineup">排兵布阵</el-menu-item>
-    <el-menu-item index="/training">训练计划</el-menu-item>
-   
-  </el-submenu>
-  <el-menu-item index="/record">财务情况</el-menu-item>
-  <el-menu-item index="/medical">健康情况</el-menu-item>
+          <el-submenu index="sub-menu">
+            <template slot="title">
+              <span>策略与训练</span>
+            </template>
+            <el-menu-item index="/lineup">排兵布阵</el-menu-item>
+            <el-menu-item index="/training">训练计划</el-menu-item>
 
-  <el-submenu class="menu-right">
-    <template slot="title">
-      <i class="el-icon-setting"></i>
-      <span class="username-title">{{ this.$store.getters["user/getUserName"] }}</span>
-      <img :src="this.$store.getters['user/getUserIcon']" class="user-icon" @error="handleImageError" />
-    </template>
-    <el-menu-item class="user-action-item" index="/changepsw">Change Password</el-menu-item>
-    <el-menu-item class="user-action-item" index="/userinfo">{{ this.$store.getters["user/getUserName"] }}'s info</el-menu-item>
-  </el-submenu>
-
-  <button class="button-change-theme" @click="toggleTheme">切换主题</button>
-  <button class="button-change-BackGroundImages" @click="toggleBackgroundImage">切换背景</button>
-</el-menu>
-
+          </el-submenu>
+        <el-menu-item index="/record">财务情况</el-menu-item>
+        <el-menu-item index="/medical">健康情况</el-menu-item>
+          <el-submenu index="sub" class="menu-right">
+            <template slot="title">
+              <i class="el-icon-setting"></i>
+              <span class="username-title">{{
+                this.$store.getters["user/getUserName"]
+              }}</span>
+              <img
+                :src="this.$store.getters['user/getUserIcon']"
+                class="user-icon"
+                @error="handleImageError"
+              />
+            </template>
+            <el-menu-item class="user-action-item" index="/changepsw"
+              >修改密码</el-menu-item
+            >
+            <el-menu-item class="user-action-item" index="/userinfo"
+              >{{ this.$store.getters["user/getUserName"] }}的个人信息</el-menu-item
+            >
+            <el-menu-item index="/AIChat">智能助手</el-menu-item>
+          </el-submenu>
+          <button class="button-change-theme" @click="toggleTheme">
+            切换主题
+          </button>
+          <button
+            class="button-change-BackGroundImages"
+            @click="toggleBackgroundImage"
+          >
+            切换背景
+          </button>
+        </el-menu>
       </div>
     </el-header>
     <el-container>
