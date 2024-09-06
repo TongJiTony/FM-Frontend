@@ -50,7 +50,7 @@ const router = new Router({
           component: () => import("@/views/PlayerView/PlayerDisplay.vue"),
         },
         {
-          path: "medical/:teamID?",
+          path: "/medical/:teamId?",
           name: "medical",
           component: () => import("@/views/MedicalView/MedicalList.vue"),
         },
@@ -92,7 +92,7 @@ const router = new Router({
         {
           path: "AIChat",
           name: "AIChat",
-          component: () => import('@/views/LLMView/ChatPage.vue'),
+          component: () => import("@/views/LLMView/ChatPage.vue"),
         },
       ],
     },
@@ -179,8 +179,7 @@ router.beforeEach((to, from, next) => {
     isLoggedIn !== "true"
   ) {
     next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
-  }
-  else if (to.name === "Login" && isLoggedIn === "true") {
+  } else if (to.name === "Login" && isLoggedIn === "true") {
     // 用户已经登录并试图访问登录页面
     if (userRole === "manager") {
       if (userTeamid) {
@@ -197,8 +196,7 @@ router.beforeEach((to, from, next) => {
     } else {
       next({ name: "Home" });
     }
-  }
-  else {
+  } else {
     next();
   }
 });
