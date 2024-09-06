@@ -2,17 +2,18 @@
   <div class="player-list">
     <el-card>
       <el-row :gutter="20" class="header-row" justify="end">
-      <el-col :span="18">
-        <el-button  @click="openAddPlayerDialog" type="primary" size="small" style="margin-bottom: 1rem" >
+        <el-col :span="4">
+        <el-button v-if="userRole === 'admin'" @click="openAddPlayerDialog" type="primary" size="small" style="margin-bottom: 1rem" >
           添加球员
         </el-button>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="20">
         <el-input-group class="el-input-group">
           <el-select
             v-model="searchType"
             placeholder="选择搜索类型"
             size="small"
+            style="width: 200px;"
           >
             <el-option label="球员编号" value="PLAYER_ID"></el-option>
             <el-option label="姓名" value="PLAYER_NAME"></el-option>
@@ -652,6 +653,10 @@ export default {
         "and query:",
         this.searchQuery
       );
+      if(this.searchType==""){
+        this.$message.warning("请选择搜索类型")
+        return;
+      }
       const searchType = this.searchType;
       const searchQuery = this.searchQuery.toLowerCase();
       this.tableData = this.allData.filter((player) =>
@@ -708,7 +713,7 @@ export default {
 .el-input-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .player-card {
