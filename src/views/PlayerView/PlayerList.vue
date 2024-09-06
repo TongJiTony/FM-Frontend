@@ -37,19 +37,20 @@
       <el-col v-for="(player, index) in pagedData" :key="index" :span="12">
         <el-card shadow="hover" class="player-card">
         
-          <el-col span="7">
+          <el-col :span="7">
             <img :src="player.ICON" alt="Player Image" class="card-image" />
           </el-col>
-          <el-col span="16">
+          <el-col :span="16">
             <h3>{{ player.PLAYER_NAME }}</h3>
           <p><strong>球员编号:</strong> {{ player.PLAYER_ID }}</p>
           <p><strong>队伍:</strong> {{ player.TEAM_NAME }}</p>
           <p><strong>位置:</strong> {{ player.ROLE }}</p>
        
-            <el-button @click="handleClick(player)" type="text" size="small"
+          <el-button @click="handleClick(player)" type="text" size="small"
             >详情</el-button
           >
           <el-button
+            v-if="userRole === 'admin'"
             @click="confirmEdit(player)"
             type="text"
             size="small"
@@ -58,6 +59,7 @@
             >编辑</el-button
           >
           <el-button
+            v-if="userRole === 'admin'"
             @click="confirmDelete(player)"
             type="text"
             size="small"
@@ -310,6 +312,12 @@
 import axios from "axios";
 
 export default {
+  computed: {
+    // 通过 Vuex Store 的 getter 获取用户角色
+    userRole() {
+      return this.$store.getters["user/getUserRight"];
+    }
+  },
   data() {
     return {
       searchType: "",

@@ -6,7 +6,7 @@ module.exports = defineConfig({
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5253', // 后端API的URL
+        target: 'http://www.tonyhuang0908.com:8080', // 后端API的URL,或者使用本地localhost:8080
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
@@ -18,7 +18,7 @@ module.exports = defineConfig({
         pathRewrite: { '^/chatAPI': '' }, // This will remove '/chatAPI' from the request URL when sending it to the target
       },
     },
-    port: 8081, // 开发服务器的端口号为8081
+    port: 8082, // 开发服务器的端口号为8082,即localhost:8082
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
