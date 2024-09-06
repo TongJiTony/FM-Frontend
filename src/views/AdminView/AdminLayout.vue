@@ -25,13 +25,13 @@ export default {
   data() {
     return {
       menuItems: [
-        { name: 'Home', path: '/' },
-        { name: 'Matches', path: '/admin/matches'},
-        { name: 'Players', path: '/admin/players'  },
-        { name: 'Records', path: '/admin/records'  },
-        { name: 'Stadiums', path: '/admin/stadiums' },
-        { name: 'Teams', path: '/admin/teams' },
-        { name: 'Users', path: '/admin/users' },
+        { name: '用户页面', path: '/' },
+        { name: '用户管理', path: '/admin/users' },
+        { name: '队伍管理', path: '/admin/teams' },
+        { name: '球员管理', path: '/admin/players'  },
+        { name: '比赛管理', path: '/admin/matches'},
+        { name: '场馆管理', path: '/admin/stadiums' },
+        { name: '财务记录', path: '/admin/records'  },
       ]
     }
   },

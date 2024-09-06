@@ -158,7 +158,7 @@ export default {
   watch: {
     selectedColumn() {
       this.searchQuery = '';
-    }
+    },
   },
   created () {
     this.selectedColumn = this.columns[0].prop;
@@ -169,7 +169,20 @@ export default {
       if (!this.selectedColumn) {
         return this.lineupDetail;
       }
-      return this.lineupDetail.filter(item => {
+      return this.lineupDetail
+    .filter(item => {
+        if (this.selectedColumn === 'ROLE') {
+          const roleMapping = {
+            '守门员': 'GK',
+            '后卫': 'B',
+            '中场': 'M',
+            '前锋': 'F'
+          };
+          if (roleMapping[item[this.selectedColumn]].includes(String(this.searchQuery)))
+            return item[this.selectedColumn] 
+          }
+         // console.log("selectedColumn", item[this.selectedColumn])
+         // console.log("searchQuery", String(this.searchQuery))
         return String(item[this.selectedColumn]).toLowerCase().includes(String(this.searchQuery).toLowerCase());
       });
     }
@@ -223,10 +236,10 @@ export default {
     },
     toggleSelectPlayer(player) {
       //console.log("toggleSelectPlayer: ", player);
-      console.log("playerID: ", player.PLAYER_ID);
+      // console.log("playerID: ", player.PLAYER_ID);
     
       const index = this.lineupDetail.findIndex(p => p.PLAYER_ID === player.PLAYER_ID);
-      console.log("index: ", index);
+      // console.log("index: ", index);
 
       if (index === -1) {
         this.lineupDetail.splice(this.editindex, 1, player);
@@ -254,10 +267,10 @@ export default {
       switch (selectedColumn) {
         case 'ROLE':
           return [
-            { value: 'GK', label: '门将(GK)' },
-            { value: 'B', label: '后卫(B)' },
-            { value: 'M', label: '中场(M)' },
-            { value: 'F', label: '前锋(F)' },
+            { value: 'GK', label: '守门员' },
+            { value: 'B', label: '后卫' },
+            { value: 'M', label: '中场' },
+            { value: 'F', label: '前锋' },
           ];
         case 'HEALTH_STATE':
           return [
@@ -266,8 +279,8 @@ export default {
           ];
         case 'GAME_STATE':
           return [
-            { value: 1, label: '允许出场' },
-            { value: 0, label: '禁赛' },
+            { value: 0, label: '允许出场' },
+            { value: 1, label: '禁赛' },
           ];
         default:
           return [];

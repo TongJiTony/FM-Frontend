@@ -55,7 +55,7 @@ const router = new Router({
           component: () => import("@/views/PlayerView/PlayerDisplay.vue"),
         },
         {
-          path: "medical",
+          path: "medical/:teamID?",
           name: "medical",
           component: () => import("@/views/MedicalView/MedicalList.vue"),
         },
@@ -75,6 +75,16 @@ const router = new Router({
           component: () => import("@/views/TrainingView/TrainingView.vue"),
         },
         {
+          path: "/transfer/:teamId?",
+          name: "transfer",
+          component: () => import("@/views/TransferView/TransferPage.vue"),
+        },
+        {
+          path: "/transfer/history",
+          name: "TransferHistory",
+          component: () => import("@/views/TransferView/TransferHistory.vue"),
+        },
+        {
           path: "changepsw",
           name: "Changepsw",
           component: () => import("@/views/UserSetting/ChangePassword.vue"),
@@ -83,6 +93,11 @@ const router = new Router({
           path: "userInfo",
           name: "UserInfo",
           component: () => import("@/views/UserSetting/UserInfo.vue"),
+        },
+        {
+          path: "AIChat",
+          name: "AIChat",
+          component: () => import('@/views/LLMView/ChatPage.vue'),
         },
       ],
     },
@@ -154,7 +169,7 @@ router.beforeEach((to, from, next) => {
   if (to.name) {
     document.title = to.name;
   } else {
-    document.title = 'Football Manager'; // 你可以在这里设置默认的页面标签
+    document.title = "Football Manager"; // 设置默认的页面标签
   }
 
   const isLoggedIn = Vue.$cookies.get("isLoggedIn");
@@ -169,7 +184,7 @@ router.beforeEach((to, from, next) => {
     isLoggedIn !== "true"
   ) {
     next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
-  } 
+  }
   else if (to.name === "Login" && isLoggedIn === "true") {
     // 用户已经登录并试图访问登录页面
     if (userRole === "manager") {
@@ -187,7 +202,7 @@ router.beforeEach((to, from, next) => {
     } else {
       next({ name: "Home" });
     }
-  } 
+  }
   else {
     next();
   }

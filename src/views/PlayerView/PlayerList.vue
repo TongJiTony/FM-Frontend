@@ -2,17 +2,18 @@
   <div class="player-list">
     <el-card>
       <el-row :gutter="20" class="header-row" justify="end">
-      <el-col :span="18">
-        <el-button  @click="openAddPlayerDialog" type="primary" size="small" style="margin-bottom: 1rem" >
+        <el-col :span="4">
+        <el-button v-if="userRole === 'admin'" @click="openAddPlayerDialog" type="primary" size="small" style="margin-bottom: 1rem" >
           添加球员
         </el-button>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="20">
         <el-input-group class="el-input-group">
           <el-select
             v-model="searchType"
             placeholder="选择搜索类型"
             size="small"
+            style="width: 200px;"
           >
             <el-option label="球员编号" value="PLAYER_ID"></el-option>
             <el-option label="姓名" value="PLAYER_NAME"></el-option>
@@ -46,10 +47,11 @@
           <p><strong>队伍:</strong> {{ player.TEAM_NAME }}</p>
           <p><strong>位置:</strong> {{ player.ROLE }}</p>
        
-            <el-button @click="handleClick(player)" type="text" size="small"
+          <el-button @click="handleClick(player)" type="text" size="small"
             >详情</el-button
           >
           <el-button
+            v-if="userRole === 'admin'"
             @click="confirmEdit(player)"
             type="text"
             size="small"
@@ -58,6 +60,7 @@
             >编辑</el-button
           >
           <el-button
+            v-if="userRole === 'admin'"
             @click="confirmDelete(player)"
             type="text"
             size="small"
@@ -80,8 +83,6 @@
     >
     </el-pagination>
     </el-card>
-   
-  
 
     <!-- Confirm Delete Dialog -->
     <el-dialog
@@ -310,6 +311,12 @@
 import axios from "axios";
 
 export default {
+  computed: {
+    // 通过 Vuex Store 的 getter 获取用户角色
+    userRole() {
+      return this.$store.getters["user/getUserRight"];
+    },
+  },
   data() {
     return {
       searchType: "",
@@ -644,6 +651,10 @@ export default {
         "and query:",
         this.searchQuery
       );
+      if(this.searchType==""){
+        this.$message.warning("请选择搜索类型")
+        return;
+      }
       const searchType = this.searchType;
       const searchQuery = this.searchQuery.toLowerCase();
       this.tableData = this.allData.filter((player) =>
@@ -700,7 +711,7 @@ export default {
 .el-input-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .player-card {
@@ -728,7 +739,7 @@ export default {
   object-fit: cover; /* 确保图片填充容器并保持比例 */
 }
 
-.card-image{
+.card-image {
   width: 100%;
   height: 180px;
   background-color: #f2f2f2;
