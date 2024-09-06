@@ -268,7 +268,7 @@ export default {
         team_familiarity: 50,
         train_intension: '',
         train_stadium_id: null,
-        train_team_id: null
+        train_team_id: this.$route.params.teamId
       },
       formLabelWidth: '140px',
       rules: {

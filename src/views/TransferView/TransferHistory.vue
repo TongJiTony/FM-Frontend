@@ -32,6 +32,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="fetchTransferHistory">搜索</el-button>
+        <el-button type="primary" size='normal' icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
       </el-form-item>
     </el-form>
 
@@ -94,6 +95,9 @@ export default {
       const options = { year: "numeric", month: "long", day: "numeric" };
       return new Date(dateString).toLocaleDateString(undefined, options); // 格式化日期
     },
+    goBack() {
+      this.$router.go(-1); // Navigate to the previous page
+    },
   },
   created() {
     this.fetchTransferHistory(); // 初次加载时获取全部数据
@@ -128,4 +132,5 @@ li {
 .el-form-item:last-child {
   margin-right: 0;
 }
+
 </style>
