@@ -2,75 +2,74 @@
   <div class="player-list">
     <el-card>
       <el-row :gutter="20" class="header-row" justify="end">
-      <el-col :span="18">
-        <el-button  @click="openAddPlayerDialog" type="primary" size="small" style="margin-bottom: 1rem" >
-          添加球员
-        </el-button>
-      </el-col>
-      <el-col :span="6">
-        <el-input-group class="el-input-group">
-          <el-select
-            v-model="searchType"
-            placeholder="选择搜索类型"
-            size="small"
-          >
-            <el-option label="球员编号" value="PLAYER_ID"></el-option>
-            <el-option label="姓名" value="PLAYER_NAME"></el-option>
-            <el-option label="队伍" value="TEAM_NAME"></el-option>
-            <el-option label="位置" value="ROLE"></el-option>
-          </el-select>
-          <el-input
-            v-model="searchQuery"
-            placeholder="输入搜索内容"
-            size="small"
-          ></el-input>
-          <el-button @click="handleSearch" type="primary" size="small"
-            >搜索</el-button
-          >
-          <el-button @click="resetSearch" type="text" size="small"
-            >重置</el-button
-          >
-        </el-input-group>
-      </el-col>
-    </el-row>
-    <el-row :gutter="20">
-      <el-col v-for="(player, index) in pagedData" :key="index" :span="12">
-        <el-card shadow="hover" class="player-card">
-        
-          <el-col :span="7">
-            <img :src="player.ICON" alt="Player Image" class="card-image" />
-          </el-col>
-          <el-col :span="16">
-            <h3>{{ player.PLAYER_NAME }}</h3>
-          <p><strong>球员编号:</strong> {{ player.PLAYER_ID }}</p>
-          <p><strong>队伍:</strong> {{ player.TEAM_NAME }}</p>
-          <p><strong>位置:</strong> {{ player.ROLE }}</p>
-       
-          <el-button @click="handleClick(player)" type="text" size="small"
-            >详情</el-button
-          >
+        <el-col :span="18">
           <el-button
-            v-if="userRole === 'admin'"
-            @click="confirmEdit(player)"
-            type="text"
+            @click="openAddPlayerDialog"
+            type="primary"
             size="small"
-            style="color: blue"
-          
-            >编辑</el-button
+            style="margin-bottom: 1rem"
           >
-          <el-button
-            v-if="userRole === 'admin'"
-            @click="confirmDelete(player)"
-            type="text"
-            size="small"
-            style="color: red"
-             >删除</el-button
-           >
-              </div>
-              <div class="player-avatar">
-                <img :src="player.ICON" alt="Player Image" class="card-image" />
-              </div>
-            </div>
+            添加球员
+          </el-button>
+        </el-col>
+        <el-col :span="6">
+          <el-input-group class="el-input-group">
+            <el-select
+              v-model="searchType"
+              placeholder="选择搜索类型"
+              size="small"
+            >
+              <el-option label="球员编号" value="PLAYER_ID"></el-option>
+              <el-option label="姓名" value="PLAYER_NAME"></el-option>
+              <el-option label="队伍" value="TEAM_NAME"></el-option>
+              <el-option label="位置" value="ROLE"></el-option>
+            </el-select>
+            <el-input
+              v-model="searchQuery"
+              placeholder="输入搜索内容"
+              size="small"
+            ></el-input>
+            <el-button @click="handleSearch" type="primary" size="small"
+              >搜索</el-button
+            >
+            <el-button @click="resetSearch" type="text" size="small"
+              >重置</el-button
+            >
+          </el-input-group>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col v-for="(player, index) in pagedData" :key="index" :span="12">
+          <el-card shadow="hover" class="player-card">
+            <el-col :span="7">
+              <img :src="player.ICON" alt="Player Image" class="card-image" />
+            </el-col>
+            <el-col :span="16">
+              <h3>{{ player.PLAYER_NAME }}</h3>
+              <p><strong>球员编号:</strong> {{ player.PLAYER_ID }}</p>
+              <p><strong>队伍:</strong> {{ player.TEAM_NAME }}</p>
+              <p><strong>位置:</strong> {{ player.ROLE }}</p>
+
+              <el-button @click="handleClick(player)" type="text" size="small"
+                >详情</el-button
+              >
+              <el-button
+                v-if="userRole === 'admin'"
+                @click="confirmEdit(player)"
+                type="text"
+                size="small"
+                style="color: blue"
+                >编辑</el-button
+              >
+              <el-button
+                v-if="userRole === 'admin'"
+                @click="confirmDelete(player)"
+                type="text"
+                size="small"
+                style="color: red"
+                >删除</el-button
+              >
+            </el-col>
           </el-card>
         </el-col>
       </el-row>
@@ -316,7 +315,7 @@ export default {
     // 通过 Vuex Store 的 getter 获取用户角色
     userRole() {
       return this.$store.getters["user/getUserRight"];
-    }
+    },
   },
   data() {
     return {
@@ -713,29 +712,6 @@ export default {
 
 .player-card {
   margin-bottom: 20px;
-}
-
-.player-card .card-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.player-card .player-info {
-  flex-grow: 1;
-}
-
-.player-card .player-avatar {
-  margin-left: 20px;
-  /* 头像大小 */
-  width: 200px;
-  height: 200px;
-}
-
-.player-card .card-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* 保持图像比例 */
 }
 
 .dialog-footer {
