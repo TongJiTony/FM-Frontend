@@ -115,8 +115,9 @@ export default {
   },
 
   watch: {
-    dialogVisible(newVal) {
-      console.log("dialogVisible changed to:", newVal);
+    dialogVisible() {
+      // console.log("dialogVisible changed to:", newVal);
+      this.fetchPlayers();
     },
   },
   methods: {

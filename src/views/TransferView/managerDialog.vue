@@ -81,7 +81,16 @@
             补充合同时长(年)
           </h3>
           <div v-if="this.currentKeywordIndex !== 2">
-            <el-input v-model="inputdata"></el-input>
+            <el-form :model="form" :rules="rules" ref="form">
+              <el-form-item prop="inputdata">
+                <el-input 
+                  v-model="form.inputdata"
+                  type="number"
+                  placeholder="单位(万元)"
+                  @input="handleInputNumber"
+                ></el-input>
+              </el-form-item>
+            </el-form>
           </div>
           <div v-else>
             <el-select v-model="inputdata" placeholder="请选择">
@@ -132,7 +141,7 @@
             </el-form-item>
             <el-form-item>
               <!-- <el-button type="primary" @click="submitForm">确定</el-button> -->
-              <el-button @click="form_visible = false">取消</el-button>
+              <el-button @click="handleClose">取消</el-button>
             </el-form-item>
           </el-form>
         </el-card>
@@ -187,7 +196,7 @@ export default {
       currentKeywordIndex: 0,
       inputcard_visible: false,
       form_visible: false,
-      refuse_reply: "",
+      // refuse_reply: "",
 
       //avatars
       randomAvatar: "",
@@ -213,6 +222,15 @@ export default {
         { value: "夏窗", label: "夏窗" },
         { value: "冬窗", label: "冬窗" },
       ],
+
+      form: {
+        inputdata: null
+      },
+      rules: {
+        inputdata: [
+          { validator: this.validateInput, trigger: 'blur' }
+        ]
+      },
     };
   },
   methods: {
@@ -236,6 +254,7 @@ export default {
 
         this.checkKeywordSequence(this.input);
         //reset
+        this.form.inputdata = null;
         this.input = "";
         this.inputdata = null;
         // this.isDialogVisible = false;
@@ -575,6 +594,21 @@ export default {
     },
 
     ////////////////////
+    validateInput(rule, value, callback) {
+      console.log("validateInput", Number(value));
+      if (value === 0 || value === '0' || value < 0) {
+        callback(new Error('输入值不能小于0'));
+      } else {
+        callback();
+      }
+    },
+    handleInputNumber(value) {
+      // 限制数字长度，假设最大长度为5位数字
+      if (String(value).length > 5) {
+        this.form.inputdata = String(value).slice(0, 5);  // 保留前5位数字
+      }
+      this.inputdata = this.form.inputdata;
+    },
     handleImageError(event) {
       event.target.src = defaultAvatar;
     },
@@ -608,6 +642,8 @@ export default {
       };
       this.currentKeywordIndex = 0;
       this.inputcard_visible = false;
+      this.form_visible = false;
+      // this.refuse_reply = '';
     },
     closeDialog() {
       axios.options(
