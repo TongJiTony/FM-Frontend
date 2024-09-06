@@ -24,8 +24,8 @@
             <el-menu-item index="/training">训练计划</el-menu-item>
             <el-menu-item index="/medical">球员健康</el-menu-item>
           </el-submenu>
-        <el-menu-item index="/record">财务管理</el-menu-item>
-        <el-menu-item index="/AIChat">智能助手</el-menu-item>
+          <el-menu-item index="/record">财务管理</el-menu-item>
+          <el-menu-item index="/AIChat">智能助手</el-menu-item>
           <el-submenu index="sub" class="menu-right">
             <template slot="title">
               <i class="el-icon-setting"></i>
@@ -42,7 +42,9 @@
               >修改密码</el-menu-item
             >
             <el-menu-item class="user-action-item" index="/userinfo"
-              >{{ this.$store.getters["user/getUserName"] }}的个人信息</el-menu-item
+              >{{
+                this.$store.getters["user/getUserName"]
+              }}的个人信息</el-menu-item
             >
           </el-submenu>
           <button class="button-change-theme" @click="toggleTheme">
@@ -156,23 +158,36 @@ export default {
           });
         return;
       }
-
-    if (key === '/lineup' && userright === 'manager') {
-      if (this.$route.path!==`/lineup/${userTeamid}`)
-        this.$router.push( { name: "lineup", params: { teamID: userTeamid }});
-      return;
-    }
-    if (key === '/training' && userright === 'manager') {
-      if (this.$route.path!==`/training/${userTeamid}`)
-        this.$router.push( { name: "training", params: { teamId: userTeamid }});
-      return;
-    }
-    if (key === '/record' && userright === 'manager') {
-      if (this.$route.path!==`/record/${userTeamid}`)
-        this.$router.push( { name: "RecordPage", params: { teamID: userTeamid }});
-      return;
-    }
-    if (this.$route.path !== key) {
+      if (key === "/medical" && userright === "manager") {
+        if (this.$route.path !== `/medical/${userTeamid}`)
+          this.$router.push({
+            name: "medical",
+            params: { teamID: userTeamid },
+          });
+        return;
+      }
+      if (key === "/lineup" && userright === "manager") {
+        if (this.$route.path !== `/lineup/${userTeamid}`)
+          this.$router.push({ name: "lineup", params: { teamID: userTeamid } });
+        return;
+      }
+      if (key === "/training" && userright === "manager") {
+        if (this.$route.path !== `/training/${userTeamid}`)
+          this.$router.push({
+            name: "training",
+            params: { teamId: userTeamid },
+          });
+        return;
+      }
+      if (key === "/record" && userright === "manager") {
+        if (this.$route.path !== `/record/${userTeamid}`)
+          this.$router.push({
+            name: "RecordPage",
+            params: { teamID: userTeamid },
+          });
+        return;
+      }
+      if (this.$route.path !== key) {
         this.$router.push(key);
       }
     },
