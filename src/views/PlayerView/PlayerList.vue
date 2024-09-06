@@ -83,8 +83,6 @@
     >
     </el-pagination>
     </el-card>
-   
-  
 
     <!-- Confirm Delete Dialog -->
     <el-dialog
@@ -317,7 +315,7 @@ export default {
     // 通过 Vuex Store 的 getter 获取用户角色
     userRole() {
       return this.$store.getters["user/getUserRight"];
-    }
+    },
   },
   data() {
     return {
@@ -741,7 +739,7 @@ export default {
   object-fit: cover; /* 确保图片填充容器并保持比例 */
 }
 
-.card-image{
+.card-image {
   width: 100%;
   height: 180px;
   background-color: #f2f2f2;
