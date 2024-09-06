@@ -37,10 +37,10 @@
       <el-col v-for="(player, index) in pagedData" :key="index" :span="12">
         <el-card shadow="hover" class="player-card">
         
-          <el-col span="7">
+          <el-col :span="7">
             <img :src="player.ICON" alt="Player Image" class="card-image" />
           </el-col>
-          <el-col span="16">
+          <el-col :span="16">
             <h3>{{ player.PLAYER_NAME }}</h3>
           <p><strong>球员编号:</strong> {{ player.PLAYER_ID }}</p>
           <p><strong>队伍:</strong> {{ player.TEAM_NAME }}</p>

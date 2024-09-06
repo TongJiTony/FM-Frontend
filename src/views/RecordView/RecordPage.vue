@@ -196,12 +196,12 @@
    
   }
 .echart-box {
-  width: 600px;
+  width: 650px;
   height: 350px;
   margin: 20px auto;
 }
 .echart-box2 {
-  width: 600px;
+  width: 700px;
   height: 300px;
   margin: 20px auto;
  
