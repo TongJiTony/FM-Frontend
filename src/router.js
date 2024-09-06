@@ -89,6 +89,11 @@ const router = new Router({
           name: "UserInfo",
           component: () => import("@/views/UserSetting/UserInfo.vue"),
         },
+        {
+          path: "AIChat",
+          name: "AIChat",
+          component: () => import('@/views/LLMView/ChatPage.vue'),
+        },
       ],
     },
     {
@@ -174,7 +179,7 @@ router.beforeEach((to, from, next) => {
     isLoggedIn !== "true"
   ) {
     next({ name: "Login" }); //导航守卫中用于中断当前导航并重定向到名为 LoginPage 的路由的方法
-  } 
+  }
   else if (to.name === "Login" && isLoggedIn === "true") {
     // 用户已经登录并试图访问登录页面
     if (userRole === "manager") {
@@ -192,7 +197,7 @@ router.beforeEach((to, from, next) => {
     } else {
       next({ name: "Home" });
     }
-  } 
+  }
   else {
     next();
   }

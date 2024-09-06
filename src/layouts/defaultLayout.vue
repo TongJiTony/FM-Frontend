@@ -1,47 +1,63 @@
 <template>
   <el-container class="default-layout">
-    <el-header>
+    <el-header class="custom-header">
       <div class="header-content">
         <img src="../assets/img/FM-Logo-2.png" class="logo" alt="Logo" />
         <div class="site-title">FOOTBALLMANAGER</div>
         <el-menu
-  :default-active="$route.path"
-  class="el-menu-custom"
-  mode="horizontal"
-  @select="handleSelect"
-  background-color="var(--primary-background)"
-  text-color="var(--text-color)"
-  active-text-color="var(--active-text-color)"
->
-  <el-menu-item index="/team">队伍主页</el-menu-item>
-  <el-menu-item index="/player-list">球员总览</el-menu-item>
+          :default-active="$route.path"
+          class="el-menu-custom"
+          mode="horizontal"
+          @select="handleSelect"
+          background-color="var(--primary-background)"
+          text-color="var(--text-color)"
+          active-text-color="var(--active-text-color)"
+        >
+          <el-menu-item index="/team">队伍主页</el-menu-item>
+          <el-menu-item index="/player-list">球员总览</el-menu-item>
 
-  <el-submenu index="sub-menu">
-    <template slot="title">
-      <span>策略与训练</span>
-    </template>
-    <el-menu-item index="/lineup">排兵布阵</el-menu-item>
-    <el-menu-item index="/training">训练计划</el-menu-item>
-   
-  </el-submenu>
-  <el-menu-item index="/record">财务情况</el-menu-item>
-  <el-menu-item index="/medical">健康情况</el-menu-item>
-  <el-menu-item index="/transfer">球员转会</el-menu-item>
-
-  <el-submenu class="menu-right">
-    <template slot="title">
-      <i class="el-icon-setting"></i>
-      <span class="username-title">{{ this.$store.getters["user/getUserName"] }}</span>
-      <img :src="this.$store.getters['user/getUserIcon']" class="user-icon" @error="handleImageError" />
-    </template>
-    <el-menu-item class="user-action-item" index="/changepsw">Change Password</el-menu-item>
-    <el-menu-item class="user-action-item" index="/userinfo">{{ this.$store.getters["user/getUserName"] }}'s info</el-menu-item>
-  </el-submenu>
-
-  <button class="button-change-theme" @click="toggleTheme">切换主题</button>
-  <button class="button-change-BackGroundImages" @click="toggleBackgroundImage">切换背景</button>
-</el-menu>
-
+          <el-submenu index="sub-menu">
+            <template slot="title">
+              <span>策略与训练</span>
+            </template>
+            <el-menu-item index="/lineup">排兵布阵</el-menu-item>
+            <el-menu-item index="/training">训练计划</el-menu-item>
+            <el-menu-item index="/medical">球员健康</el-menu-item>
+          </el-submenu>
+          <el-menu-item index="/record">财务管理</el-menu-item>
+          <el-menu-item index="/transfer">球员转会</el-menu-item>
+          <el-menu-item index="/AIChat">智能助手</el-menu-item>
+          <el-submenu index="sub" class="menu-right">
+            <template slot="title">
+              <i class="el-icon-setting"></i>
+              <span class="username-title">{{
+                this.$store.getters["user/getUserName"]
+              }}</span>
+              <img
+                :src="this.$store.getters['user/getUserIcon']"
+                class="user-icon"
+                @error="handleImageError"
+              />
+            </template>
+            <el-menu-item class="user-action-item" index="/changepsw"
+              >修改密码</el-menu-item
+            >
+            <el-menu-item class="user-action-item" index="/userinfo"
+              >{{
+                this.$store.getters["user/getUserName"]
+              }}的个人信息</el-menu-item
+            >
+          </el-submenu>
+          <button class="button-change-theme" @click="toggleTheme">
+            切换主题
+          </button>
+          <button
+            class="button-change-BackGroundImages"
+            @click="toggleBackgroundImage"
+          >
+            切换背景
+          </button>
+        </el-menu>
       </div>
     </el-header>
     <el-container>
@@ -76,7 +92,7 @@ export default {
         greenGradient: "linear-gradient(to right, #43cea2, #185a9d)",
         purpleGradient: "linear-gradient(to right, #8e2de2, #4a00e0)",
         orangeGradient: "linear-gradient(to right, #ff7e5f, #feb47b)",
-        blueGrey:"#607D8B",
+        blueGrey: "#607D8B",
         image1: `url(${require("@/assets/img/main-bg-1.png")})`,
         image2: `url(${require("@/assets/img/main-bg-2.png")})`,
       },
@@ -141,23 +157,36 @@ export default {
           });
         return;
       }
-
-    if (key === '/lineup' && userright === 'manager') {
-      if (this.$route.path!==`/lineup/${userTeamid}`)
-        this.$router.push( { name: "lineup", params: { teamID: userTeamid }});
-      return;
-    }
-    if (key === '/training' && userright === 'manager') {
-      if (this.$route.path!==`/training/${userTeamid}`)
-        this.$router.push( { name: "training", params: { teamId: userTeamid }});
-      return;
-    }
-    if (key === '/record' && userright === 'manager') {
-      if (this.$route.path!==`/record/${userTeamid}`)
-        this.$router.push( { name: "RecordPage", params: { teamID: userTeamid }});
-      return;
-    }
-    if (this.$route.path !== key) {
+      if (key === "/medical" && userright === "manager") {
+        if (this.$route.path !== `/medical/${userTeamid}`)
+          this.$router.push({
+            name: "medical",
+            params: { teamID: userTeamid },
+          });
+        return;
+      }
+      if (key === "/lineup" && userright === "manager") {
+        if (this.$route.path !== `/lineup/${userTeamid}`)
+          this.$router.push({ name: "lineup", params: { teamID: userTeamid } });
+        return;
+      }
+      if (key === "/training" && userright === "manager") {
+        if (this.$route.path !== `/training/${userTeamid}`)
+          this.$router.push({
+            name: "training",
+            params: { teamId: userTeamid },
+          });
+        return;
+      }
+      if (key === "/record" && userright === "manager") {
+        if (this.$route.path !== `/record/${userTeamid}`)
+          this.$router.push({
+            name: "RecordPage",
+            params: { teamID: userTeamid },
+          });
+        return;
+      }
+      if (this.$route.path !== key) {
         this.$router.push(key);
       }
     },
@@ -188,20 +217,31 @@ export default {
   min-height: 100vh;
 }
 
-.el-header {
+.custom-header {
   background: var(--primary-background);
   transition: background 0.3s;
   line-height: 60px;
-}
-.el-menu-item:hover {
-  background-color: var(--active-text-color) !important; /* 强制背景色 */
-  color: var(--primary-background) !important; /* 强制文字颜色 */
+  height: 60px; /* Set header height */
+  padding: 0; /* Ensure no extra padding */
+  display: flex;
+  align-items: center; /* Vertically center the content */
 }
 
-.el-submenu :hover {
-  background-color: var(--active-text-color) !important; /* 强制背景色 */
-  color: var(--primary-background) !important; /* 强制文字颜色 */
+.el-header .el-menu {
+  height: 60px; /* Match the header height */
+  line-height: 60px; /* Vertically align menu items */
 }
+
+.el-menu-item:hover {
+  background-color: var(--active-text-color) !important;
+  color: var(--primary-background) !important;
+}
+
+.el-submenu:hover {
+  background-color: var(--active-text-color) !important;
+  color: var(--primary-background) !important;
+}
+
 .header-content {
   display: flex;
   align-items: center;
@@ -223,7 +263,7 @@ export default {
   font-weight: bold;
   color: var(--text-color);
   margin-left: 0px;
-  margin-right: 180px;
+  margin-right: 160px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* 增加阴影效果 */
 }
 
@@ -238,8 +278,8 @@ export default {
 }
 
 .user-icon {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   object-fit: cover;
   margin-left: 10px;
@@ -270,7 +310,7 @@ export default {
 }
 
 .menu-right {
-  margin-left: 100px;
+  margin-left: auto;
   display: flex;
   align-items: center;
 }

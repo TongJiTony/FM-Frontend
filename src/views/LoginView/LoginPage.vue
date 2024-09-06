@@ -4,9 +4,9 @@
       <div class="site-content">
         <!-- brand-info 部分展示了项目名称（FootballManager）和简短介绍 -->
         <div class="brand-info">
-          <h2 class="brand-info__text">FootballManager</h2>
+          <h2 class="brand-info__text">Football Manager</h2>
           <p class="brand-info__intro">
-            footballManager基于vue、element-ui构建开发的提供给足球经理的一套解决方案
+            Football Manager是基于vue框架、采用element-ui和C#开发的足球队伍管理系统，为足球经理提供全面便捷的数字化球队管理解决方案。
           </p>
         </div>
         <!-- 登录主要部分 -->
@@ -247,7 +247,7 @@ export default {
               .then(({ data }) => {
                 console.log("data.code=", data.code);
                 console.log("data.msg=", data.msg);
-                console.log("data.token=", data.token);
+                // console.log("data.token=", data.token);
                 if (data.code == 200) {
                   // code == 200 表示成功
                   VueCookies.set("isLoggedIn", "true", "1h"); // 设置 Cookie
