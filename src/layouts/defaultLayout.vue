@@ -24,15 +24,22 @@
             <el-menu-item index="/training">训练计划</el-menu-item>
             <el-menu-item index="/medical">球员健康</el-menu-item>
           </el-submenu>
-          <el-menu-item index="/record">财务管理</el-menu-item>
+
+          <el-submenu index="sub-menu2">
+            <template slot="title">
+              <span>财务与转会</span>
+            </template>
+            <el-menu-item index="/record">财务管理</el-menu-item>
           <el-menu-item index="/transfer">球员转会</el-menu-item>
+          </el-submenu>
+          
           <el-menu-item index="/AIChat">智能助手</el-menu-item>
           <el-submenu index="sub" class="menu-right">
             <template slot="title">
               <i class="el-icon-setting"></i>
-              <span class="username-title">{{
+              <span class="username-title">Hello, {{
                 this.$store.getters["user/getUserName"]
-              }}</span>
+              }}!</span>
               <img
                 :src="this.$store.getters['user/getUserIcon']"
                 class="user-icon"

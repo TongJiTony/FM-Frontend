@@ -159,6 +159,7 @@
               </el-table-column>
               </el-table>
               <el-pagination
+              background
                     @current-change="handlePageChange"
                     :current-page="currentPage"
                     :page-size="pageSize"
@@ -296,11 +297,43 @@ export default {
   },
   computed: {
     filteredPosRecords() {
-      return this.records.filter(record => record.AMOUNT > 0 && record.TRANSACTION_DATE === this.selectedDate);
-    },
-    filteredNegRecords() {
-      return this.records.filter(record => record.AMOUNT < 0 && record.TRANSACTION_DATE === this.selectedDate);
-    },
+  // 使用 reduce 方法将具有相同描述的记录的金额相加
+  const aggregatedRecords = this.records.reduce((acc, record) => {
+    if (record.AMOUNT > 0 && record.TRANSACTION_DATE === this.selectedDate) {
+      const existingRecord = acc.find(r => r.DESCRIPTION === record.DESCRIPTION);
+      if (existingRecord) {
+        existingRecord.AMOUNT += record.AMOUNT;
+      } else {
+        acc.push({
+          DESCRIPTION: record.DESCRIPTION,
+          AMOUNT: record.AMOUNT,
+        });
+      }
+    }
+    return acc;
+  }, []);
+
+  return aggregatedRecords;
+},
+filteredNegRecords() {
+  // 使用 reduce 方法将具有相同描述的记录的金额相加
+  const aggregatedRecords = this.records.reduce((acc, record) => {
+    if (record.AMOUNT < 0 && record.TRANSACTION_DATE === this.selectedDate) {
+      const existingRecord = acc.find(r => r.DESCRIPTION === record.DESCRIPTION);
+      if (existingRecord) {
+        existingRecord.AMOUNT += record.AMOUNT;
+      } else {
+        acc.push({
+          DESCRIPTION: record.DESCRIPTION,
+          AMOUNT: record.AMOUNT,
+        });
+      }
+    }
+    return acc;
+  }, []);
+
+  return aggregatedRecords;
+},
     formattedSumAmount() {    
       const sumAmountInTenThousand = this.sum_amount / 10000;   
       return `¥${sumAmountInTenThousand.toFixed(2)}万`;
@@ -321,6 +354,7 @@ export default {
   },
 
   methods: {
+
     handlePageChange(page) {
       this.currentPage = page;
     },
@@ -370,8 +404,6 @@ export default {
         });
     },
      fetchTeamRecords() {
-
-
       //const teamID = this.$route.params.teamID;
         axios.get(`/api/v1/record/search?team_id=${this.teamID}`)
         .then(response => {
@@ -614,14 +646,29 @@ export default {
 
   myChart.setOption(option);
     },
-    renderPosBar(filteredRecords){
-    const barDom = this.$refs.posbarChart; // 使用新的 ref
-    const myChart = this.$echarts.init(barDom);
+    renderPosBar(filteredRecords) {
+  const barDom = this.$refs.posbarChart; // 使用新的 ref
+  const myChart = this.$echarts.init(barDom);
 
-    const items = filteredRecords.map(record => record.DESCRIPTION);
-    const amounts = filteredRecords.map(record => Math.abs(record.AMOUNT));
-    const option ={
-      title: {
+  // 使用 reduce 方法将具有相同描述的记录的金额相加
+  const aggregatedRecords = filteredRecords.reduce((acc, record) => {
+    const existingRecord = acc.find(r => r.DESCRIPTION === record.DESCRIPTION);
+    if (existingRecord) {
+      existingRecord.AMOUNT += Math.abs(record.AMOUNT);
+    } else {
+      acc.push({
+        DESCRIPTION: record.DESCRIPTION,
+        AMOUNT: Math.abs(record.AMOUNT),
+      });
+    }
+    return acc;
+  }, []);
+
+  const items = aggregatedRecords.map(record => record.DESCRIPTION);
+  const amounts = aggregatedRecords.map(record => record.AMOUNT);
+
+  const option = {
+    title: {
       text: '本月各项收入',
       left: 'center',
     },
@@ -642,28 +689,41 @@ export default {
         data: amounts,
         type: 'bar',
         label: {
-        show: true,
-        position: 'top', // 将数值标签显示在柱子的上方
-        formatter: function (params) {
-          return (params.value / 10000).toFixed(2) + '万';
+          show: true,
+          position: 'top', // 将数值标签显示在柱子的上方
+          formatter: function (params) {
+            return (params.value / 10000).toFixed(2) + '万';
+          }
         }
-      }
       }
     ]
   };
-  myChart.setOption(option);
-  },
-    renderNegBar(filteredRecords){
-    const barDom = this.$refs.negbarChart; // 使用新的 ref
-    const myChart = this.$echarts.init(barDom);
-  
-    const items = filteredRecords.map(record => record.DESCRIPTION);
-    const amounts = filteredRecords.map(record => Math.abs(record.AMOUNT));
 
-    //const items = result.map(record => record.ITEM);
-    //const amounts = result.map(record => record.TOTAL_AMOUNT);
-    const option ={
-      title: {
+  myChart.setOption(option);
+},
+renderNegBar(filteredRecords) {
+  const barDom = this.$refs.negbarChart; // 使用新的 ref
+  const myChart = this.$echarts.init(barDom);
+
+  // 使用 reduce 方法将具有相同描述的记录的金额相加
+  const aggregatedRecords = filteredRecords.reduce((acc, record) => {
+    const existingRecord = acc.find(r => r.DESCRIPTION === record.DESCRIPTION);
+    if (existingRecord) {
+      existingRecord.AMOUNT += Math.abs(record.AMOUNT);
+    } else {
+      acc.push({
+        DESCRIPTION: record.DESCRIPTION,
+        AMOUNT: Math.abs(record.AMOUNT),
+      });
+    }
+    return acc;
+  }, []);
+
+  const items = aggregatedRecords.map(record => record.DESCRIPTION);
+  const amounts = aggregatedRecords.map(record => record.AMOUNT);
+
+  const option = {
+    title: {
       text: '本月各项支出',
       left: 'center',
     },
@@ -671,11 +731,11 @@ export default {
       type: 'category',
       data: items,
       axisLabel: {
-                interval: 0, // 显示所有的x轴标签
-                formatter: function (value) {
-                    return value;
-                }
-            }
+        interval: 0, // 显示所有的x轴标签
+        formatter: function (value) {
+          return value;
+        }
+      }
     },
     yAxis: {
       type: 'value',
@@ -690,17 +750,18 @@ export default {
         data: amounts,
         type: 'bar',
         label: {
-        show: true,
-        position: 'top', // 将数值标签显示在柱子的上方
-        formatter: function (params) {
-          return (params.value / 10000).toFixed(2) + '万';
+          show: true,
+          position: 'top', // 将数值标签显示在柱子的上方
+          formatter: function (params) {
+            return (params.value / 10000).toFixed(2) + '万';
+          }
         }
-      }
       }
     ]
   };
+
   myChart.setOption(option);
-  }
+},
   },
 };
 </script>
