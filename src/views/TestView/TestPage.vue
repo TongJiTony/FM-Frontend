@@ -17,9 +17,8 @@ v-if="loading": 当 loading 为 true 时，显示 "Loading..."。
 v-else: 当 loading 为 false 时，显示从API获取的数据。
 -->
 
-
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
@@ -29,16 +28,17 @@ export default {
     };
   },
   created() {
-    axios.get('/api/v1/testexampleapi')
-        .then(response => {
-          this.data = response.data;
-          this.loading = false;
-        })
-        .catch(error => {
-          console.error(error);
-          this.loading = false;
-        });
-  }
+    axios
+      .get("/api/v1/testexampleapi")
+      .then((response) => {
+        this.data = response.data;
+        this.loading = false;
+      })
+      .catch((error) => {
+        console.error(error);
+        this.loading = false;
+      });
+  },
 };
 </script>
 
