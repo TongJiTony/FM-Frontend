@@ -25,6 +25,7 @@
             <el-menu-item index="/medical">球员健康</el-menu-item>
           </el-submenu>
           <el-menu-item index="/record">财务管理</el-menu-item>
+          <el-menu-item index="/transfer">球员转会</el-menu-item>
           <el-menu-item index="/AIChat">智能助手</el-menu-item>
           <el-submenu index="sub" class="menu-right">
             <template slot="title">

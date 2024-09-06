@@ -4,11 +4,11 @@
     <div v-else class="lineup-list">
       <el-card class="card-style">
         <el-row>
-          <el-col span="16">
+          <el-col :span="16">
             <el-button  type="primary"  @click="handleAdd"  class="add_button" size="small">添加阵容</el-button>
           </el-col>
-          <el-col span="8">
-            <el-input-group class="el-input-group">
+          <el-col :span="8">
+            <div class="el-input-group">
               <el-select
                       v-model="selectedColumn"
                       placeholder="选择列"
@@ -26,7 +26,7 @@
               <el-input  placeholder="输入关键字搜索"  v-model="searchQuery"/>
               <el-button @click="handleSearch" type="primary" size="small">搜索</el-button>
               <el-button @click="resetSearch" type="text" size="small">重置</el-button>
-            </el-input-group>
+            </div>
             
           </el-col>
         </el-row>
@@ -151,7 +151,7 @@
             <!-- 编辑NOTE的输入框 -->
             <el-input
               type="textarea"
-              placeholder="请输入阵容备注"
+              placeholder="请输入阵容名称"
               v-model="addForm.NOTE"
               maxlength="200"
               show-word-limit
@@ -371,6 +371,7 @@ export default {
         this.$message.error('请选择11名球员');
         return;
       }
+      // console.log("addform is", this.addForm)
       const lineup = {
         NOTE: this.addForm.NOTE,
         TEAM_ID: Number(this.addForm.TEAM_ID),
@@ -387,6 +388,7 @@ export default {
         PLAYER11_ID: Number(this.selectedPlayers[10].PLAYER_ID),
       };
       console.log("lineup:", lineup);
+      if (!lineup.NOTE) { lineup.NOTE = ' ' }
 
       axios.post('/api/v1/lineup/add', lineup)
         .then(response => {

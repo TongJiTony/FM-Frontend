@@ -5,10 +5,10 @@
       <el-form label-position="top">
         <el-form-item label="位置筛选">
           <el-select v-model="filters.position" placeholder="选择位置">
-            <el-option label="前锋" value="F"></el-option>
-            <el-option label="中场" value="M"></el-option>
-            <el-option label="后卫" value="B"></el-option>
-            <el-option label="门将" value="GK"></el-option>
+            <el-option label="前锋" value="前锋"></el-option>
+            <el-option label="中场" value="中场"></el-option>
+            <el-option label="后卫" value="后卫"></el-option>
+            <el-option label="守门员" value="守门员"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="能力值筛选">
@@ -54,7 +54,7 @@
           惯用脚: {{ player.USED_FOOT === 1 ? "右脚" : "左脚" }} | 健康状态:{{
             player.HEALTH_STATE === 0 ? "健康" : "受伤"
           }}
-          | 等级:{{ player.RANK }}
+          | 能力:{{ player.RANK }}
           <!-- 添加按钮 -->
           <el-button @click="openDialog(player)"> 向经纪人询问转会 </el-button>
         </li>
@@ -115,8 +115,9 @@ export default {
   },
 
   watch: {
-    dialogVisible(newVal) {
-      console.log("dialogVisible changed to:", newVal);
+    dialogVisible() {
+      // console.log("dialogVisible changed to:", newVal);
+      this.fetchPlayers();
     },
   },
   methods: {
