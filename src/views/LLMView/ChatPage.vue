@@ -10,6 +10,9 @@
         :key="index"
         :class="['message', message.role]"
       >
+        <div class="icon">
+            <i :class="message.role === 'user' ? 'el-icon-user' : 'el-icon-s-check'" class="icon-size"></i>
+        </div>
         <div class="bubble">
           <p>{{ message.content }}</p>
         </div>
@@ -122,16 +125,6 @@ export default {
           medicalRequest,
         ]);
 
-        console.log("Contract Data:", contractData.data);
-        console.log("Lineup Data:", lineupData.data);
-        console.log("Player Data:", playerData.data);
-        console.log("Record Data:", recordData.data);
-        console.log("Team Data:", teamData.data);
-        console.log("Training Data:", trainingData.data);
-        console.log("Transfer Data:", transferData.data);
-        console.log("Home Match Data:", homeMatchData.data);
-        console.log("Away Match Data:", awayMatchData.data);
-        console.log("Medical Data:", medicalData.data);
         // 保存数据到状态
         this.contractData = contractData.data;
         this.lineupData = lineupData.data;
@@ -239,7 +232,7 @@ export default {
   margin-bottom: 10px;
 }
 .message.user {
-  justify-content: flex-end;
+  flex-direction: row-reverse; /* 用户消息靠右 */
 }
 .message.assistant {
   justify-content: flex-start;
@@ -279,4 +272,17 @@ button {
 button:hover {
   background-color: #0056b3;
 }
+
+
+.icon {
+  margin-right: 10px; /* 用户的图标右边距 */
+  margin-left: 10px; /* 助手的图标左边距 */
+}
+
+.icon-size {
+  font-size: 24px; /* 图标大小 */
+}
+
+
+
 </style>
