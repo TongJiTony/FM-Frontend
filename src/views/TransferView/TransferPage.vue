@@ -8,7 +8,7 @@
             <el-option label="前锋" value="F"></el-option>
             <el-option label="中场" value="M"></el-option>
             <el-option label="后卫" value="B"></el-option>
-            <el-option label="门将" value="GK"></el-option>
+            <el-option label="守门员" value="GK"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="能力值筛选">
