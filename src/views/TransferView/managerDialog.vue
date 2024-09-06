@@ -83,7 +83,7 @@
           <div v-if="this.currentKeywordIndex !== 2">
             <el-form :model="form" :rules="rules" ref="form">
               <el-form-item prop="inputdata">
-                <el-input 
+                <el-input
                   v-model="form.inputdata"
                   type="number"
                   placeholder="单位(万元)"
@@ -224,12 +224,10 @@ export default {
       ],
 
       form: {
-        inputdata: null
+        inputdata: null,
       },
       rules: {
-        inputdata: [
-          { validator: this.validateInput, trigger: 'blur' }
-        ]
+        inputdata: [{ validator: this.validateInput, trigger: "blur" }],
       },
     };
   },
@@ -596,19 +594,23 @@ export default {
     ////////////////////
     validateInput(rule, value, callback) {
       console.log("validateInput", Number(value));
-      if (value === 0 || value === '0' || value < 0) {
-        callback(new Error('输入值不能小于0'));
+      if (value === 0 || value === "0" || value < 0) {
+        callback(new Error("输入值不能小于0"));
       } else {
         callback();
       }
     },
     handleInputNumber(value) {
+      console.log("handleInputNumber", value);
       // 限制数字长度，假设最大长度为5位数字
-      if (value <= 0) {
-        this.form.inputdata = 1; // 强制设为1
-      } 
+      if (value < 0) {
+        this.form.inputdata = null; // 强制设为null
+      }
+      if (value === "--") {
+        this.form.inputdata = null; // 强制设为null
+      }
       if (String(value).length > 5) {
-        this.form.inputdata = String(value).slice(0, 5);  // 保留前5位数字
+        this.form.inputdata = String(value).slice(0, 5); // 保留前5位数字
       }
       this.inputdata = this.form.inputdata;
     },
