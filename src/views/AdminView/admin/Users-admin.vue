@@ -105,6 +105,9 @@ export default {
       addOrUpdateVisible: false
     };
   },
+  created() {
+    this.getDataList();
+  },
   components: {
     AddOrUpdate
   },
