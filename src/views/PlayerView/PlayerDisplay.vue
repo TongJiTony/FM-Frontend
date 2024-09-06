@@ -95,7 +95,7 @@
                   alt="Football Field"
                   class="field-image"
                 />
-                <div class="player-position" :style="positionStyle"></div>
+                <div class="player-position"></div>
               </el-card>
             </el-col>
             <el-col :span="12">
@@ -133,7 +133,7 @@
 
         <el-tab-pane label="医疗记录" name="second">
           <el-card shadow="hover">
-            <h2 v-if="HEALTH_STATE">健康状况：受伤</h2>
+            <h2 v-if="player[0].HEALTH_STATE">健康状况：受伤</h2>
             <h2 v-else>健康状况：健康</h2>
             <el-table :data="tableData" style="width: 100%">
               <el-table-column
@@ -163,8 +163,8 @@
 
         <el-tab-pane label="所在阵容" name="third">
           <el-card shadow="never">
-            <h2 v-if="GAME_STATE">比赛状态：禁赛</h2>
-            <h2 v-else>比赛状态：允许出场</h2>
+            <h2 v-if="player[0].GAME_STATE">比赛状态：允许出场</h2>
+            <h2 v-else>比赛状态：禁赛</h2>
             <el-table :data="lineupData" style="width: 100%">
               <el-table-column prop="NOTE" label="阵容名称"></el-table-column>
               <el-table-column label="位置">{{
@@ -219,6 +219,19 @@ export default {
       players: [],
       avgRank: 0,
       activeTab: "first", // 默认打开的标签页名称
+      PLAYER_ID: "", // 球员ID，必须要有
+      PLAYER_NAME: "", // 球员姓名
+      BIRTHDAY: "", // 出生日期
+      TEAM_ID: "", // 队伍ID
+      TEAM_NAME: "", // 队伍名称
+      ROLE: "", // 球员位置
+      USED_FOOT: 0, // 惯用脚
+      HEALTH_STATE: 0, // 健康状态
+      RANK: 0, // 球员等级
+      GAME_STATE: 0, // 场上状态
+      TRANS_STATE: 0, // 转会状态
+      IS_SHOW: 1, // 展示状态
+      ICON: "",
     };
   },
   created() {
