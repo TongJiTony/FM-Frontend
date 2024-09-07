@@ -26,11 +26,11 @@
     <div class="input-area">
       <input
         v-model="userInput"
-        @keyup.enter="sendMessage"
+        @keyup.enter="sendData"
         type="text"
         placeholder="输入消息..."
       />
-      <button @click="sendMessage">发送</button>
+      <button @click="sendData">发送</button>
     </div>
   </div>
 </template>
@@ -93,10 +93,106 @@ export default {
         this.showError("初始化失败，请稍后再试。");
       }
     },
-    sendData(truncatedData) {
+    async sendData(truncatedData) {
+      // 检查发送时间间隔
+      const currentTime = Date.now();
+      if (currentTime - this.lastSendTime < this.minSendInterval) {
+        this.showError("请求发送太频繁，请稍后再试。");
+        return false;
+      }
+      this.lastSendTime = currentTime; // 更新发送时间
+
+      // 检查用户输入是否为空
+      if (this.userInput.trim() === "") return false;
+
       // 发送数据逻辑
-      console.log("发送数据:", truncatedData);
-      return true;
+      const lineupDataMessage =
+        truncatedData.lineupData && truncatedData.lineupData.length > 0
+          ? JSON.stringify(truncatedData.lineupData)
+          : "暂无阵容数据";
+      const contractDataMessage =
+        truncatedData.contractData && truncatedData.contractData.length > 0
+          ? JSON.stringify(truncatedData.contractData)
+          : "暂无合同数据";
+      const playerDataMessage =
+        truncatedData.playerData && truncatedData.playerData.length > 0
+          ? JSON.stringify(truncatedData.playerData)
+          : "暂无球员数据";
+      const recordDataMessage =
+        truncatedData.recordData && truncatedData.recordData.length > 0
+          ? JSON.stringify(truncatedData.recordData)
+          : "暂无记录数据";
+      const trainingDataMessage =
+        truncatedData.trainingData && truncatedData.trainingData.length > 0
+          ? JSON.stringify(truncatedData.trainingData)
+          : "暂无训练数据";
+      const transferDataMessage =
+        truncatedData.transferData && truncatedData.transferData.length > 0
+          ? JSON.stringify(truncatedData.transferData)
+          : "暂无转会数据";
+      const homeMatchDataMessage =
+        truncatedData.homeMatchData && truncatedData.homeMatchData.length > 0
+          ? JSON.stringify(truncatedData.homeMatchData)
+          : "暂无主场比赛数据";
+      const awayMatchDataMessage =
+        truncatedData.awayMatchData && truncatedData.awayMatchData.length > 0
+          ? JSON.stringify(truncatedData.awayMatchData)
+          : "暂无客场比赛数据";
+      const medicalDataMessage =
+        truncatedData.medicalData && truncatedData.medicalData.length > 0
+          ? JSON.stringify(truncatedData.medicalData)
+          : "暂无医疗数据";
+      
+
+      // Add user message to chat
+      this.messages.push({ role: "user", content: this.userInput });
+      this.isAssistantTyping = true;
+      const userMessage = this.userInput;
+      this.userInput = ""; // Clear input field
+      const systemMessage = `你是Football-Manager的智能助手，负责为球队经理提供球队信息汇总和球队发展建议，请你用中文回答，一次回答尽量不要超过100个字。 
+          球员信息: ${playerDataMessage}, 
+          训练情况: ${trainingDataMessage},
+          阵容情况: ${lineupDataMessage}, 
+          合同信息: ${contractDataMessage},
+          财务数据: ${recordDataMessage},
+          转会数据: ${transferDataMessage},
+          主场比赛数据: ${homeMatchDataMessage},
+          客场比赛数据: ${awayMatchDataMessage},
+          医疗数据: ${medicalDataMessage}。         
+          `;
+      const allmessages = systemMessage + userMessage; //合并用户消息和系统消息
+      const alltokens = await this.calculateTokenCount(allmessages);
+      if (alltokens > this.maxTokens + 200) {
+        this.showError("用户输入的数据过长，请减少输入内容。");
+        return false;
+      }
+      console.log("本次发送数据:", truncatedData);
+
+      try {
+        const response = await api.post("/LLM/v1/chat/completions", {
+          model: "step-1-8k",
+          messages: [
+            {
+              role: "system",
+              content: systemMessage,
+            },
+            {
+              role: "user",
+              content: userMessage,
+            },
+          ],
+        });
+
+        // Simulate streaming effect by updating message content in chunks
+        const assistantMessage = response.data.choices[0].message.content;
+        this.simulateStreamingEffect(assistantMessage);
+        return true;
+      } catch (error) {
+        console.error("Error fetching AI response:", error);
+        this.handleError(error); // 处理不同错误码
+        this.isAssistantTyping = false; // Set typing status to false on error
+        return false;
+      } 
     },
 
     async calculateTokenCount(messages) {
@@ -233,9 +329,12 @@ export default {
 
     // 优化数据并截断
     async optimizeData(data) {
-      const priorityList = await Promise.all(// 并行计算tokens
+      const priorityList = await Promise.all(
+        // 并行计算tokens
         this.priorityData.map(async (item) => {
-          const tokens = await this.calculateTokenCount(JSON.stringify(data[item.key])); // 计算tokens
+          const tokens = await this.calculateTokenCount(
+            JSON.stringify(data[item.key])
+          ); // 计算tokens
           console.log(`${item.key} `, data[item.key]);
           console.log(`${item.key} tokens`, tokens);
           return {
@@ -272,49 +371,6 @@ export default {
       }, {});
     },
 
-    async sendMessage() {
-      if (this.userInput.trim() === "") return;
-      // Add user message to chat
-      this.messages.push({ role: "user", content: this.userInput });
-      this.isAssistantTyping = true;
-      const userMessage = this.userInput;
-      this.userInput = ""; // Clear input field
-      const systemMessage = `你是Football-Manager的智能助手，负责为球队经理提供球队信息汇总和球队发展建议。 
-          队伍所有球员数据: ${JSON.stringify(this.priorityData[0].data)}, 
-          队伍训练数据: ${JSON.stringify(this.priorityData[1].data)},
-          队伍阵容数据: ${JSON.stringify(this.priorityData[2].data)}, 
-          队伍当前合同数据: ${JSON.stringify(
-            this.priorityData[3].data
-          )},         
-          请你用中文回答，一次回答尽量不要超过100个字`;
-      const allmessages = systemMessage + userMessage; //合并用户消息和系统消息
-      try {
-        const response = await api.post("/LLM/v1/chat/completions", {
-          model: "step-1-8k",
-          messages: [
-            {
-              role: "system",
-              content: systemMessage,
-            },
-            {
-              role: "user",
-              content: userMessage,
-            },
-          ],
-        });
-
-        // Simulate streaming effect by updating message content in chunks
-        const assistantMessage = response.data.choices[0].message.content;
-        this.simulateStreamingEffect(assistantMessage);
-      } catch (error) {
-        console.error("Error fetching AI response:", error);
-        this.isAssistantTyping = false; // Set typing status to false on error
-      } finally {
-        console.log("allmessages:", allmessages);
-        const alltokens = await this.calculateTokenCount(allmessages);
-        console.log("allmessages tokens:", alltokens);
-      }
-    },
     simulateStreamingEffect(content) {
       const chunks = content.split(""); // Split content into chunks for simulation
       let currentChunk = "";
