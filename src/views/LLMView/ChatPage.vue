@@ -39,7 +39,6 @@
 import axios from "axios";
 import { Message } from "element-ui"; // 用于提示信息
 
-
 const api = axios.create({
   baseURL: "", // The proxy path
   headers: {
@@ -55,47 +54,34 @@ export default {
       isAssistantTyping: false,
       team_id: this.$store.getters["user/getTeamID"], //get team_id from vuex
       isLoading: true, // 是否正在加载数据
-      maxTokens: 8192, // LLM的单次最大token数 8192
+      maxTokens: 7992, // LLM的单次最大token数 8192 - 200 = 7992(200为允许用户的自由输入)
       minSendInterval: 3000, // 限制最小发送间隔，3秒
       lastSendTime: 0, // 记录上次发送时间
       priorityData: [
         // 数据请求优先级
-        { key: "playerData", data: null, priority: 4 },
-        { key: "trainingData", data: null, priority: 3 },
-        { key: "lineupData", data: null, priority: 8 },
-        { key: "contractData", data: null, priority: 2 },
-        { key: "transferData", data: null, priority: 5 },
-        { key: "recordData", data: null, priority: 9 },
-        { key: "homeMatchData", data: null, priority: 6 },
-        { key: "awayMatchData", data: null, priority: 7 },
-        { key: "medicalData", data: null, priority: 8 },
+        { key: "playerData", data: null, priority: 4 }, //0
+        { key: "trainingData", data: null, priority: 3 }, //1
+        { key: "lineupData", data: null, priority: 8 }, //2
+        { key: "contractData", data: null, priority: 2 }, //3
+        { key: "transferData", data: null, priority: 5 }, //4
+        { key: "recordData", data: null, priority: 9 }, //5
+        { key: "homeMatchData", data: null, priority: 6 }, //6
+        { key: "awayMatchData", data: null, priority: 7 }, //7
+        { key: "medicalData", data: null, priority: 8 }, //8
       ],
-
-
-      contractData: null,
-      lineupData: null,
-      playerData: null,
-      recordData: null,
-      trainingData: null,
-      transferData: null,
-      homeMatchData: null,
-      awayMatchData: null,
-      medicalData: null,
     };
   },
   mounted() {
     // 页面加载时调用 initialize()
-    this.getInfo();
+    this.initialize();
   },
   methods: {
     // 初始化入口函数
     async initialize() {
-      this.isLoading = true;// 开始加载，显示loading状态
+      this.isLoading = true; // 开始加载，显示loading状态
       try {
         const allData = await this.getInfo(); // 获取所有可选的数据
-        console.log("allData:", allData);
-        const truncatedData = this.optimizeData(allData); // 优化并截断数据
-
+        const truncatedData = await this.optimizeData(allData); // 优化并截断数据
         const success = await this.sendData(truncatedData); // 发送优化后的数据
         if (success) {
           this.isLoading = false; // 数据传输成功，停止loading
@@ -107,19 +93,24 @@ export default {
         this.showError("初始化失败，请稍后再试。");
       }
     },
+    sendData(truncatedData) {
+      // 发送数据逻辑
+      console.log("发送数据:", truncatedData);
+      return true;
+    },
 
-    async calculateTokenCount(usermessages) {
+    async calculateTokenCount(messages) {
       try {
         const response = await api.post(
           "/LLM/v1/token/count",
           {
             model: "step-1-8k",
-            messages: [ 
-            {
-              role: "user",
-              content: usermessages,
-            },
-          ]
+            messages: [
+              {
+                role: "user",
+                content: messages,
+              },
+            ],
           },
           {
             headers: {
@@ -136,7 +127,7 @@ export default {
       }
     },
 
-    async getInfo() {  
+    async getInfo() {
       try {
         const contractRequest = axios.get(
           `/api/v1/contract/displayall?teamid=${this.team_id}`
@@ -189,35 +180,96 @@ export default {
           medicalRequest,
         ]);
 
-        // 保存数据到状态
-        this.contractData = contractData.data;
-        this.lineupData = lineupData.data;
-        this.playerData = playerData.data;
-        this.recordData = recordData.data;
-        this.trainingData = trainingData.data;
-        this.transferData = transferData.data;
-        this.homeMatchData = homeMatchData.data;
-        this.awayMatchData = awayMatchData.data;
-        this.medicalData = medicalData.data;
-
-
+        // 将数据存储到对应的变量中
+        this.priorityData.forEach((item) => {
+          switch (item.key) {
+            case "contractData":
+              item.data = contractData.data;
+              break;
+            case "lineupData":
+              item.data = lineupData.data;
+              break;
+            case "playerData":
+              item.data = playerData.data;
+              break;
+            case "recordData":
+              item.data = recordData.data;
+              break;
+            case "trainingData":
+              item.data = trainingData.data;
+              break;
+            case "transferData":
+              item.data = transferData.data;
+              break;
+            case "homeMatchData":
+              item.data = homeMatchData.data;
+              break;
+            case "awayMatchData":
+              item.data = awayMatchData.data;
+              break;
+            case "medicalData":
+              item.data = medicalData.data;
+              break;
+          }
+        });
         // 返回一个包含所有数据的对象
         return {
-            contractData: contractData.data,
-            lineupData: lineupData.data,
-            playerData: playerData.data,
-            recordData: recordData.data,
-            trainingData: trainingData.data,
-            transferData: transferData.data,
-            homeMatchData: homeMatchData.data,
-            awayMatchData: awayMatchData.data,
-            medicalData: medicalData.data
+          contractData: contractData.data,
+          lineupData: lineupData.data,
+          playerData: playerData.data,
+          recordData: recordData.data,
+          trainingData: trainingData.data,
+          transferData: transferData.data,
+          homeMatchData: homeMatchData.data,
+          awayMatchData: awayMatchData.data,
+          medicalData: medicalData.data,
         };
       } catch (error) {
         console.error("Error fetching team data:", error);
       } finally {
         this.isLoading = false; // 请求完成，隐藏loading状态
       }
+    },
+
+    // 优化数据并截断
+    async optimizeData(data) {
+      const priorityList = await Promise.all(// 并行计算tokens
+        this.priorityData.map(async (item) => {
+          const tokens = await this.calculateTokenCount(JSON.stringify(data[item.key])); // 计算tokens
+          console.log(`${item.key} `, data[item.key]);
+          console.log(`${item.key} tokens`, tokens);
+          return {
+            key: item.key,
+            data: data[item.key],
+            tokens: tokens, // 直接使用 tokens
+            priority: item.priority,
+          };
+        })
+      );
+
+      // 计算总的tokens数量
+      let totalTokens = priorityList.reduce(
+        (sum, item) => sum + item.tokens,
+        0
+      );
+      console.info("origin-totalTokens:", totalTokens);
+
+      // 优先根据tokens大小从高到低排序，并按照优先级逐步删除
+      priorityList.sort((a, b) => a.priority - b.priority); // 优先级从小到大排序
+
+      // 移除优先级较低的数据直到满足最大tokens要求
+      while (totalTokens > this.maxTokens && priorityList.length > 0) {
+        const removedItem = priorityList.pop();
+        console.warn(`移除优先级较低的数据: ${removedItem.key}`);
+        totalTokens -= removedItem.tokens;
+        console.info("current-totalTokens:", totalTokens);
+      }
+
+      // 返回优化后的数据
+      return priorityList.reduce((result, item) => {
+        result[item.key] = item.data;
+        return result;
+      }, {});
     },
 
     async sendMessage() {
@@ -227,14 +279,16 @@ export default {
       this.isAssistantTyping = true;
       const userMessage = this.userInput;
       this.userInput = ""; // Clear input field
-      const systemMessage = `你是Football-Manager的智能助手，负责为球队经理提供球队信息汇总和球队发展建议。
-          队伍当前合同数据: ${JSON.stringify(this.contractData)},
-         
-
+      const systemMessage = `你是Football-Manager的智能助手，负责为球队经理提供球队信息汇总和球队发展建议。 
+          队伍所有球员数据: ${JSON.stringify(this.priorityData[0].data)}, 
+          队伍训练数据: ${JSON.stringify(this.priorityData[1].data)},
+          队伍阵容数据: ${JSON.stringify(this.priorityData[2].data)}, 
+          队伍当前合同数据: ${JSON.stringify(
+            this.priorityData[3].data
+          )},         
           请你用中文回答，一次回答尽量不要超过100个字`;
-      const allmessages = systemMessage + userMessage;//合并用户消息和系统消息
+      const allmessages = systemMessage + userMessage; //合并用户消息和系统消息
       try {
-        
         const response = await api.post("/LLM/v1/chat/completions", {
           model: "step-1-8k",
           messages: [
@@ -249,17 +303,16 @@ export default {
           ],
         });
 
-        
-
         // Simulate streaming effect by updating message content in chunks
         const assistantMessage = response.data.choices[0].message.content;
         this.simulateStreamingEffect(assistantMessage);
       } catch (error) {
         console.error("Error fetching AI response:", error);
         this.isAssistantTyping = false; // Set typing status to false on error
-      }finally {
-        const tokens = await this.calculateTokenCount(allmessages);
-        console.log("tokens:", tokens);
+      } finally {
+        console.log("allmessages:", allmessages);
+        const alltokens = await this.calculateTokenCount(allmessages);
+        console.log("allmessages tokens:", alltokens);
       }
     },
     simulateStreamingEffect(content) {
@@ -288,9 +341,7 @@ export default {
       }
     },
 
-
-
-     // 处理错误并给出提示
+    // 处理错误并给出提示
     handleError(error) {
       if (error.response) {
         const status = error.response.status;
@@ -314,7 +365,6 @@ export default {
         this.showError("无法连接到服务器，请检查网络。");
       }
     },
-
 
     // 提示错误信息
     showError(message) {
