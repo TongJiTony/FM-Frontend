@@ -60,7 +60,6 @@ export default {
       lastSendTime: 0, // 记录上次发送时间
       priorityData: [
         // 数据请求优先级
-        { key: "teamData", data: null, priority: 1 },
         { key: "playerData", data: null, priority: 4 },
         { key: "trainingData", data: null, priority: 3 },
         { key: "lineupData", data: null, priority: 8 },
@@ -72,12 +71,11 @@ export default {
         { key: "medicalData", data: null, priority: 8 },
       ],
 
-      
+
       contractData: null,
       lineupData: null,
       playerData: null,
       recordData: null,
-      teamData: null,
       trainingData: null,
       transferData: null,
       homeMatchData: null,
@@ -86,7 +84,7 @@ export default {
     };
   },
   mounted() {
-    // 页面加载时调用 getInfo
+    // 页面加载时调用 initialize()
     this.getInfo();
   },
   methods: {
@@ -95,6 +93,7 @@ export default {
       this.isLoading = true;// 开始加载，显示loading状态
       try {
         const allData = await this.getInfo(); // 获取所有可选的数据
+        console.log("allData:", allData);
         const truncatedData = this.optimizeData(allData); // 优化并截断数据
 
         const success = await this.sendData(truncatedData); // 发送优化后的数据
@@ -137,9 +136,7 @@ export default {
       }
     },
 
-    async getInfo() {
-      this.isLoading = true; // 开始加载，显示loading状态
-
+    async getInfo() {  
       try {
         const contractRequest = axios.get(
           `/api/v1/contract/displayall?teamid=${this.team_id}`
@@ -152,9 +149,6 @@ export default {
         );
         const recordRequest = axios.get(
           `/api/v1/record/search?team_id=${this.team_id}`
-        );
-        const teamRequest = axios.get(
-          `/api/v1/team/displayone?Teamid=${this.team_id}`
         );
         const trainingRequest = axios.get(
           `/api/v1/training/displayall?teamid=${this.team_id}`
@@ -178,7 +172,6 @@ export default {
           lineupData,
           playerData,
           recordData,
-          teamData,
           trainingData,
           transferData,
           homeMatchData,
@@ -189,7 +182,6 @@ export default {
           lineupRequest,
           playerRequest,
           recordRequest,
-          teamRequest,
           trainingRequest,
           transferRequest,
           homeMatchRequest,
@@ -202,12 +194,25 @@ export default {
         this.lineupData = lineupData.data;
         this.playerData = playerData.data;
         this.recordData = recordData.data;
-        this.teamData = teamData.data;
         this.trainingData = trainingData.data;
         this.transferData = transferData.data;
         this.homeMatchData = homeMatchData.data;
         this.awayMatchData = awayMatchData.data;
         this.medicalData = medicalData.data;
+
+
+        // 返回一个包含所有数据的对象
+        return {
+            contractData: contractData.data,
+            lineupData: lineupData.data,
+            playerData: playerData.data,
+            recordData: recordData.data,
+            trainingData: trainingData.data,
+            transferData: transferData.data,
+            homeMatchData: homeMatchData.data,
+            awayMatchData: awayMatchData.data,
+            medicalData: medicalData.data
+        };
       } catch (error) {
         console.error("Error fetching team data:", error);
       } finally {
@@ -223,7 +228,6 @@ export default {
       const userMessage = this.userInput;
       this.userInput = ""; // Clear input field
       const systemMessage = `你是Football-Manager的智能助手，负责为球队经理提供球队信息汇总和球队发展建议。
-          队伍信息数据: ${JSON.stringify(this.teamData)}。
           队伍当前合同数据: ${JSON.stringify(this.contractData)},
          
 
