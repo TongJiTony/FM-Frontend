@@ -69,7 +69,6 @@
       @save="saveTransfer"
     ></manager-dialog>
   </div>
-
 </template>
 
 <script>
@@ -156,7 +155,7 @@ export default {
         }
       } catch (error) {
         console.error("Error fetching agent status:", error);
-        this.$message.error("无法与服务器通信");
+        this.$message.error("无法创建对话，经纪人正忙");
       }
     },
 
@@ -234,7 +233,7 @@ export default {
 </script>
 
 <style scoped>
-.card-style{
+.card-style {
   background-color: rgba(255, 255, 255, 0.8);
 }
 .transfer-page {
@@ -276,13 +275,12 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-   background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 .player-item:hover {
   background-color: rgba(255, 255, 255, 0.8);
 }
-
 
 .el-button {
   background-color: rgb(0, 153, 255);
