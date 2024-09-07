@@ -45,14 +45,6 @@
         <el-card shadow="never" class="card-style">
           <div class="regional_table">
             <el-table :data="pagedData" style="width: 100%">
-            </el-table-column>
-            <el-table-column
-              prop="PRED_REC_DATE"
-              label="预计康复时间"
-              :formatter="formatData"
-            >
-            </el-table-column>
-            <el-table-column label="是否痊愈">
               <el-table-column prop="PLAYER_NAME" label="球员姓名">
               </el-table-column>
               <el-table-column prop="HURT_PART" label="受伤部位">
