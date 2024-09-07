@@ -105,6 +105,10 @@ export default {
       // 检查用户输入是否为空
       if (this.userInput.trim() === "") return false;
 
+
+
+      const allData = await this.getInfo();
+      truncatedData = await this.optimizeData(allData);// 优化并截断数据，在这里要更新第二次，否则会出现第二次发送的数据有问题
       // 发送数据逻辑
       const lineupDataMessage =
         truncatedData.lineupData && truncatedData.lineupData.length > 0
