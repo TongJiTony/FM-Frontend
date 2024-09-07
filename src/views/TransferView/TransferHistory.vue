@@ -32,7 +32,14 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="fetchTransferHistory">搜索</el-button>
-        <el-button type="primary" size='normal' icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
+        <el-button
+          type="primary"
+          size="normal"
+          icon="el-icon-arrow-left"
+          @click="goBack"
+          class="back-button1"
+          >返回</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -132,5 +139,4 @@ li {
 .el-form-item:last-child {
   margin-right: 0;
 }
-
 </style>
