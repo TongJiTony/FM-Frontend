@@ -1,47 +1,59 @@
 <template>
   <div class="transfer-history-page">
-    
-    <el-button type="primary" size="small" icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
+    <el-button
+      type="primary"
+      size="small"
+      icon="el-icon-arrow-left"
+      @click="goBack"
+      class="back-button1"
+      >返回</el-button
+    >
     <h2>历史转会信息</h2>
 
-   <el-form
-  inline
-  label-position="top"
-  @submit.native.prevent="fetchTransferHistory"
->
-  <el-form-item label="球队编号">
-    <el-input
-      v-model="queryParams.teamid"
-      placeholder="输入 球队编号"
-    ></el-input>
-  </el-form-item>
-  <el-form-item label="转出球队编号">
-    <el-input
-      v-model="queryParams.fromteamid"
-      placeholder="输入 转出球队编号"
-    ></el-input>
-  </el-form-item>
-  <el-form-item label="转入球队编号">
-    <el-input
-      v-model="queryParams.toteamid"
-      placeholder="输入 转入球队编号"
-    ></el-input>
-  </el-form-item>
-  <el-form-item label="球员编号">
-    <el-input
-      v-model="queryParams.playerid"
-      placeholder="输入 球员编号"
-    ></el-input>
-  </el-form-item>
-  <el-form-item>
-    <el-button type="primary" size="small"  @click="fetchTransferHistory">搜索</el-button>
-  </el-form-item>
-</el-form>
-   
+    <el-form
+      inline
+      label-position="top"
+      @submit.native.prevent="fetchTransferHistory"
+    >
+      <el-form-item label="球队编号">
+        <el-input
+          v-model="queryParams.teamid"
+          placeholder="输入 球队编号"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="转出球队编号">
+        <el-input
+          v-model="queryParams.toteamid"
+          placeholder="输入 转出球队编号"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="转入球队编号">
+        <el-input
+          v-model="queryParams.fromteamid"
+          placeholder="输入 转入球队编号"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="球员编号">
+        <el-input
+          v-model="queryParams.playerid"
+          placeholder="输入 球员编号"
+        ></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" size="small" @click="fetchTransferHistory"
+          >搜索</el-button
+        >
+      </el-form-item>
+    </el-form>
+
     <ul v-if="transferHistory.length > 0">
-      <li v-for="(transfer, index) in transferHistory" class='card-style' :key="index">
-        {{ transfer.PLAYER_NAME }} 从 {{ transfer.TEAM_NAME_FROM }} 转会到
-        {{ transfer.TEAM_NAME_TO }}，费用:
+      <li
+        v-for="(transfer, index) in transferHistory"
+        class="card-style"
+        :key="index"
+      >
+        {{ transfer.PLAYER_NAME }} 从 {{ transfer.TEAM_NAME_TO }} 转会到
+        {{ transfer.TEAM_NAME_FROM }}，费用:
         {{ formatTransferFee(transfer.TRANSFER_FEES) }}，日期:
         {{ formatDate(transfer.TRANSFER_DATE) }}
       </li>
@@ -70,10 +82,10 @@ export default {
       // 构造查询参数
       const params = {};
       if (this.queryParams.teamid) params.teamid = this.queryParams.teamid;
-      if (this.queryParams.fromteamid)
-        params.fromteamid = this.queryParams.fromteamid;
       if (this.queryParams.toteamid)
         params.toteamid = this.queryParams.toteamid;
+      if (this.queryParams.fromteamid)
+        params.fromteamid = this.queryParams.fromteamid;
       if (this.queryParams.playerid)
         params.playerid = this.queryParams.playerid;
 
@@ -83,7 +95,7 @@ export default {
       axios
         .get("/api/v1/transfer/displayall", axiosConfig)
         .then((response) => {
-          this.transferHistory = response.data; // 根据实际 API 响应格式调整
+          this.transferHistory = response.data;
           console.log("Received data:", response.data);
         })
         .catch((error) => {
@@ -98,7 +110,7 @@ export default {
       return new Date(dateString).toLocaleDateString(undefined, options); // 格式化日期
     },
     goBack() {
-      this.$router.go(-1); // Navigate to the previous page
+      this.$router.go(-1);
     },
   },
   created() {
@@ -111,7 +123,7 @@ export default {
 .back-button1 {
   float: right;
 }
-.card-style{
+.card-style {
   background-color: rgba(255, 255, 255, 0.8);
 }
 .transfer-history-page {
