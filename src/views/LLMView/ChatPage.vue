@@ -91,6 +91,8 @@ export default {
       } catch (error) {
         console.error("初始化失败", error);
         this.showError("初始化失败，请稍后再试。");
+      }finally {
+        this.isLoading = false; // 请求完成，隐藏loading状态
       }
     },
     async sendData(truncatedData) {
@@ -326,9 +328,7 @@ export default {
         };
       } catch (error) {
         console.error("Error fetching team data:", error);
-      } finally {
-        this.isLoading = false; // 请求完成，隐藏loading状态
-      }
+      } 
     },
 
     // 优化数据并截断
