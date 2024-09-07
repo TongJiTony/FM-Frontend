@@ -218,7 +218,7 @@ export default {
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 600px;
+  height: 700px;
   border: 1px solid #ccc;
   padding: 10px;
   background-color: rgba(255, 255, 255, 0.5);
