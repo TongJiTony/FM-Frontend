@@ -3,6 +3,7 @@
     
     <el-button type="primary" size="small" icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
     <h2>历史转会信息</h2>
+
    <el-form
   inline
   label-position="top"
@@ -139,5 +140,4 @@ li {
 .el-form-item:last-child {
   margin-right: 0;
 }
-
 </style>
