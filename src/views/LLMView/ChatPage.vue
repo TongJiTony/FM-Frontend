@@ -34,7 +34,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "/chatAPI/v1", // The proxy path
+  baseURL: "", // The proxy path
   headers: {
     Authorization: `Bearer ${process.env.VUE_APP_API_KEY}`,
     "Content-Type": "application/json",
@@ -165,7 +165,7 @@ export default {
           队伍客场比赛数据: ${JSON.stringify(this.awayMatchData)}。
           队伍医疗数据: ${JSON.stringify(this.medicalData)}。
           请你用中文回答，一次回答尽量不要超过100个字`;
-        const response = await api.post("/chat/completions", {
+        const response = await api.post('/LLM/v1/chat/completions', {
           model: "step-1-8k",
           messages: [
             {
