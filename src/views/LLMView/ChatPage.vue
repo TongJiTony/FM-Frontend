@@ -167,7 +167,7 @@ export default {
       const allmessages = systemMessage + userMessage; //合并用户消息和系统消息
       const alltokens = await this.calculateTokenCount(allmessages);
       if (alltokens > this.maxTokens + 200) {
-        this.showError("用户输入的数据过长，请减少输入内容。");
+        this.messages.error("用户输入的数据过长，本次不会回答任何内容，请减少输入内容。");
         return false;
       }
       console.log("本次发送数据:", truncatedData);
