@@ -181,22 +181,22 @@
         <el-tab-pane label="转会记录" name="forth">
           <el-card shadow="never" class="card-style">
             <h2>转会记录</h2>
-            <el-table :data="transferData" style="width: 100%" height="120">
+            <el-table :data="transferData" style="width: 100%" height="200">
               <el-table-column
-                prop="TEAM_ID_FROM"
+                prop="TEAM_NAME_FROM"
                 label="转出球队"
-               :formatter="row => this.teams[row.TEAM_ID_FROM] || '未找到球队'"
+               
               ></el-table-column>
                <el-table-column
-                prop="TEAM_ID_TO"
+                prop="TEAM_NAME_TO"
                 label="转入球队"
-               :formatter="row => this.teams[row.TEAM_ID_TO] || '未找到球队'"
+               
               ></el-table-column>
             
               <el-table-column
                 prop="TRANSFER_FEES"
                 label="转会费"
-                 :formatter="formatTransferFees"
+                
               ></el-table-column>
               <el-table-column
                 prop="TRANSFER_DATE"
