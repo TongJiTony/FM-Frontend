@@ -86,7 +86,7 @@
                 <el-input
                   v-model="form.inputdata"
                   type="number"
-                  placeholder="单位(万元)"
+                  placeholder="输入数据"
                   @input="handleInputNumber"
                 ></el-input>
               </el-form-item>
