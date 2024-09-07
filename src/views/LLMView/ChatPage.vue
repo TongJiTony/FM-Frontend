@@ -154,7 +154,7 @@ export default {
         const systemMessage = `你是Football-Manager的智能助手，负责为球队经理提供球队信息汇总和球队发展建议。
           队伍信息数据: ${JSON.stringify(this.teamData)}。
           队伍当前合同数据: ${JSON.stringify(this.contractData)},
-          队伍阵容数据: ${JSON.stringify(this.lineupData)}, 
+          队伍阵容数据: ${JSON.stringify(this.lineupData)},          
           队伍所有球员数据: ${JSON.stringify(this.playerData)}, 
           财务记录数据: ${JSON.stringify(this.recordData)}。
           队伍训练数据: ${JSON.stringify(this.trainingData)}。
