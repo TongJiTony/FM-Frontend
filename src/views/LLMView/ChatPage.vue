@@ -11,7 +11,12 @@
         :class="['message', message.role]"
       >
         <div class="icon">
-            <i :class="message.role === 'user' ? 'el-icon-user' : 'el-icon-s-check'" class="icon-size"></i>
+          <i
+            :class="
+              message.role === 'user' ? 'el-icon-user' : 'el-icon-s-check'
+            "
+            class="icon-size"
+          ></i>
         </div>
         <div class="bubble">
           <p>{{ message.content }}</p>
@@ -32,6 +37,8 @@
 
 <script>
 import axios from "axios";
+import { Message } from "element-ui"; // 用于提示信息
+
 
 const api = axios.create({
   baseURL: "", // The proxy path
@@ -48,6 +55,24 @@ export default {
       isAssistantTyping: false,
       team_id: this.$store.getters["user/getTeamID"], //get team_id from vuex
       isLoading: true, // 是否正在加载数据
+      maxTokens: 8192, // LLM的单次最大token数 8192
+      minSendInterval: 3000, // 限制最小发送间隔，3秒
+      lastSendTime: 0, // 记录上次发送时间
+      priorityData: [
+        // 数据请求优先级
+        { key: "teamData", data: null, priority: 1 },
+        { key: "playerData", data: null, priority: 4 },
+        { key: "trainingData", data: null, priority: 3 },
+        { key: "lineupData", data: null, priority: 8 },
+        { key: "contractData", data: null, priority: 2 },
+        { key: "transferData", data: null, priority: 5 },
+        { key: "recordData", data: null, priority: 9 },
+        { key: "homeMatchData", data: null, priority: 6 },
+        { key: "awayMatchData", data: null, priority: 7 },
+        { key: "medicalData", data: null, priority: 8 },
+      ],
+
+      
       contractData: null,
       lineupData: null,
       playerData: null,
@@ -65,6 +90,53 @@ export default {
     this.getInfo();
   },
   methods: {
+    // 初始化入口函数
+    async initialize() {
+      this.isLoading = true;// 开始加载，显示loading状态
+      try {
+        const allData = await this.getInfo(); // 获取所有可选的数据
+        const truncatedData = this.optimizeData(allData); // 优化并截断数据
+
+        const success = await this.sendData(truncatedData); // 发送优化后的数据
+        if (success) {
+          this.isLoading = false; // 数据传输成功，停止loading
+        } else {
+          this.showError("数据传输失败，请稍后再试。");
+        }
+      } catch (error) {
+        console.error("初始化失败", error);
+        this.showError("初始化失败，请稍后再试。");
+      }
+    },
+
+    async calculateTokenCount(usermessages) {
+      try {
+        const response = await api.post(
+          "/LLM/v1/token/count",
+          {
+            model: "step-1-8k",
+            messages: [ 
+            {
+              role: "user",
+              content: usermessages,
+            },
+          ]
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${process.env.VUE_APP_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        return response.data.data.total_tokens; // 返回总的tokens数量
+      } catch (error) {
+        console.error("Error calculating tokens:", error);
+        return null;
+      }
+    },
+
     async getInfo() {
       this.isLoading = true; // 开始加载，显示loading状态
 
@@ -150,22 +222,16 @@ export default {
       this.isAssistantTyping = true;
       const userMessage = this.userInput;
       this.userInput = ""; // Clear input field
-      try {
-        const systemMessage = `你是Football-Manager的智能助手，负责为球队经理提供球队信息汇总和球队发展建议。
+      const systemMessage = `你是Football-Manager的智能助手，负责为球队经理提供球队信息汇总和球队发展建议。
           队伍信息数据: ${JSON.stringify(this.teamData)}。
           队伍当前合同数据: ${JSON.stringify(this.contractData)},
-          队伍阵容数据: ${JSON.stringify(this.lineupData)},          
-          队伍所有球员数据: ${JSON.stringify(this.playerData)}, 
-          财务记录数据: ${JSON.stringify(this.recordData)}。
-          队伍训练数据: ${JSON.stringify(this.trainingData)}。
-          队伍转会数据(FROM意味着队员离开到另外的队伍，TO意味着队员来带本队伍，在说明球员总数的时候可以附加说明转会球员是谁): ${JSON.stringify(
-            this.transferData
-          )}。
-          队伍主场比赛数据: ${JSON.stringify(this.homeMatchData)}。
-          队伍客场比赛数据: ${JSON.stringify(this.awayMatchData)}。
-          队伍医疗数据: ${JSON.stringify(this.medicalData)}。
+         
+
           请你用中文回答，一次回答尽量不要超过100个字`;
-        const response = await api.post('/LLM/v1/chat/completions', {
+      const allmessages = systemMessage + userMessage;//合并用户消息和系统消息
+      try {
+        
+        const response = await api.post("/LLM/v1/chat/completions", {
           model: "step-1-8k",
           messages: [
             {
@@ -178,12 +244,18 @@ export default {
             },
           ],
         });
+
+        
+
         // Simulate streaming effect by updating message content in chunks
         const assistantMessage = response.data.choices[0].message.content;
         this.simulateStreamingEffect(assistantMessage);
       } catch (error) {
         console.error("Error fetching AI response:", error);
         this.isAssistantTyping = false; // Set typing status to false on error
+      }finally {
+        const tokens = await this.calculateTokenCount(allmessages);
+        console.log("tokens:", tokens);
       }
     },
     simulateStreamingEffect(content) {
@@ -210,6 +282,42 @@ export default {
         }
         this.messages[this.messages.length - 1].content = content;
       }
+    },
+
+
+
+     // 处理错误并给出提示
+    handleError(error) {
+      if (error.response) {
+        const status = error.response.status;
+        switch (status) {
+          case 400:
+            this.showError("请求无效，请检查输入的数据。");
+            break;
+          case 404:
+            this.showError("未找到相关数据，请稍后再试。");
+            break;
+          case 500:
+            this.showError("服务器内部错误，请稍后再试。");
+            break;
+          case 429:
+            this.showError("请求过多，请稍后再试。");
+            break;
+          default:
+            this.showError("未知错误，请稍后再试。");
+        }
+      } else {
+        this.showError("无法连接到服务器，请检查网络。");
+      }
+    },
+
+
+    // 提示错误信息
+    showError(message) {
+      Message.error({
+        message: message,
+        duration: 5000,
+      });
     },
   },
 };
@@ -275,7 +383,6 @@ button:hover {
   background-color: #0056b3;
 }
 
-
 .icon {
   margin-right: 10px; /* 用户的图标右边距 */
   margin-left: 10px; /* 助手的图标左边距 */
@@ -284,7 +391,4 @@ button:hover {
 .icon-size {
   font-size: 24px; /* 图标大小 */
 }
-
-
-
 </style>
