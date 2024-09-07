@@ -69,6 +69,7 @@
       @save="saveTransfer"
     ></manager-dialog>
   </div>
+
 </template>
 
 <script>
@@ -233,6 +234,9 @@ export default {
 </script>
 
 <style scoped>
+.card-style{
+  background-color: rgba(255, 255, 255, 0.8);
+}
 .transfer-page {
   display: flex;
   justify-content: space-between;
@@ -245,6 +249,7 @@ export default {
   padding: 20px;
   background-color: #f0f0f0;
   border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 .player-list {
@@ -252,6 +257,7 @@ export default {
   padding: 20px;
   background-color: #f0f0f0;
   border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 .player-list ul {
@@ -266,16 +272,17 @@ export default {
   border: 1px solid #ccc;
   border-radius: 5px;
 }
-
-.player-item:hover {
-  background-color: #e0e0e0;
-}
-
 .player-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
+   background-color: rgba(255, 255, 255, 0.8);
 }
+
+.player-item:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
 
 .el-button {
   background-color: rgb(0, 153, 255);

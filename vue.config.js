@@ -12,10 +12,10 @@ module.exports = defineConfig({
           '^/api': ''
         }
       },
-      '/chatAPI': {
+      '/LLM': {
         target: 'https://api.stepfun.com',
         changeOrigin: true, // This allows you to avoid the CORS issue
-        pathRewrite: { '^/chatAPI': '' }, // This will remove '/chatAPI' from the request URL when sending it to the target
+        pathRewrite: { '^/LLM': '' }, // This will remove '/LLM' from the request URL when sending it to the target
       },
     },
     port: 8082, // 开发服务器的端口号为8082,即localhost:8082

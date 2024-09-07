@@ -1,50 +1,45 @@
 <template>
   <div class="transfer-history-page">
+    
+    <el-button type="primary" size="small" icon="el-icon-arrow-left" @click="goBack" class="back-button1">返回</el-button>
     <h2>历史转会信息</h2>
-    <el-form
-      inline
-      label-position="top"
-      @submit.native.prevent="fetchTransferHistory"
-    >
-      <el-form-item label="Team ID">
-        <el-input
-          v-model="queryParams.teamid"
-          placeholder="输入 team ID"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="From Team ID">
-        <el-input
-          v-model="queryParams.fromteamid"
-          placeholder="输入 from team ID"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="To Team ID">
-        <el-input
-          v-model="queryParams.toteamid"
-          placeholder="输入 to team ID"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="Player ID">
-        <el-input
-          v-model="queryParams.playerid"
-          placeholder="输入 player ID"
-        ></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="fetchTransferHistory">搜索</el-button>
-        <el-button
-          type="primary"
-          size="normal"
-          icon="el-icon-arrow-left"
-          @click="goBack"
-          class="back-button1"
-          >返回</el-button
-        >
-      </el-form-item>
-    </el-form>
 
+   <el-form
+  inline
+  label-position="top"
+  @submit.native.prevent="fetchTransferHistory"
+>
+  <el-form-item label="球队编号">
+    <el-input
+      v-model="queryParams.teamid"
+      placeholder="输入 球队编号"
+    ></el-input>
+  </el-form-item>
+  <el-form-item label="转出球队编号">
+    <el-input
+      v-model="queryParams.fromteamid"
+      placeholder="输入 转出球队编号"
+    ></el-input>
+  </el-form-item>
+  <el-form-item label="转入球队编号">
+    <el-input
+      v-model="queryParams.toteamid"
+      placeholder="输入 转入球队编号"
+    ></el-input>
+  </el-form-item>
+  <el-form-item label="球员编号">
+    <el-input
+      v-model="queryParams.playerid"
+      placeholder="输入 球员编号"
+    ></el-input>
+  </el-form-item>
+  <el-form-item>
+    <el-button type="primary" size="small"  @click="fetchTransferHistory">搜索</el-button>
+  </el-form-item>
+</el-form>
+   
     <ul v-if="transferHistory.length > 0">
-      <li v-for="(transfer, index) in transferHistory" :key="index">
+      <li v-for="(transfer, index) in transferHistory" class='card-style' :key="index">
         {{ transfer.PLAYER_NAME }} 从 {{ transfer.TEAM_NAME_FROM }} 转会到
         {{ transfer.TEAM_NAME_TO }}，费用:
         {{ formatTransferFee(transfer.TRANSFER_FEES) }}，日期:
@@ -113,9 +108,15 @@ export default {
 </script>
 
 <style scoped>
+.back-button1 {
+  float: right;
+}
+.card-style{
+  background-color: rgba(255, 255, 255, 0.8);
+}
 .transfer-history-page {
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: rgba(255, 255, 255, 0.8);
   border-radius: 8px;
 }
 

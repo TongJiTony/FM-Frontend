@@ -63,9 +63,9 @@
           <img :src="scope.row.ICON" alt="球员头像" style="width: 36px; height: 36px; border-radius: 50%;">
         </template>
       </el-table-column>
-      <el-table-column prop="PLAYER_NAME" label="球员姓名" width="170"></el-table-column>
-      <el-table-column prop="ROLE" label="位置" ></el-table-column>
-      <el-table-column prop="RANK" label="评分" ></el-table-column>
+      <el-table-column prop="PLAYER_NAME" label="球员姓名" width="160"></el-table-column>
+      <el-table-column prop="ROLE" label="位置"  width="160"></el-table-column>
+      <el-table-column prop="RANK" label="评分"  width="160"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button @click="handlePlayerDetails(scope.row)" type="text" size="small">详情</el-button>
