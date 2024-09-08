@@ -237,6 +237,15 @@ export default {
         this.sendMessage_edit();
         return;
       }
+      if (this.inputcard_visible) {
+        if (!this.inputdata) {
+          this.$message.error("请输入数据");
+          return;
+        } else if (this.inputdata <= 0){
+          this.$message.error("请输入正确的数据");
+          return;
+        }
+      }
       if (this.input.trim()) {
         // 检测并修改 [] 中的内容
         let text = this.input;
