@@ -1,7 +1,6 @@
 <template>
   <div class="player-display">
     <el-card shadow="always" class="card-style">
-     
       <el-row :gutter="20">
         <el-card class="card-style">
           <div slot="header" class="clearfix">
@@ -31,7 +30,7 @@
                 <div style="height: 60px; line-height: 60px">
                   <strong>球员编号:</strong>
                   <span style="margin-right: 10px"></span>
-                  <el-tag  style="font-size: 14px">{{
+                  <el-tag style="font-size: 14px">{{
                     player[0].PLAYER_ID
                   }}</el-tag>
                 </div>
@@ -41,7 +40,7 @@
                   <strong>所在球队:</strong>
                   <span style="margin-right: 10px"></span>
                   <span style="margin-right: 10px; vertical-align: middle">
-                    <el-tag  style="font-size: 14px">{{
+                    <el-tag style="font-size: 14px">{{
                       player[0].TEAM_NAME
                     }}</el-tag>
                     <img
@@ -61,7 +60,7 @@
                 <div style="height: 60px; line-height: 60px">
                   <strong>生日:</strong>
                   <span style="margin-right: 10px"></span>
-                  <el-tag  style="font-size: 14px"
+                  <el-tag style="font-size: 14px"
                     >{{ player[0].BIRTHDAY }} ({{
                       calculateAge(player[0].BIRTHDAY)
                     }}岁)</el-tag
@@ -72,7 +71,7 @@
                 <div style="height: 60px; line-height: 60px">
                   <strong>惯用脚:</strong>
                   <span style="margin-right: 10px"></span>
-                  <el-tag  style="font-size: 14px">{{
+                  <el-tag style="font-size: 14px">{{
                     player[0].USED_FOOT === 1 ? "右脚" : "左脚"
                   }}</el-tag>
                 </div>
@@ -86,52 +85,50 @@
         <el-tab-pane label="作战能力" name="first">
           <el-row type="flex" justify="space-between">
             <el-card class="card-style2">
-
-            <el-col :span="12">
-              <el-card class="module-card2" shadow="hover">
-                <div slot="header" class="clearfix">
-                  <span>{{ player[0].ROLE }}</span>
-                </div>
-                <img
-                  :src="fieldImageUrl"
-                  alt="Football Field"
-                  class="field-image"
-                />
-                <div class="player-position"></div>
-              </el-card>
-            </el-col>
-            <el-col :span="12">
-              <el-card class="module-card2" shadow="never">
-                <div class="card-content">
-                  <div class="team-avg-rank">
-                    <div class="rank-info">
-                      <span>队伍平均评分</span>
+              <el-col :span="12">
+                <el-card class="module-card2" shadow="hover">
+                  <div slot="header" class="clearfix">
+                    <span>{{ player[0].ROLE }}</span>
+                  </div>
+                  <img
+                    :src="fieldImageUrl"
+                    alt="Football Field"
+                    class="field-image"
+                  />
+                  <div class="player-position"></div>
+                </el-card>
+              </el-col>
+              <el-col :span="12">
+                <el-card class="module-card2" shadow="never">
+                  <div class="card-content">
+                    <div class="team-avg-rank">
+                      <div class="rank-info">
+                        <span>队伍平均评分</span>
+                      </div>
+                      <div class="rank-progress">
+                        <el-progress
+                          type="circle"
+                          :percentage="avgRank"
+                          :format="formatTeam"
+                        ></el-progress>
+                      </div>
                     </div>
-                    <div class="rank-progress">
-                      <el-progress
-                        type="circle"
-                        :percentage="avgRank"
-                        :format="formatTeam"
-                      ></el-progress>
+                    <div class="player-rank">
+                      <div class="rank-info">
+                        <span>个人评分</span>
+                      </div>
+                      <div class="rank-progress">
+                        <el-progress
+                          type="circle"
+                          :percentage="player[0].RANK"
+                          :format="formatPlayer"
+                        ></el-progress>
+                      </div>
                     </div>
                   </div>
-                  <div class="player-rank">
-                    <div class="rank-info">
-                      <span>个人评分</span>
-                    </div>
-                    <div class="rank-progress">
-                      <el-progress
-                        type="circle"
-                        :percentage="player[0].RANK"
-                        :format="formatPlayer"
-                      ></el-progress>
-                    </div>
-                  </div>
-                </div>
-              </el-card>
-            </el-col>
-
-          </el-card>
+                </el-card>
+              </el-col>
+            </el-card>
           </el-row>
         </el-tab-pane>
 
@@ -181,22 +178,19 @@
         <el-tab-pane label="转会记录" name="forth">
           <el-card shadow="never" class="card-style">
             <h2>转会记录</h2>
-            <el-table :data="transferData" style="width: 100%" height="120">
+            <el-table :data="transferData" style="width: 100%" height="200">
               <el-table-column
-                prop="TEAM_ID_FROM"
+                prop="TEAM_NAME_TO"
                 label="转出球队"
-               :formatter="row => this.teams[row.TEAM_ID_FROM] || '未找到球队'"
               ></el-table-column>
-               <el-table-column
-                prop="TEAM_ID_TO"
+              <el-table-column
+                prop="TEAM_NAME_FROM"
                 label="转入球队"
-               :formatter="row => this.teams[row.TEAM_ID_TO] || '未找到球队'"
               ></el-table-column>
-            
+
               <el-table-column
                 prop="TRANSFER_FEES"
                 label="转会费"
-                 :formatter="formatTransferFees"
               ></el-table-column>
               <el-table-column
                 prop="TRANSFER_DATE"
@@ -252,44 +246,47 @@ export default {
   },
   methods: {
     formatTransferDate(row, column, cellValue) {
-    // 将日期字符串解析为 Date 对象，并使用 toLocaleDateString 方法格式化为年月日
-    return new Date(cellValue).toLocaleDateString();
-  },
-    formatTransferFees(row, column, cellValue) {
-    // 将转会费转换为万为单位，并添加千分位分隔符和货币符号
-    return `¥${(cellValue / 10000).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}万`;
-  },
-    getTeamName(){
-      fetch('/api/v1/team/displayall')
-      .then(response => response.json())
-      .then(teamsData => {
-        this.teams = teamsData.reduce((acc, team) => {
-          acc[team.TEAM_ID] = team.TEAM_NAME;
-          return acc;
-        }, {});
-      })
-      .catch(error => {
-        console.error('Error fetching teams:', error);
-      });
+      // 将日期字符串解析为 Date 对象，并使用 toLocaleDateString 方法格式化为年月日
+      return new Date(cellValue).toLocaleDateString();
     },
-    getAverageRank(teamId){
-      axios.get(`/api/v1/player/displayall?teamid=${teamId}`)
-          .then((response) => {
-            console.log("Received data:", response.data);
-            this.players = response.data;
-        
-              // 计算RANK之和
-            let rankSum = 0;
-            for (let player of this.players) {
-              rankSum += player.RANK;
-            }
-            // 计算平均值
-            this.avgRank = rankSum / this.players.length;
-            console.log('Average RANK:', this.avgRank);
-          })
-          .catch((error) => {
-            console.error("Failed to fetch player list for team:", error);
-          });
+    formatTransferFees(row, column, cellValue) {
+      // 将转会费转换为万为单位，并添加千分位分隔符和货币符号
+      return `¥${(cellValue / 10000)
+        .toFixed(2)
+        .replace(/\d(?=(\d{3})+\.)/g, "$&,")}万`;
+    },
+    getTeamName() {
+      fetch("/api/v1/team/displayall")
+        .then((response) => response.json())
+        .then((teamsData) => {
+          this.teams = teamsData.reduce((acc, team) => {
+            acc[team.TEAM_ID] = team.TEAM_NAME;
+            return acc;
+          }, {});
+        })
+        .catch((error) => {
+          console.error("Error fetching teams:", error);
+        });
+    },
+    getAverageRank(teamId) {
+      axios
+        .get(`/api/v1/player/displayall?teamid=${teamId}`)
+        .then((response) => {
+          console.log("Received data:", response.data);
+          this.players = response.data;
+
+          // 计算RANK之和
+          let rankSum = 0;
+          for (let player of this.players) {
+            rankSum += player.RANK;
+          }
+          // 计算平均值
+          this.avgRank = rankSum / this.players.length;
+          console.log("Average RANK:", this.avgRank);
+        })
+        .catch((error) => {
+          console.error("Failed to fetch player list for team:", error);
+        });
     },
     formatPlayer() {
       return `${this.player[0].RANK.toFixed(1)}分`;
@@ -431,11 +428,11 @@ export default {
 </script>
 
 <style scoped>
-.card-style{
+.card-style {
   background-color: rgba(255, 255, 255, 0.8);
 }
-.card-style2{
-  width:1500px;
+.card-style2 {
+  width: 1500px;
   background-color: rgba(255, 255, 255, 0.8);
 }
 .player-display {

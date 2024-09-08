@@ -1,7 +1,5 @@
 <template>
   <div class="medical-list">
-
-
     <el-card shadow="never" class="card-style">
       <el-row :gutter="20" class="header-row" justify="end">
         <el-col :span="12">
@@ -47,54 +45,53 @@
         <el-card shadow="never" class="card-style">
           <div class="regional_table">
             <el-table :data="pagedData" style="width: 100%">
-            <el-table-column prop="PLAYER_NAME" label="球员姓名">
-            </el-table-column>
-            <el-table-column prop="HURT_PART" label="受伤部位">
-            </el-table-column>
-            <el-table-column prop="MEDICAL_CARE" label="医疗护理">
-            </el-table-column>
-            <el-table-column
-              prop="HURT_TIME"
-              label="受伤时间"
-              :formatter="formatData"
-            >
-            </el-table-column>
-            <el-table-column
-              prop="PRED_REC_DATE"
-              label="预计康复时间"
-              :formatter="formatData"
-            >
-            </el-table-column>
-            <el-table-column label="是否痊愈">
-              <template slot-scope="scope">
-                <el-tag :type="scope.row.STATE === 0 ? 'success' : 'danger'">
-                  {{ scope.row.STATE === 0 ? "已痊愈" : "未痊愈" }}
-                </el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column label="操作" fixed="right">
-              <!-- eslint-disable-next-line -->
+              <el-table-column prop="PLAYER_NAME" label="球员姓名">
+              </el-table-column>
+              <el-table-column prop="HURT_PART" label="受伤部位">
+              </el-table-column>
+              <el-table-column prop="MEDICAL_CARE" label="医疗护理">
+              </el-table-column>
+              <el-table-column
+                prop="HURT_TIME"
+                label="受伤时间"
+                :formatter="formatData"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="PRED_REC_DATE"
+                label="预计康复时间"
+                :formatter="formatData"
+              >
+              </el-table-column>
+              <el-table-column label="是否痊愈">
+                <template slot-scope="scope">
+                  <el-tag :type="scope.row.STATE === 0 ? 'success' : 'danger'">
+                    {{ scope.row.STATE === 0 ? "已痊愈" : "未痊愈" }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" fixed="right">
+                <!-- eslint-disable-next-line -->
 
-              <template slot-scope="scope">
-                <el-button
-                  @click="confirmEdit(scope.row)"
-                  type="text"
-                  size="small"
-                  style="color: blue"
-                  >编辑</el-button
-                >
-                <el-button
-                  @click="confirmDelete(scope.row)"
-                  type="text"
-                  size="small"
-                  style="color: red"
-                  >删除</el-button
-                >
-              </template>
-            </el-table-column>
-          </el-table>
+                <template slot-scope="scope">
+                  <el-button
+                    @click="confirmEdit(scope.row)"
+                    type="text"
+                    size="small"
+                    style="color: blue"
+                    >编辑</el-button
+                  >
+                  <el-button
+                    @click="confirmDelete(scope.row)"
+                    type="text"
+                    size="small"
+                    style="color: red"
+                    >删除</el-button
+                  >
+                </template>
+              </el-table-column>
+            </el-table>
           </div>
-       
         </el-card>
         <el-pagination
           background
@@ -460,7 +457,7 @@ export default {
           );
 
           axios
-            .post(`api/v1/medical/add`, newMedicalData)
+            .post(`/api/v1/medical/add`, newMedicalData)
             .then(() => {
               this.fetchMedicalRecords();
               this.addDialogVisible = false;
@@ -549,10 +546,10 @@ export default {
 .regional_table /deep/ .el-table tr,
 .regional_table /deep/ .el-table td {
   background-color: transparent !important;
-  
+
   color: rgb(0, 0, 0);
 }
-.card-style{
+.card-style {
   background-color: rgba(255, 255, 255, 0.8);
 }
 .medical-list {
@@ -608,7 +605,7 @@ export default {
 .regional_table /deep/ .el-table tr,
 .regional_table /deep/ .el-table td {
   background-color: transparent !important;
-  
+
   color: rgb(0, 0, 0);
 }
 </style>

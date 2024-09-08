@@ -269,48 +269,48 @@
       this.$router.go(-1); // Navigate to the previous page
     },
     fetchTeamRecords() {
-      const teamID = this.$route.params.teamID;
-      axios.get(`/api/v1/record/search?team_id=${teamID}`)
-        .then(response => {
-          console.log('Received record data:', response.data);
-          this.records = response.data;
-          this.loading = false;
-          let positiveSum = 0;
-          let negativeSum = 0;
-          this.records.forEach(record => {
-          if (record.AMOUNT > 0) {
-            positiveSum += record.AMOUNT;
-          } else if (record.AMOUNT < 0) {
-            negativeSum += record.AMOUNT;
-          }
-          });
-          const amounts=[positiveSum,negativeSum];
-          // 用于存储每个日期的金额之和
-          const dateAmountMap = {};
-          // 遍历 records 数组
-          this.records.forEach(record => {
-          const date = record.TRANSACTION_DATE;
-          const amount = record.AMOUNT;
-          // 如果日期不存在于 dateAmountMap 中，初始化它
-          if (!dateAmountMap[date]) {
-            dateAmountMap[date] = 0;
-          }
-          // 累加金额到对应日期
-          dateAmountMap[date] += amount;
-          });
-          // 将结果转换为数组形式
-          const result = Object.keys(dateAmountMap).map(date => ({
-          TRANSACTION_DATE: date,
-          TOTAL_AMOUNT: dateAmountMap[date]
-          }));
-          this.renderPie(amounts);
-          this.renderLine(result);
-        })
-        .catch(error => {
-          console.error('Failed to fetch record data:', error);
-          this.loading = false;
-        });
-    },
+  const teamID = this.$route.params.teamID;
+  axios.get(`/api/v1/record/search?team_id=${teamID}`)
+    .then(response => {
+      console.log('Received record data:', response.data);
+      this.records = response.data;
+      this.loading = false;
+      let positiveSum = 0;
+      let negativeSum = 0;
+      this.records.forEach(record => {
+        if (record.AMOUNT > 0) {
+          positiveSum += record.AMOUNT;
+        } else if (record.AMOUNT < 0) {
+          negativeSum += record.AMOUNT;
+        }
+      });
+      const amounts = [positiveSum, negativeSum];
+      const dateAmountMap = {};
+      this.records.forEach(record => {
+        const date = record.TRANSACTION_DATE;
+        const amount = record.AMOUNT;
+        if (!dateAmountMap[date]) {
+          dateAmountMap[date] = 0;
+        }
+        dateAmountMap[date] += amount;
+      });
+      const result = Object.keys(dateAmountMap).map(date => ({
+        TRANSACTION_DATE: date,
+        TOTAL_AMOUNT: dateAmountMap[date]
+      }));
+
+      // 确保 DOM 挂载后再进行渲染
+      this.$nextTick(() => {
+        this.renderPie(amounts);
+        this.renderLine(result);
+      });
+    })
+    .catch(error => {
+      console.error('Failed to fetch record data:', error);
+      this.loading = false;
+    });
+},
+
     renderPie(amounts) {
       const pieDom = this.$refs.pieChart; // 使用新的 ref
       const myChart = this.$echarts.init(pieDom);
