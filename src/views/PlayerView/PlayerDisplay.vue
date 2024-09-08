@@ -242,7 +242,6 @@ export default {
     this.fetchLineupRecords();
     this.fetchPlayerData();
     this.fetchMedicalRecords();
-    this.getTeamName();
   },
   methods: {
     formatTransferDate(row, column, cellValue) {
@@ -254,19 +253,6 @@ export default {
       return `¥${(cellValue / 10000)
         .toFixed(2)
         .replace(/\d(?=(\d{3})+\.)/g, "$&,")}万`;
-    },
-    getTeamName() {
-      fetch("/api/v1/team/displayall")
-        .then((response) => response.json())
-        .then((teamsData) => {
-          this.teams = teamsData.reduce((acc, team) => {
-            acc[team.TEAM_ID] = team.TEAM_NAME;
-            return acc;
-          }, {});
-        })
-        .catch((error) => {
-          console.error("Error fetching teams:", error);
-        });
     },
     getAverageRank(teamId) {
       axios
