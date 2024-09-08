@@ -18,9 +18,39 @@
   
 </h1>
         </div>
-     
 
-       <el-card class="card-style">
+        <el-card class="card-style" v-for="(event, index) in events" :key="index" style="margin-bottom: 20px;">
+            <el-row>
+                <el-col>
+                    <h4 style="font-size: 20px;">
+                        比赛时间：{{ match[0].MATCH_DATE }}
+                    </h4>
+                    <p style="font-size: 20px;">
+                        比赛事件：
+                        <el-tag
+                            style="font-size: 20px;"
+                            :type="
+                                event.EVENT_TYPE === '黄牌'
+                                ? 'warning'
+                                : event.EVENT_TYPE === '红牌'
+                                ? 'danger'
+                                : 'default'">
+                            {{ event.EVENT_TYPE }}
+                        </el-tag>
+                    </p>          
+                    <h4 style="font-size: 20px;font-weight: bold;">相关球员：{{ event.PLAYER_NAME }} </h4>
+                    <p style="font-size: 20px;">
+                        所属队伍：{{ player[0].TEAM_NAME }}
+                    </p>
+                </el-col>
+                <el-col>
+                    <!-- 其他内容 -->
+                </el-col>
+            </el-row>
+        </el-card>
+
+
+       <!-- <el-card class="card-style">
         <el-row>
             <el-col>
                 <h4 style="font-size: 20px;">
@@ -34,7 +64,7 @@
                             :type="
                             event[0].EVENT_TYPE === '黄牌'
                             ? 'warning'
-                            : event[0].EVENT_TYPE === '换人'
+                            : event[0].EVENT_TYPE === '红牌'
                             ? 'danger'
                             : 'default'">
                             {{ event[0].EVENT_TYPE }}
@@ -52,7 +82,7 @@
            </el-col>
           
         </el-row>
-       </el-card>
+       </el-card> -->
        <el-col :span="24" style="height: 12px;"></el-col> 
        <el-card class="card-style">
           <div class="calendar-container">
@@ -122,15 +152,14 @@ export default {
     data(){
         return{
             match:[],
-            event:[],
+            events:[],
             currentDate: new Date(),
             player:[],
         };
     },
     created(){
-        this.fetchMatchData();
-        this.fetchEventData();
-      
+      this.fetchMatchData();
+      this.fetchEventData();
     },
     computed: {
         surroundingDates() {
@@ -156,8 +185,8 @@ export default {
         goBack() {
       this.$router.go(-1); // Navigate to the previous page
     },
-        fetchPlayerData() {
-      const playerId = this.event[0].PLAYER_ID;
+    fetchPlayerData() {
+      const playerId = this.events[0].PLAYER_ID;
       axios
         .get(`/api/v1/player/displayone?playerid=${playerId}`)
         .then((response) => {
@@ -170,7 +199,7 @@ export default {
           this.loading = false;
         });
     },
-        formatDate(date) {
+    formatDate(date) {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
@@ -198,7 +227,7 @@ export default {
             axios.get(`/api/v1/event/search?match_id=${matchID}`)
           .then(response => {
             console.log('Received event data:', response.data);
-            this.event = response.data;
+            this.events = response.data;
             this.fetchPlayerData();
           })
           .catch(error => {
