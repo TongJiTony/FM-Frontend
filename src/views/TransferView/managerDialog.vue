@@ -106,17 +106,17 @@
         </el-card>
 
         <el-card v-if="form_visible" class="prompts">
-          <el-form :model="transferDetails" label-width="60px">
-            <el-form-item label="转会费">
+          <el-form :model="transferDetails" label-width="80px">
+            <el-form-item label="转会费(万)" >
               <el-input
                 v-model="transferDetails.fee"
                 placeholder="请输入转会费"
               ></el-input>
             </el-form-item>
-            <el-form-item label="薪水">
+            <el-form-item label="薪水(万)">
               <el-input
                 v-model="transferDetails.salary"
-                placeholder="请输入薪水"
+                placeholder="请输入薪水(万)"
               ></el-input>
             </el-form-item>
             <el-form-item label="窗口">
@@ -133,7 +133,7 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="期限">
+            <el-form-item label="期限(年)">
               <el-input
                 v-model="transferDetails.contractDuration"
                 placeholder="请输入合同期限（月数）"
@@ -236,6 +236,15 @@ export default {
       if (this.form_visible) {
         this.sendMessage_edit();
         return;
+      }
+      if (this.inputcard_visible) {
+        if (!this.inputdata) {
+          this.$message.error("请输入数据");
+          return;
+        } else if (this.inputdata <= 0){
+          this.$message.error("请输入正确的数据");
+          return;
+        }
       }
       if (this.input.trim()) {
         // 检测并修改 [] 中的内容
